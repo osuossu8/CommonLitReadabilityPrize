@@ -132,6 +132,7 @@ class RoBERTaLarge(nn.Module):
     def __init__(self, model_path):
         super(RoBERTaLarge, self).__init__()
         self.in_features = 1024
+        self.dropout = nn.Dropout(0.3)
         self.roberta = RobertaModel.from_pretrained(model_path)
         # self.att = AttentionBlock(self.in_features, self.in_features, 1)
         self.l0 = nn.Linear(self.in_features, 1)
@@ -142,12 +143,12 @@ class RoBERTaLarge(nn.Module):
             attention_mask=mask
         )
         
-        last_hidden_states = roberta_outputs.last_hidden_state[:, 0, :] # torch.Size([1, 1024])
-        # pooler_output = roberta_outputs.pooler_output # torch.Size([1, 1024])
+        # last_hidden_states = roberta_outputs.last_hidden_state[:, 0, :] # torch.Size([1, 1024])
+        pooler_output = roberta_outputs.pooler_output # torch.Size([1, 1024])
 
         # (batch_size, num_tokens, 1024)
-        # logits = self.l0(pooler_output)
-        logits = self.l0(last_hidden_states)
+        logits = self.l0(self.dropout(pooler_output))
+        # logits = self.l0(self.dropout(last_hidden_states))
         # x = self.att(last_hidden_states)
 
         return logits.squeeze(-1)
@@ -185,7 +186,8 @@ class MetricMeter(object):
     
     def update(self, y_true, y_pred):
         self.y_true.extend(y_true.cpu().detach().numpy().tolist())
-        self.y_pred.extend(torch.sigmoid(y_pred).cpu().detach().numpy().tolist())
+        self.y_pred.extend(y_pred.cpu().detach().numpy().tolist())
+        # self.y_pred.extend(torch.sigmoid(y_pred).cpu().detach().numpy().tolist())
 
     @property
     def avg(self):
@@ -339,21 +341,22 @@ for fold in range(5):
         valid_dataset, batch_size=CFG.valid_bs, num_workers=0, pin_memory=True, shuffle=False
     )
     
-    param_optimizer = list(model.named_parameters())
-    no_decay = ["bias", "LayerNorm.bias", "LayerNorm.weight"]
-    optimizer_parameters = [
-        {'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], 'weight_decay': 0.001},
-        {'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], 'weight_decay': 0.0},
-    ]
+    # param_optimizer = list(model.named_parameters())
+    # no_decay = ["bias", "LayerNorm.bias", "LayerNorm.weight"]
+    # optimizer_parameters = [
+    #     {'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], 'weight_decay': 0.001},
+    #     {'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], 'weight_decay': 0.0},
+    # ]
 
     num_train_steps = int(len(trn_df) / CFG.train_bs * CFG.epochs)   
-    # optimizer = torch.optim.Adam(model.parameters(), lr=CFG.LR)
-    optimizer = transformers.AdamW(optimizer_parameters, lr=CFG.LR)
-    scheduler = transformers.get_linear_schedule_with_warmup(
-        optimizer,
-        num_warmup_steps=0,
-        num_training_steps=num_train_steps
-    )
+    optimizer = torch.optim.Adam(model.parameters(), lr=CFG.LR)
+    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, eta_min=1e-5, T_max=CFG.epochs)
+    # optimizer = transformers.AdamW(optimizer_parameters, lr=CFG.LR)
+    # scheduler = transformers.get_linear_schedule_with_warmup(
+    #     optimizer,
+    #     num_warmup_steps=0,
+    #     num_training_steps=num_train_steps
+    # )
 
     model = model.to(device)
     # model, optimizer = amp.initialize(model, optimizer, opt_level='O1', verbosity=0)
