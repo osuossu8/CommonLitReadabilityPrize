@@ -345,15 +345,18 @@ for fold in range(5):
             best_score = valid_avg['RMSE']
 
 
-model_paths = [
-    f'outputs/CFG.EXP_ID/fold-0.bin', 
-    f'outputs/CFG.EXP_ID/fold-1.bin', 
-    f'outputs/CFG.EXP_ID/fold-2.bin', 
-    f'outputs/CFG.EXP_ID/fold-3.bin',
-    f'outputs/CFG.EXP_ID/fold-4.bin',
-]
+if len(CFG.folds) == 1:
+    pass
+else:
+    model_paths = [
+        f'outputs/CFG.EXP_ID/fold-0.bin', 
+        f'outputs/CFG.EXP_ID/fold-1.bin', 
+        f'outputs/CFG.EXP_ID/fold-2.bin', 
+        f'outputs/CFG.EXP_ID/fold-3.bin',
+        f'outputs/CFG.EXP_ID/fold-4.bin',
+    ]
 
-overall_cv_score = calc_cv(model_paths)
-logger.info(f'cv score {overall_cv_score}')
-print()
+    overall_cv_score = calc_cv(model_paths)
+    logger.info(f'cv score {overall_cv_score}')
+    print()
 
