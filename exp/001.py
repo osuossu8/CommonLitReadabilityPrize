@@ -298,7 +298,7 @@ for fold in range(5):
     
     valid_dataset = CommonLitDataset(df=val_df, excerpt=val_df.excerpt.values, tokenizer=tokenizer, max_len=max_len)
     valid_dataloader = torch.utils.data.DataLoader(
-        valid_dataset, batch_size=CFG.test_bs, num_workers=0, pin_memory=True, shuffle=False
+        valid_dataset, batch_size=CFG.valid_bs, num_workers=0, pin_memory=True, shuffle=False
     )
     
     
