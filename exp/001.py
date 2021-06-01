@@ -37,6 +37,8 @@ class CFG:
     folds = [0, 1, 2, 3, 4]
     N_FOLDS = 5
     LR = 3e-5
+    train_bs = 8
+    valid_bs = 16
 
 
 def set_seed(seed=42):
@@ -235,7 +237,7 @@ def calc_cv(model_paths):
     
         dataset = CommonLitDataset(df=val_df, excerpt=val_df.excerpt.values, tokenizer=tokenizer, max_len=max_len)
         data_loader = torch.utils.data.DataLoader(
-            dataset, batch_size=4, num_workers=4, pin_memory=True, shuffle=False
+            dataset, batch_size=CFG.valid_bs, num_workers=0, pin_memory=True, shuffle=False
         )
 
         final_output = []
@@ -291,12 +293,12 @@ for fold in range(5):
     
     train_dataset = CommonLitDataset(df=trn_df, excerpt=trn_df.excerpt.values, tokenizer=tokenizer, max_len=max_len)
     train_dataloader = torch.utils.data.DataLoader(
-        train_dataset, batch_size=2, num_workers=4, pin_memory=True, shuffle=True
+        train_dataset, batch_size=CFG.train_bs, num_workers=0, pin_memory=True, shuffle=True
     )
     
     valid_dataset = CommonLitDataset(df=val_df, excerpt=val_df.excerpt.values, tokenizer=tokenizer, max_len=max_len)
     valid_dataloader = torch.utils.data.DataLoader(
-        valid_dataset, batch_size=4, num_workers=4, pin_memory=True, shuffle=False
+        valid_dataset, batch_size=CFG.test_bs, num_workers=0, pin_memory=True, shuffle=False
     )
     
     
