@@ -34,7 +34,7 @@ class CFG:
     ######################
     EXP_ID = '001'
     seed = 71
-    epochs = 3
+    epochs = 10 # 3
     folds = [0] # [0, 1, 2, 3, 4]
     N_FOLDS = 5
     # LR = 3e-5
