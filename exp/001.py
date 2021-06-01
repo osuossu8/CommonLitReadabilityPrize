@@ -270,7 +270,7 @@ set_seed(CFG.seed)
 device = get_device()
 
 # data
-train = pd.read_csv("../input/step-1-create-folds/train_folds.csv")
+train = pd.read_csv("inputs/train_folds.csv")
 
 print(train.shape)
 train.head()
