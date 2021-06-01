@@ -105,11 +105,36 @@ class CommonLitDataset:
         }
 
 
+class AttentionBlock(nn.Module):
+  def __init__(self, in_features, middle_features, out_features):
+    super().__init__()
+    self.in_features = in_features
+    self.middle_features = middle_features
+    self.out_features = out_features
+
+    self.W = nn.Linear(in_features, middle_features)
+    self.V = nn.Linear(middle_features, out_features)
+
+  def forward(self, features):
+    att = torch.tanh(self.W(features))
+
+    score = self.V(att)
+
+    attention_weights = torch.softmax(score, dim=1)
+
+    context_vector = attention_weights * features
+    context_vector = torch.sum(context_vector, dim=1)
+
+    return context_vector
+
+
 class RoBERTaLarge(nn.Module):
     def __init__(self, model_path):
         super(RoBERTaLarge, self).__init__()
+        self.in_features = 1024
         self.roberta = RobertaModel.from_pretrained(model_path)
-        self.l0 = nn.Linear(1024, 1)
+        # self.att = AttentionBlock(self.in_features, self.in_features, 1)
+        self.l0 = nn.Linear(self.in_features, 1)
 
     def forward(self, ids, mask):
         roberta_outputs = self.roberta(
@@ -118,10 +143,12 @@ class RoBERTaLarge(nn.Module):
         )
         
         last_hidden_states = roberta_outputs.last_hidden_state[:, 0, :] # torch.Size([1, 1024])
-        pooler_output = roberta_outputs.pooler_output # torch.Size([1, 1024])
-        
+        # pooler_output = roberta_outputs.pooler_output # torch.Size([1, 1024])
+
         # (batch_size, num_tokens, 1024)
-        logits = self.l0(pooler_output)
+        # logits = self.l0(pooler_output)
+        logits = self.l0(last_hidden_states)
+        # x = self.att(last_hidden_states)
 
         return logits.squeeze(-1)
 
@@ -169,8 +196,19 @@ class MetricMeter(object):
         }
 
 
+class RMSELoss(torch.nn.Module):
+    def __init__(self):
+        super(RMSELoss,self).__init__()
+
+    def forward(self,x,y):
+        criterion = nn.MSELoss()
+        loss = torch.sqrt(criterion(x, y))
+        return loss
+
+
 def loss_fn(logits, targets):
-    loss_fct = torch.nn.BCEWithLogitsLoss(reduction="mean")
+    # loss_fct = torch.nn.BCEWithLogitsLoss(reduction="mean")
+    loss_fct = RMSELoss()
     loss = loss_fct(logits, targets)
     return loss
         
@@ -187,7 +225,7 @@ def train_fn(model, data_loader, device, optimizer, scheduler):
         masks = data['attention_mask'].to(device)
         targets = data['targets'].to(device)
         outputs = model(inputs, masks)
-        loss = loss_fn(torch.sigmoid(outputs), targets)
+        loss = loss_fn(outputs, targets)
         loss.backward()
         optimizer.step()
         scheduler.step()
@@ -209,7 +247,7 @@ def valid_fn(model, data_loader, device):
             masks = data['attention_mask'].to(device)
             targets = data['targets'].to(device)
             outputs = model(inputs, masks)
-            loss = loss_fn(torch.sigmoid(outputs), targets)
+            loss = loss_fn(outputs, targets)
             losses.update(loss.item(), inputs.size(0))
             scores.update(targets, outputs)
             tk0.set_postfix(loss=losses.avg)
