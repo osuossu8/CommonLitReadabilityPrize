@@ -34,9 +34,10 @@ class CFG:
     EXP_ID = '001'
     seed = 71
     epochs = 3
-    folds = [0, 1, 2, 3, 4]
+    folds = [0] # [0, 1, 2, 3, 4]
     N_FOLDS = 5
-    LR = 3e-5
+    # LR = 3e-5
+    LR = 5e-5
     train_bs = 8
     valid_bs = 16
 
@@ -299,9 +300,21 @@ for fold in range(5):
         valid_dataset, batch_size=CFG.valid_bs, num_workers=0, pin_memory=True, shuffle=False
     )
     
-    
-    optimizer = torch.optim.Adam(model.parameters(), lr=CFG.LR)
-    scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0=16, T_mult=1)
+    param_optimizer = list(model.parameters())
+    no_decay = ["bias", "LayerNorm.bias", "LayerNorm.weight"]
+    optimizer_parameters = [
+        {'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], 'weight_decay': 0.001},
+        {'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], 'weight_decay': 0.0},
+    ]
+
+    num_train_steps = int(len(trn_df) / CFG.train_bs * CFG.epochs)   
+    # optimizer = torch.optim.Adam(model.parameters(), lr=CFG.LR)
+    optimizer = transformers.AdamW(optimizer_parameters, lr=CFG.LR)
+    scheduler = transformers.get_linear_schedule_with_warmup(
+        optimizer,
+        num_warmup_steps=0,
+        num_training_steps=num_train_steps
+    )
 
     model = model.to(device)
     # model, optimizer = amp.initialize(model, optimizer, opt_level='O1', verbosity=0)
