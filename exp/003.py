@@ -270,7 +270,7 @@ def calc_cv(model_paths):
     tokenizer = RobertaTokenizer.from_pretrained(model_name)
     
     df = pd.read_csv("inputs/train_folds.csv")
-    y_true = df['target'].values
+    y_true = []
     y_pred = []
     for fold, model in enumerate(models):
         val_df = df[df.kfold == fold].reset_index(drop=True)
@@ -289,10 +289,13 @@ def calc_cv(model_paths):
                 output = model(inputs, masks)
                 output = output.detach().cpu().numpy().tolist()
                 final_output.extend(output)
+        print(calc_loss(np.array(final_output), val_df['target'].values))
         y_pred.append(np.array(final_output))
+        y_true.append(val_df['target'].values)
         torch.cuda.empty_cache()
         
     y_pred = np.concatenate(y_pred)
+    y_true = np.concatenate(y_true)
     overall_cv_score = calc_loss(y_true, y_pred)
     print(overall_cv_score)
     return overall_cv_score
