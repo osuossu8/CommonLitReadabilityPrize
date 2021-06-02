@@ -332,6 +332,9 @@ for fold in range(5):
     max_len = 256
     model_path = 'roberta-large'
     model = RoBERTaLarge(model_path)
+    model.load_state_dict(torch.load('itpt/roberta_large/pytorch_model.bin'))
+    print('load itpt weights')
+
     tokenizer = RobertaTokenizer.from_pretrained(model_path)
     
     train_dataset = CommonLitDataset(df=trn_df, excerpt=trn_df.excerpt.values, tokenizer=tokenizer, max_len=max_len)
