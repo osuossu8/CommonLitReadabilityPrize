@@ -332,7 +332,11 @@ for fold in range(5):
     max_len = 256
     model_path = 'roberta-large'
     model = RoBERTaLarge(model_path)
-    model.load_state_dict(torch.load('itpt/roberta_large/pytorch_model.bin'))
+    net_dict = model.state_dict() 
+    pretrain = torch.load('itpt/roberta_large/pytorch_model.bin')
+    pretrain_dict = {k: v for k, v in pretrain.items() if k in net_dict.keys()}
+    net_dict.update(pretrain_dict)
+    model.load_state_dict(net_dict)
     print('load itpt weights')
 
     tokenizer = RobertaTokenizer.from_pretrained(model_path)
