@@ -34,7 +34,7 @@ class CFG:
     ######################
     EXP_ID = '003'
     seed = 71
-    epochs = 15 # 10
+    epochs = 10
     folds = [0, 1, 2, 3, 4]
     N_FOLDS = 5
     # LR = 3e-5
@@ -134,6 +134,7 @@ class RoBERTaLarge(nn.Module):
         self.in_features = 1024
         self.dropout = nn.Dropout(0.3)
         self.roberta = RobertaModel.from_pretrained(model_path)
+        self.activation = nn.Tanh()
         self.l0 = nn.Linear(self.in_features, 1)
 
     def forward(self, ids, mask):
@@ -149,7 +150,9 @@ class RoBERTaLarge(nn.Module):
 
         # (batch_size, num_tokens, 1024)
         # logits = self.l0(self.dropout(pooler_output))
-        logits = self.l0(self.dropout(last_4_hidden))
+
+        x = self.activation(last_4_hidden)
+        logits = self.l0(self.dropout(x))
         return logits.squeeze(-1)
 
 
