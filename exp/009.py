@@ -38,6 +38,7 @@ class CFG:
     folds = [0, 1, 2, 3, 4]
     N_FOLDS = 5
     LR = 5e-5
+    max_len = 300 # 256
     train_bs = 8
     valid_bs = 16
 
@@ -103,13 +104,13 @@ class CommonLitDataset:
 
     def __getitem__(self, item):
         text = str(self.excerpt[item])
-        # inputs = self.tokenizer(
-        #     text, 
-        #     max_length=self.max_len, 
-        #     padding="max_length", 
-        #     truncation=True
-        # )
-        inputs = convert_examples_to_features(text, self.tokenizer, self.max_len)
+        inputs = self.tokenizer(
+            text, 
+            max_length=self.max_len, 
+            padding="max_length", 
+            truncation=True
+        )
+        # inputs = convert_examples_to_features(text, self.tokenizer, self.max_len)
 
         ids = inputs["input_ids"]
         mask = inputs["attention_mask"]
@@ -201,7 +202,7 @@ class RoBERTaLargeV2(nn.Module):
 
         # x = self.layer_norm(last_4_hidden)
         x = self.activation(last_4_hidden)
-        # x = self.dropout(x)
+        x = self.dropout(x)
         logits = self.l0(x)
         return logits.squeeze(-1)
 
@@ -307,7 +308,6 @@ def valid_fn(model, data_loader, device):
 
 
 def calc_cv(model_paths):
-    max_len = 256
     model_name = 'roberta-large'
     model_path_2 = 'itpt/roberta_large/'
     models = []
@@ -327,7 +327,7 @@ def calc_cv(model_paths):
     for fold, model in enumerate(models):
         val_df = df[df.kfold == fold].reset_index(drop=True)
     
-        dataset = CommonLitDataset(df=val_df, excerpt=val_df.excerpt.values, tokenizer=tokenizer, max_len=max_len)
+        dataset = CommonLitDataset(df=val_df, excerpt=val_df.excerpt.values, tokenizer=tokenizer, max_len=CFG.max_len)
         data_loader = torch.utils.data.DataLoader(
             dataset, batch_size=CFG.valid_bs, num_workers=0, pin_memory=True, shuffle=False
         )
@@ -381,7 +381,6 @@ for fold in range(5):
     trn_df = train[train.kfold != fold].reset_index(drop=True)
     val_df = train[train.kfold == fold].reset_index(drop=True)
     
-    max_len = 256
     model_path = 'roberta-large'
     model_path_2 = 'itpt/roberta_large/'
     model = RoBERTaLarge(model_path_2)
@@ -389,12 +388,12 @@ for fold in range(5):
 
     tokenizer = RobertaTokenizer.from_pretrained(model_path)
     
-    train_dataset = CommonLitDataset(df=trn_df, excerpt=trn_df.excerpt.values, tokenizer=tokenizer, max_len=max_len)
+    train_dataset = CommonLitDataset(df=trn_df, excerpt=trn_df.excerpt.values, tokenizer=tokenizer, max_len=CFG.max_len)
     train_dataloader = torch.utils.data.DataLoader(
         train_dataset, batch_size=CFG.train_bs, num_workers=0, pin_memory=True, shuffle=True
     )
     
-    valid_dataset = CommonLitDataset(df=val_df, excerpt=val_df.excerpt.values, tokenizer=tokenizer, max_len=max_len)
+    valid_dataset = CommonLitDataset(df=val_df, excerpt=val_df.excerpt.values, tokenizer=tokenizer, max_len=CFG.max_len)
     valid_dataloader = torch.utils.data.DataLoader(
         valid_dataset, batch_size=CFG.valid_bs, num_workers=0, pin_memory=True, shuffle=False
     )
@@ -422,7 +421,7 @@ for fold in range(5):
     # model, optimizer = amp.initialize(model, optimizer, opt_level='O1', verbosity=0)
 
     p = 0
-    patience = 4 # 3
+    patience = 3
     min_loss = 999
     best_score = np.inf
 
