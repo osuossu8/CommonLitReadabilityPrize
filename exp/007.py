@@ -172,11 +172,14 @@ class RoBERTaLarge(nn.Module):
             ids,
             attention_mask=mask
         )
-        
-        last_4_hidden = torch.mean(roberta_outputs.last_hidden_state[:, -4:, :], 1)
+
+        hidden_state = roberta_outputs.last_hidden_state
+        hidden_state = self.embedding_dropout(hidden_state)[:, -4:, :]      
+        last_4_hidden = torch.mean(hidden_state, 1)
+
+        # last_4_hidden = torch.mean(roberta_outputs.last_hidden_state[:, -4:, :], 1)
 
         x = self.layer_norm(last_4_hidden)
-        x = self.embedding_dropout(x)
         # x = self.activation(x)
         logits = self.l0(self.dropout(x))
         return logits.squeeze(-1)
