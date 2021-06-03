@@ -163,7 +163,7 @@ class RoBERTaLargeV2(nn.Module):
         self.dropout = nn.Dropout(0.5)
         self.roberta = RobertaModel.from_pretrained(model_path)
         self.activation = nn.Tanh()
-        self.layer_norm = nn.LayerNorm(self.in_features = 1024)
+        self.layer_norm = nn.LayerNorm(self.in_features)
         self.l0 = nn.Linear(self.in_features, 1)
 
     def forward(self, ids, mask):
