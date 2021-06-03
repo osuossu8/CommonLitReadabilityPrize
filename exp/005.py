@@ -34,11 +34,11 @@ class CFG:
     ######################
     EXP_ID = '005'
     seed = 71
-    epochs = 10
+    epochs = 5 # 10
     folds = [0, 1, 2, 3, 4]
     N_FOLDS = 5
     LR = 5e-5
-    # LR = 9e-5 # 5e-4 # 3e-5 # 7e-5
+    # LR = 5e-3 # 1e-4 # 9e-5 # 5e-4 # 3e-5 # 7e-5
     train_bs = 8
     valid_bs = 16
 
@@ -134,7 +134,7 @@ class RoBERTaLarge(nn.Module):
         self.in_features = 1024
         self.dropout = nn.Dropout(0.3)
         self.roberta = RobertaModel.from_pretrained(model_path)
-        self.activation = nn.Tanh()
+        # self.activation = nn.Tanh()
         self.layer_norm = nn.LayerNorm(self.in_features)
         self.l0 = nn.Linear(self.in_features, 1)
 
@@ -147,7 +147,7 @@ class RoBERTaLarge(nn.Module):
         last_4_hidden = torch.mean(roberta_outputs.last_hidden_state[:, -4:, :], 1)
 
         x = self.layer_norm(last_4_hidden)
-        x = self.activation(x)
+        # x = self.activation(x)
         logits = self.l0(self.dropout(x))
         return logits.squeeze(-1)
 
