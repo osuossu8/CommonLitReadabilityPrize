@@ -172,15 +172,16 @@ class RoBERTaLargeV2(nn.Module):
             attention_mask=mask
         )
 
-        sequence_output = roberta_outputs[1]
+        sequence_output = roberta_outputs.last_hidden_state[:, 0, :]
         sequence_output = self.layer_norm(sequence_output)
 
         # max-avg head
-        average_pool = torch.mean(sequence_output, 1)
-        max_pool, _ = torch.max(sequence_output, 1)
-        concat_sequence_output = torch.cat((average_pool, max_pool), 1)
+        # average_pool = torch.mean(sequence_output, 1)
+        # max_pool, _ = torch.max(sequence_output, 1)
+   
+        # concat_sequence_output = torch.cat((average_pool, max_pool), 1)
 
-        logits = self.l0(self.dropout(concat_sequence_output))
+        logits = self.l0(self.dropout(sequence_output))
         return logits.squeeze(-1)
 
 
@@ -287,9 +288,11 @@ def valid_fn(model, data_loader, device):
 def calc_cv(model_paths):
     max_len = 256
     model_name = 'roberta-large'
+    model_path_2 = 'itpt/roberta_large/'
     models = []
     for model_path in model_paths:
-        model = RoBERTaLarge(model_name)
+        # model = RoBERTaLarge(model_name)
+        model = RoBERTaLargeV2(model_path_2)
         model.to("cuda")
         model.load_state_dict(torch.load(model_path))
         model.eval()
