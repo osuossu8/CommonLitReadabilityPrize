@@ -179,7 +179,7 @@ class RoBERTaLarge(nn.Module):
         # last_4_hidden = torch.mean(roberta_outputs.last_hidden_state[:, -4:, :], 1)
 
         # x = self.layer_norm(last_4_hidden)
-        x = self.activation(x)
+        x = self.activation(last_4_hidden)
         # x = self.dropout(x)
         logits = self.l0(x)
         return logits.squeeze(-1)
