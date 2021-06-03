@@ -37,8 +37,8 @@ class CFG:
     epochs = 10
     folds = [0, 1, 2, 3, 4]
     N_FOLDS = 5
-    # LR = 3e-5
     LR = 5e-5
+    # LR = 9e-5 # 5e-4 # 3e-5 # 7e-5
     train_bs = 8
     valid_bs = 16
 
@@ -153,6 +153,34 @@ class RoBERTaLarge(nn.Module):
 
         x = self.activation(last_4_hidden)
         logits = self.l0(self.dropout(x))
+        return logits.squeeze(-1)
+
+
+class RoBERTaLargeV2(nn.Module):
+    def __init__(self, model_path):
+        super(RoBERTaLargeV2, self).__init__()
+        self.in_features = 1024
+        self.dropout = nn.Dropout(0.5)
+        self.roberta = RobertaModel.from_pretrained(model_path)
+        self.activation = nn.Tanh()
+        self.layer_norm = nn.LayerNorm(self.in_features = 1024)
+        self.l0 = nn.Linear(self.in_features, 1)
+
+    def forward(self, ids, mask):
+        roberta_outputs = self.roberta(
+            ids,
+            attention_mask=mask
+        )
+
+        sequence_output = roberta_outputs[1]
+        sequence_output = self.layer_norm(sequence_output)
+
+        # max-avg head
+        average_pool = torch.mean(sequence_output, 1)
+        max_pool, _ = torch.max(sequence_output, 1)
+        concat_sequence_output = torch.cat((average_pool, max_pool), 1)
+
+        logits = self.l0(self.dropout(concat_sequence_output))
         return logits.squeeze(-1)
 
 
@@ -331,13 +359,16 @@ for fold in range(5):
     
     max_len = 256
     model_path = 'roberta-large'
-    model = RoBERTaLarge(model_path)
-    net_dict = model.state_dict() 
-    pretrain = torch.load('itpt/roberta_large/pytorch_model.bin')
-    pretrain_dict = {k: v for k, v in pretrain.items() if k in net_dict.keys()}
-    net_dict.update(pretrain_dict)
-    model.load_state_dict(net_dict)
-    print('load itpt weights')
+    model_path_2 = 'itpt/roberta_large/'
+    model = RoBERTaLargeV2(model_path_2)
+    # model = RoBERTaLarge(model_path_2)
+    # model = RoBERTaLarge(model_path)
+    # net_dict = model.state_dict() 
+    # pretrain = torch.load('itpt/roberta_large/pytorch_model.bin')
+    # pretrain_dict = {k: v for k, v in pretrain.items() if k in net_dict.keys()}
+    # net_dict.update(pretrain_dict)
+    # model.load_state_dict(net_dict)
+    # print('load itpt weights')
 
     tokenizer = RobertaTokenizer.from_pretrained(model_path)
     
