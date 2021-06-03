@@ -1,0 +1,16 @@
+========================================================================================================================
+Fold 0 Training
+========================================================================================================================
+Starting 1 epoch...
+Epoch 1 - avg_train_loss: 0.85202  avg_val_loss: 0.74532  time: 166s
+Epoch 1 - train_rmse:0.88975  valid_rmse:0.75624
+>>>>>>>> Model Improved From inf ----> 0.7562441538744972
+Starting 2 epoch...
+Epoch 2 - avg_train_loss: 1.01371  avg_val_loss: 1.02673  time: 169s
+Epoch 2 - train_rmse:1.04696  valid_rmse:1.04121
+best score is not updated while 1 epochs of training
+Starting 3 epoch...
+Epoch 3 - avg_train_loss: 1.02235  avg_val_loss: 1.01057  time: 170s
+Epoch 3 - train_rmse:1.04896  valid_rmse:1.02482
+best score is not updated while 2 epochs of training
+Starting 4 epoch...
