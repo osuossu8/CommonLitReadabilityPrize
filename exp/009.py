@@ -160,6 +160,27 @@ class RoBERTaLarge(nn.Module):
         super(RoBERTaLarge, self).__init__()
         self.in_features = 1024
         self.dropout = nn.Dropout(0.3)
+        self.roberta = RobertaModel.from_pretrained(model_path)
+        self.activation = nn.Tanh()
+        self.l0 = nn.Linear(self.in_features, 1)
+
+    def forward(self, ids, mask):
+        roberta_outputs = self.roberta(
+            ids,
+            attention_mask=mask
+        )
+        
+        last_4_hidden = torch.mean(roberta_outputs.last_hidden_state[:, -4:, :], 1)
+        x = self.activation(last_4_hidden)
+        logits = self.l0(self.dropout(x))
+        return logits.squeeze(-1)
+
+
+class RoBERTaLargeV2(nn.Module):
+    def __init__(self, model_path):
+        super(RoBERTaLarge, self).__init__()
+        self.in_features = 1024
+        self.dropout = nn.Dropout(0.3)
         self.embedding_dropout = SpatialDropout(0.3)
         self.roberta = RobertaModel.from_pretrained(model_path)
         self.activation = nn.Tanh()
@@ -388,7 +409,9 @@ for fold in range(5):
     num_train_steps = int(len(trn_df) / CFG.train_bs * CFG.epochs)   
     # optimizer = torch.optim.Adam(model.parameters(), lr=CFG.LR)
     optimizer = transformers.AdamW(optimizer_parameters, lr=CFG.LR)
-    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, eta_min=1e-5, T_max=CFG.epochs)
+    # scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, eta_min=1e-5, T_max=CFG.epochs)
+    scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0=CFG.epochs, T_mult=1)
+
     # scheduler = transformers.get_linear_schedule_with_warmup(
     #     optimizer,
     #     num_warmup_steps=0,
@@ -399,7 +422,7 @@ for fold in range(5):
     # model, optimizer = amp.initialize(model, optimizer, opt_level='O1', verbosity=0)
 
     p = 0
-    patience = 3
+    patience = 4 # 3
     min_loss = 999
     best_score = np.inf
 
