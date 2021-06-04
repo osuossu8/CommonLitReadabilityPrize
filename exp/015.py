@@ -41,7 +41,7 @@ class CFG:
     max_len = 260 # 220 # 256
     train_bs = 8
     valid_bs = 16
-    model_path = 'roberta-large'
+    model_name = 'roberta-large'
     itpt_path = 'itpt/roberta_large/'
 
 
@@ -272,7 +272,7 @@ def calc_cv(model_paths):
             model = RoBERTaLarge(CFG.itpt_path)
             print('load itpt model')
         else:
-            model = RoBERTaLarge(CFG.model_path)
+            model = RoBERTaLarge(CFG.model_name)
         model.to("cuda")
         model.load_state_dict(torch.load(model_path))
         model.eval()
@@ -344,9 +344,9 @@ for fold in range(5):
         model = RoBERTaLarge(CFG.itpt_path)
         print('load itpt model')
     else:
-        model = RoBERTaLarge(CFG.model_path)
+        model = RoBERTaLarge(CFG.model_name)
 
-    tokenizer = RobertaTokenizer.from_pretrained(CFG.model_path)
+    tokenizer = RobertaTokenizer.from_pretrained(CFG.model_name)
     
     train_dataset = CommonLitDataset(df=trn_df, excerpt=trn_df.excerpt.values, tokenizer=tokenizer, max_len=CFG.max_len)
     train_dataloader = torch.utils.data.DataLoader(
