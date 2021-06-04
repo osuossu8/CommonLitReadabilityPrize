@@ -38,7 +38,7 @@ class CFG:
     folds = [0, 1, 2, 3, 4]
     N_FOLDS = 5
     LR = 5e-5
-    max_len = 260 # 220 # 256
+    max_len = 256 # 220
     train_bs = 8
     valid_bs = 16
 
@@ -153,25 +153,15 @@ class AttentionBlock(nn.Module):
     return context_vector
 
 
-class SpatialDropout(nn.Dropout2d):
-    def forward(self, x):
-        x = x.unsqueeze(2)    # (N, T, 1, K)
-        x = x.permute(0, 3, 2, 1)  # (N, K, 1, T)
-        x = super(SpatialDropout, self).forward(x)  # (N, K, 1, T), some features are masked
-        x = x.permute(0, 3, 2, 1)  # (N, T, 1, K)
-        x = x.squeeze(2)  # (N, T, K)
-        return x
-
-
 class RoBERTaLarge(nn.Module):
     def __init__(self, model_path):
         super(RoBERTaLarge, self).__init__()
         self.in_features = 1024
-        self.embedding_dropout = SpatialDropout(0.2)
-        self.dropout1 = nn.Dropout(0.2)
-        self.dropout2 = nn.Dropout(0.2)
+        self.dropout1 = nn.Dropout(0.5) # 0.2
+        self.dropout2 = nn.Dropout(0.5) # 0.2
         self.roberta = RobertaModel.from_pretrained(model_path)
-        self.activation = nn.Tanh()
+        # self.activation = nn.Tanh()
+        self.activation = nn.PReLU()
         self.l0 = nn.Linear(self.in_features, 256)
         self.l1= nn.Linear(256, 1)
 
@@ -182,8 +172,7 @@ class RoBERTaLarge(nn.Module):
         )
         
         hidden_state = roberta_outputs.last_hidden_state
-        hidden_state = self.embedding_dropout(hidden_state)[:, -4:, :]      
-        # hidden_state = hidden_state[:, -4:, :]
+        hidden_state = hidden_state[:, -4:, :]
         last_4_hidden = torch.mean(hidden_state, 1)
 
         x = self.activation(last_4_hidden)
@@ -387,10 +376,8 @@ for fold in range(5):
     ]
 
     num_train_steps = int(len(trn_df) / CFG.train_bs * CFG.epochs)   
-    # optimizer = torch.optim.Adam(model.parameters(), lr=CFG.LR)
     optimizer = transformers.AdamW(optimizer_parameters, lr=CFG.LR)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, eta_min=1e-5, T_max=CFG.epochs)
-    # scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0=CFG.epochs, T_mult=1)
 
     model = model.to(device)
 
