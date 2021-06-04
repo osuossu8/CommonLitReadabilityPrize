@@ -76,7 +76,8 @@ def calc_loss(y_true, y_pred):
 
 
 def convert_examples_to_head_and_tail_features(data, tokenizer, max_len):
-    half_len = int(max_len//2)
+    head_len = int(max_len//2)
+    tail_len = head_len - 1
     
     data = data.replace('\n', '')
     len_tok = len(tokenizer.tokenize(data))
@@ -90,10 +91,10 @@ def convert_examples_to_head_and_tail_features(data, tokenizer, max_len):
     )
     curr_sent = {}
     if len_tok > max_len:
-        head_ids = tok['input_ids'][:half_len]
-        tail_ids = tok['input_ids'][-half_len:]
-        head_mask = tok['attention_mask'][:half_len]
-        tail_mask = tok['attention_mask'][-half_len:]
+        head_ids = tok['input_ids'][:head_len]
+        tail_ids = tok['input_ids'][-tail_len:]
+        head_mask = tok['attention_mask'][:head_len]
+        tail_mask = tok['attention_mask'][-tail_len:]
         curr_sent['input_ids'] = head_ids + [1] + tail_ids
         curr_sent['attention_mask'] = head_mask + [0] + tail_mask
     else:
