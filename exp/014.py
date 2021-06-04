@@ -295,7 +295,7 @@ def calc_cv(model_paths):
                 output = model(inputs, masks)
                 output = output.detach().cpu().numpy().tolist()
                 final_output.extend(output)
-        print(calc_loss(np.array(final_output), val_df['target'].values))
+        logger.info(calc_loss(np.array(final_output), val_df['target'].values))
         y_pred.append(np.array(final_output))
         y_true.append(val_df['target'].values)
         torch.cuda.empty_cache()
