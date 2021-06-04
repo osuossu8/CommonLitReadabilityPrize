@@ -38,7 +38,7 @@ class CFG:
     folds = [0, 1, 2, 3, 4]
     N_FOLDS = 5
     LR = 5e-5
-    max_len = 220 # 260 # 220 # 256
+    max_len = 256 # 260 # 220 # 256
     train_bs = 8
     valid_bs = 16
 
@@ -167,7 +167,7 @@ class RoBERTaLarge(nn.Module):
     def __init__(self, model_path):
         super(RoBERTaLarge, self).__init__()
         self.in_features = 1024
-        self.embedding_dropout = SpatialDropout(0.2) # 2.5 # 0.3
+        # self.embedding_dropout = SpatialDropout(0.3) # 2.0 2.5 # 0.3
         self.dropout = nn.Dropout(0.3) # 2.0 # 2.5 # 0.3
         self.roberta = RobertaModel.from_pretrained(model_path)
         self.activation = nn.Tanh()
@@ -180,7 +180,8 @@ class RoBERTaLarge(nn.Module):
         )
         
         hidden_state = roberta_outputs.last_hidden_state
-        hidden_state = self.embedding_dropout(hidden_state)[:, -4:, :]      
+        # hidden_state = self.embedding_dropout(hidden_state)[:, -4:, :]      
+        hidden_state = hidden_state[:, -4:, :]
         last_4_hidden = torch.mean(hidden_state, 1)
 
         x = self.activation(last_4_hidden)
