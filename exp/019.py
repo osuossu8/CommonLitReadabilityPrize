@@ -33,6 +33,9 @@ from transformers import MODEL_FOR_TOKEN_CLASSIFICATION_MAPPING
 from IPython.display import clear_output
 from tqdm import tqdm, trange
 
+from pathlib import Path
+from typing import List
+
 
 class CFG:
     ######################
