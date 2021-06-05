@@ -368,7 +368,7 @@ def get_optimizer_params(model):
     return optimizer_parameters
 
 
-def make_model(model_name='../content/roberta-base-5-epochs/', num_labels=1):
+def make_model(model_name='itpt/roberta_base/', num_labels=1):
     tokenizer = AutoTokenizer.from_pretrained('roberta-base')
     config = AutoConfig.from_pretrained(model_name)
     config.update({'num_labels':num_labels})
@@ -639,7 +639,7 @@ def config(fold=0):
     max_len = 250
     batch_size = 16
 
-    model, tokenizer = make_model(model_name='../content/roberta-base-5-epochs/', num_labels=1)
+    model, tokenizer = make_model(model_name='itpt/roberta_base/', num_labels=1)
     train_loader, valid_loader = make_loader(
         train, tokenizer, max_len=max_len,
         batch_size=batch_size, fold=fold
