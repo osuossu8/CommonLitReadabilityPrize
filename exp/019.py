@@ -731,14 +731,14 @@ for fold in range(5):
     logger.info('----')
 
 
-[logger.info("FOLD::", i, "Loss:: ", fold['best_val_loss']) for i, fold in enumerate(result_list)]
+# [logger.info("FOLD::", i, "Loss:: ", fold['best_val_loss']) for i, fold in enumerate(result_list)]
 
 
 oof = np.zeros(len(train))
 for fold in tqdm(range(5), total=5):
     model, tokenizer = make_model()
     model.load_state_dict(
-        torch.load(f'model{fold}.bin')
+        torch.load(OUTPUT_DIR+f'model{fold}.bin')
     )
     model.cuda()
     model.eval()
