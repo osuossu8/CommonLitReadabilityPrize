@@ -34,13 +34,15 @@ class CFG:
     ######################
     EXP_ID = '018'
     seed = 71
-    epochs = 10
+    epochs = 8 # 10
     folds = [0, 1, 2, 3, 4]
     N_FOLDS = 5
     LR = 5e-5
-    max_len = 256 # 220
-    train_bs = 8
-    valid_bs = 16
+    max_len = 250 # 256 # 220
+    train_bs = 16 # 8
+    valid_bs = 32 # 16
+    model_name = 'roberta-large'
+    itpt_path = 'itpt/roberta_large/'
 
 
 def set_seed(seed=42):
@@ -119,6 +121,13 @@ class CommonLitDataset:
 
         inputs = convert_examples_to_head_and_tail_features(text, self.tokenizer, self.max_len)
 
+        # inputs = self.tokenizer(
+        #     text, 
+        #     max_length=self.max_len, 
+        #     padding="max_length", 
+        #     truncation=True
+        # )
+
         ids = inputs["input_ids"]
         mask = inputs["attention_mask"]
         targets = self.df["target"].values[item]
@@ -157,13 +166,10 @@ class RoBERTaLarge(nn.Module):
     def __init__(self, model_path):
         super(RoBERTaLarge, self).__init__()
         self.in_features = 1024
-        self.dropout1 = nn.Dropout(0.5) # 0.2
-        self.dropout2 = nn.Dropout(0.5) # 0.2
+        self.dropout = nn.Dropout(0.3)
         self.roberta = RobertaModel.from_pretrained(model_path)
-        # self.activation = nn.Tanh()
-        self.activation = nn.PReLU()
-        self.l0 = nn.Linear(self.in_features, 256)
-        self.l1= nn.Linear(256, 1)
+        self.activation = nn.Tanh()
+        self.l0 = nn.Linear(self.in_features, 1)
 
     def forward(self, ids, mask):
         roberta_outputs = self.roberta(
@@ -171,15 +177,13 @@ class RoBERTaLarge(nn.Module):
             attention_mask=mask
         )
         
-        hidden_state = roberta_outputs.last_hidden_state
-        hidden_state = hidden_state[:, -4:, :]
-        last_4_hidden = torch.mean(hidden_state, 1)
+        # pooler_output = roberta_outputs.pooler_output # torch.Size([1, 1024])
+
+        last_4_hidden = torch.mean(roberta_outputs.last_hidden_state[:, -4:, :], 1)
 
         x = self.activation(last_4_hidden)
-        x = self.l0(self.dropout1(x))
-        x = self.activation(x)
-        x = self.l1(self.dropout2(x))
-        return x.squeeze(-1)
+        logits = self.l0(self.dropout(x))
+        return logits.squeeze(-1)
 
 
 # ====================================================
@@ -283,16 +287,19 @@ def valid_fn(model, data_loader, device):
 
 
 def calc_cv(model_paths):
-    model_name = 'roberta-large'
     models = []
     for model_path in model_paths:
-        model = RoBERTaLarge(model_name)
+        if CFG.itpt_path:
+            model = RoBERTaLarge(CFG.itpt_path)
+            print('load itpt model')
+        else:
+            model = RoBERTaLarge(CFG.model_name)
         model.to("cuda")
-        model.load_state_dict(torch.load(model_path))
+        model.load_state_dict(torch.load(CFG.model_path))
         model.eval()
         models.append(model)
     
-    tokenizer = RobertaTokenizer.from_pretrained(model_name)
+    tokenizer = RobertaTokenizer.from_pretrained(CFG.model_name)
     
     df = pd.read_csv("inputs/train_folds.csv")
     y_true = []
@@ -324,7 +331,30 @@ def calc_cv(model_paths):
     overall_cv_score = calc_loss(y_true, y_pred)
     print(overall_cv_score)
     return overall_cv_score
- 
+
+
+def get_optimizer_params(model):
+    # differential learning rate and weight decay
+    param_optimizer = list(model.named_parameters())
+    learning_rate = 5e-5
+    no_decay = ['bias', 'gamma', 'beta']
+    group1=['layer.0.','layer.1.','layer.2.','layer.3.']
+    group2=['layer.4.','layer.5.','layer.6.','layer.7.']    
+    group3=['layer.8.','layer.9.','layer.10.','layer.11.']
+    group_all=['layer.0.','layer.1.','layer.2.','layer.3.','layer.4.','layer.5.','layer.6.','layer.7.','layer.8.','layer.9.','layer.10.','layer.11.']
+    optimizer_parameters = [
+        {'params': [p for n, p in model.roberta.named_parameters() if not any(nd in n for nd in no_decay) and not any(nd in n for nd in group_all)],'weight_decay': 0.01},
+        {'params': [p for n, p in model.roberta.named_parameters() if not any(nd in n for nd in no_decay) and any(nd in n for nd in group1)],'weight_decay': 0.01, 'lr': learning_rate/2.6},
+        {'params': [p for n, p in model.roberta.named_parameters() if not any(nd in n for nd in no_decay) and any(nd in n for nd in group2)],'weight_decay': 0.01, 'lr': learning_rate},
+        {'params': [p for n, p in model.roberta.named_parameters() if not any(nd in n for nd in no_decay) and any(nd in n for nd in group3)],'weight_decay': 0.01, 'lr': learning_rate*2.6},
+        {'params': [p for n, p in model.roberta.named_parameters() if any(nd in n for nd in no_decay) and not any(nd in n for nd in group_all)],'weight_decay': 0.0},
+        {'params': [p for n, p in model.roberta.named_parameters() if any(nd in n for nd in no_decay) and any(nd in n for nd in group1)],'weight_decay': 0.0, 'lr': learning_rate/2.6},
+        {'params': [p for n, p in model.roberta.named_parameters() if any(nd in n for nd in no_decay) and any(nd in n for nd in group2)],'weight_decay': 0.0, 'lr': learning_rate},
+        {'params': [p for n, p in model.roberta.named_parameters() if any(nd in n for nd in no_decay) and any(nd in n for nd in group3)],'weight_decay': 0.0, 'lr': learning_rate*2.6},
+        {'params': [p for n, p in model.named_parameters() if "roberta" not in n], 'lr':1e-3, "momentum" : 0.99},
+    ]
+    return optimizer_parameters 
+
        
 OUTPUT_DIR = f'outputs/{CFG.EXP_ID}/'
 if not os.path.exists(OUTPUT_DIR):
@@ -353,10 +383,14 @@ for fold in range(5):
 
     trn_df = train[train.kfold != fold].reset_index(drop=True)
     val_df = train[train.kfold == fold].reset_index(drop=True)
-    
-    model_path = 'roberta-large'
-    model = RoBERTaLarge(model_path)
-    tokenizer = RobertaTokenizer.from_pretrained(model_path)
+ 
+    if CFG.itpt_path:    
+        model = RoBERTaLarge(CFG.itpt_path)
+        print('load itpt model')
+    else:
+        model = RoBERTaLarge(CFG.model_name)
+
+    tokenizer = RobertaTokenizer.from_pretrained(CFG.model_name)   
     
     train_dataset = CommonLitDataset(df=trn_df, excerpt=trn_df.excerpt.values, tokenizer=tokenizer, max_len=CFG.max_len)
     train_dataloader = torch.utils.data.DataLoader(
@@ -370,14 +404,18 @@ for fold in range(5):
     
     param_optimizer = list(model.named_parameters())
     no_decay = ["bias", "LayerNorm.bias", "LayerNorm.weight"]
-    optimizer_parameters = [
-        {'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], 'weight_decay': 0.001},
-        {'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], 'weight_decay': 0.0},
-    ]
+    # optimizer_parameters = [
+    #     {'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], 'weight_decay': 0.001},
+    #     {'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], 'weight_decay': 0.0},
+    # ]
 
-    num_train_steps = int(len(trn_df) / CFG.train_bs * CFG.epochs)   
-    optimizer = transformers.AdamW(optimizer_parameters, lr=CFG.LR)
-    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, eta_min=1e-5, T_max=CFG.epochs)
+    optimizer_parameters = get_optimizer_params(model)
+
+    num_train_steps = int(len(trn_df) / CFG.train_bs * CFG.epochs)
+    # optimizer = transformers.AdamW(optimizer_parameters, lr=CFG.LR)
+    optimizer = transformers.AdamW(optimizer_parameters, lr=CFG.LR, weight_decay=0.01)
+    # scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, eta_min=1e-5, T_max=CFG.epochs)
+    scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0=CFG.epochs, T_mult=1, eta_min=1e-5)
 
     model = model.to(device)
 
