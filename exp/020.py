@@ -97,7 +97,7 @@ set_seed(CFG.seed)
 device = get_device()
 
 # data
-train = pd.read_csv("inputs/train.csv")
+train = pd.read_csv("inputs/train_folds.csv")
 
 
 def create_folds(data, num_splits):
@@ -106,7 +106,7 @@ def create_folds(data, num_splits):
     for f, (t_, v_) in enumerate(kf.split(X=data)):
         data.loc[v_, 'kfold'] = f
     return data
-train = create_folds(train, num_splits=5)
+# train = create_folds(train, num_splits=5)
 
 
 def convert_examples_to_head_and_tail_features(data, tokenizer, max_len, is_test=False):
