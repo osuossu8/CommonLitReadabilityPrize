@@ -25,6 +25,8 @@ from sklearn import metrics
 from tqdm import tqdm
 from transformers import RobertaConfig, RobertaModel, RobertaTokenizer, BertPreTrainedModel
 
+from tokenizers import ByteLevelBPETokenizer
+
 from apex import amp
 
 
@@ -111,9 +113,9 @@ def convert_examples_to_head_and_tail_features(data, tokenizer, max_len):
     return curr_sent
 
 
-TOKENIZER = tokenizers.ByteLevelBPETokenizer(
-    vocab_file=f"{CFG.bpe_path}/vocab.json",
-    merges_file=f"{CFG.bpe_path}/merges.txt", 
+TOKENIZER = ByteLevelBPETokenizer(
+    vocab=f"{CFG.bpe_path}/vocab.json",
+    merges=f"{CFG.bpe_path}/merges.txt",
     lowercase=True,
     add_prefix_space=True
 )
@@ -133,30 +135,31 @@ class CommonLitDataset:
         text = str(self.excerpt[item])
 
         # inputs = convert_examples_to_head_and_tail_features(text, self.tokenizer, self.max_len)
-        # inputs = self.tokenizer(
-        #     text, 
-        #     max_length=self.max_len, 
-        #     padding="max_length", 
-        #     truncation=True
-        # )
-
+        #inputs = self.tokenizer(
+        #    text, 
+        #    max_length=self.max_len, 
+        #    padding="max_length", 
+        #    truncation=True
+        #)
+        #"""
         tok_text = TOKENIZER.encode(text)
         input_ids = tok_text.ids
 
-        padding_length = self.max_len - len(input_ids)
-        ids = input_ids + ([1] * padding_length)
-        token_type_ids = [1] * len(input_ids) + ([0] * padding_length)
-        mask = [1] * len(token_type_ids)
-
-        # ids = inputs["input_ids"]
-        # mask = inputs["attention_mask"]
-        # token_type_ids = inputs["token_type_ids"]
+        if len(input_ids) >= self.max_len:
+            ids = input_ids[:self.max_len]
+            mask = [1] * self.max_len
+        else:
+            padding_length = self.max_len - len(input_ids)
+            ids = input_ids + ([1] * padding_length)
+            mask = [1] * len(input_ids) + ([0] * padding_length)
+        #"""
+        #ids = inputs["input_ids"]
+        #mask = inputs["attention_mask"]
         targets = self.df["target"].values[item]
 
         return {
             "input_ids": torch.tensor(ids, dtype=torch.long),
             "attention_mask": torch.tensor(mask, dtype=torch.long),
-            "token_type_ids": torch.tensor(token_type_ids, dtype=torch.long),
             "targets" : torch.tensor(targets, dtype=torch.float32),
         }
 
@@ -171,20 +174,19 @@ class RoBERTaLarge(nn.Module):
         self.activation = nn.Tanh()
         self.l0 = nn.Linear(self.in_features, 1)
 
-    def forward(self, ids, mask, token_type_ids):
+    def forward(self, ids, mask):
         roberta_outputs = self.roberta(
             ids,
-            attention_mask=mask,
-            token_type_ids=token_type_ids
+            attention_mask=mask
         )
-        
+
         # last_hidden_states = roberta_outputs.last_hidden_state[:, 0, :] # torch.Size([1, 1024])
         # pooler_output = roberta_outputs.pooler_output # torch.Size([1, 1024])
 
         # last_4_hidden = torch.mean(roberta_outputs.last_hidden_state[:, -4:, :], 1)
-        last_4_hidden = torch.mean(roberta_outputs.last_hidden_state[:, -4:, :], 1)
+        last_8_hidden = torch.mean(roberta_outputs.last_hidden_state[:, -8:, :], 1)
 
-        x = self.activation(last_4_hidden)
+        x = self.activation(last_8_hidden)
         logits = self.l0(self.dropout(x))
         return logits.squeeze(-1)
 
@@ -258,9 +260,8 @@ def train_fn(model, data_loader, device, optimizer, scheduler):
         optimizer.zero_grad()
         inputs = data['input_ids'].to(device)
         masks = data['attention_mask'].to(device)
-        token_type_ids = data["token_type_ids"].to(device)
         targets = data['targets'].to(device)
-        outputs = model(inputs, masks, token_type_ids)
+        outputs = model(inputs, masks)
         loss = loss_fn(outputs, targets)
         loss.backward()
         optimizer.step()
@@ -281,9 +282,8 @@ def valid_fn(model, data_loader, device):
         for data in tk0:
             inputs = data['input_ids'].to(device)
             masks = data['attention_mask'].to(device)
-            token_type_ids = data["token_type_ids"].to(device)
             targets = data['targets'].to(device)
-            outputs = model(inputs, masks, token_type_ids)
+            outputs = model(inputs, masks)
             loss = loss_fn(outputs, targets)
             losses.update(loss.item(), inputs.size(0))
             scores.update(targets, outputs)
@@ -322,9 +322,8 @@ def calc_cv(model_paths):
             with torch.no_grad():
                 inputs = data['input_ids'].to(device)
                 masks = data['attention_mask'].to(device)
-                token_type_ids = data['token_type_ids'].to(device)
 
-                output = model(inputs, masks, token_type_ids)
+                output = model(inputs, masks)
                 output = output.detach().cpu().numpy().tolist()
                 final_output.extend(output)
         logger.info(calc_loss(np.array(final_output), val_df['target'].values))
