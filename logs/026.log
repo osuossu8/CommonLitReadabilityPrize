@@ -1,0 +1,1889 @@
+----
+FOLD: 0
+----
+FOLD: 0
+Model pushed to 1 GPU(s), type TITAN RTX.
+epoch: 000 [  16/2267 (  1%)], train_loss: 1.96652
+----Validation Results Summary----
+Epoch: [0] valid_loss: 2.10796
+0 epoch, best epoch was updated! valid_loss: 2.10796
+epoch: 000 [ 176/2267 (  8%)], train_loss: 1.17981
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.91326
+0 epoch, best epoch was updated! valid_loss: 0.91326
+epoch: 000 [ 336/2267 ( 15%)], train_loss: 1.02616
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.64029
+0 epoch, best epoch was updated! valid_loss: 0.64029
+epoch: 000 [ 496/2267 ( 22%)], train_loss: 0.91586
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.68079
+epoch: 000 [ 656/2267 ( 29%)], train_loss: 0.86777
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.76708
+epoch: 000 [ 816/2267 ( 36%)], train_loss: 0.85170
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.73519
+epoch: 000 [ 976/2267 ( 43%)], train_loss: 0.83258
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.65293
+epoch: 000 [1136/2267 ( 50%)], train_loss: 0.80758
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.59865
+0 epoch, best epoch was updated! valid_loss: 0.59865
+epoch: 000 [1296/2267 ( 57%)], train_loss: 0.78692
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.72463
+epoch: 000 [1456/2267 ( 64%)], train_loss: 0.77658
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.59908
+epoch: 000 [1616/2267 ( 71%)], train_loss: 0.76481
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.95113
+epoch: 000 [1776/2267 ( 78%)], train_loss: 0.79104
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.85574
+epoch: 000 [1936/2267 ( 85%)], train_loss: 0.79101
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.60831
+epoch: 000 [2096/2267 ( 92%)], train_loss: 0.77958
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.78996
+epoch: 000 [2256/2267 (100%)], train_loss: 0.77156
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.61774
+epoch: 001 [  16/2267 (  1%)], train_loss: 1.06678
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.60365
+epoch: 001 [ 176/2267 (  8%)], train_loss: 0.59678
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.65393
+epoch: 001 [ 336/2267 ( 15%)], train_loss: 0.59114
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.71568
+epoch: 001 [ 496/2267 ( 22%)], train_loss: 0.58601
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.59501
+1 epoch, best epoch was updated! valid_loss: 0.59501
+epoch: 001 [ 656/2267 ( 29%)], train_loss: 0.59016
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.69284
+epoch: 001 [ 816/2267 ( 36%)], train_loss: 0.58434
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.67976
+epoch: 001 [ 976/2267 ( 43%)], train_loss: 0.58220
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.56750
+1 epoch, best epoch was updated! valid_loss: 0.56750
+epoch: 001 [1136/2267 ( 50%)], train_loss: 0.57524
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.87702
+epoch: 001 [1296/2267 ( 57%)], train_loss: 0.57889
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.61274
+epoch: 001 [1456/2267 ( 64%)], train_loss: 0.57220
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.55745
+1 epoch, best epoch was updated! valid_loss: 0.55745
+epoch: 001 [1616/2267 ( 71%)], train_loss: 0.57577
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.63009
+epoch: 001 [1776/2267 ( 78%)], train_loss: 0.57009
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.54125
+1 epoch, best epoch was updated! valid_loss: 0.54125
+epoch: 001 [1936/2267 ( 85%)], train_loss: 0.56709
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.61965
+epoch: 001 [2096/2267 ( 92%)], train_loss: 0.56146
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.58760
+epoch: 001 [2256/2267 (100%)], train_loss: 0.55280
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.51530
+1 epoch, best epoch was updated! valid_loss: 0.51530
+epoch: 002 [  16/2267 (  1%)], train_loss: 0.74849
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.65856
+epoch: 002 [ 176/2267 (  8%)], train_loss: 0.54146
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.54849
+epoch: 002 [ 336/2267 ( 15%)], train_loss: 0.50747
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.56227
+epoch: 002 [ 496/2267 ( 22%)], train_loss: 0.48927
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.67312
+epoch: 002 [ 656/2267 ( 29%)], train_loss: 0.50229
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.59731
+epoch: 002 [ 816/2267 ( 36%)], train_loss: 0.48077
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.54681
+epoch: 002 [ 976/2267 ( 43%)], train_loss: 0.45782
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.57035
+epoch: 002 [1136/2267 ( 50%)], train_loss: 0.45000
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.55643
+epoch: 002 [1296/2267 ( 57%)], train_loss: 0.44974
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.52770
+epoch: 002 [1456/2267 ( 64%)], train_loss: 0.45193
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.57873
+epoch: 002 [1616/2267 ( 71%)], train_loss: 0.44603
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.57356
+epoch: 002 [1776/2267 ( 78%)], train_loss: 0.43904
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.52569
+epoch: 002 [1936/2267 ( 85%)], train_loss: 0.43130
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.53542
+epoch: 002 [2096/2267 ( 92%)], train_loss: 0.42735
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.53103
+epoch: 002 [2256/2267 (100%)], train_loss: 0.42329
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.51985
+epoch: 003 [  16/2267 (  1%)], train_loss: 0.67040
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.57922
+epoch: 003 [ 176/2267 (  8%)], train_loss: 0.37644
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.51962
+epoch: 003 [ 336/2267 ( 15%)], train_loss: 0.33390
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.52070
+epoch: 003 [ 496/2267 ( 22%)], train_loss: 0.32957
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.52564
+epoch: 003 [ 656/2267 ( 29%)], train_loss: 0.32412
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.52325
+epoch: 003 [ 816/2267 ( 36%)], train_loss: 0.33694
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.70887
+epoch: 003 [ 976/2267 ( 43%)], train_loss: 0.33880
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.51859
+epoch: 003 [1136/2267 ( 50%)], train_loss: 0.34149
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.65579
+epoch: 003 [1296/2267 ( 57%)], train_loss: 0.35008
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.56569
+epoch: 003 [1456/2267 ( 64%)], train_loss: 0.35098
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.56684
+epoch: 003 [1616/2267 ( 71%)], train_loss: 0.35192
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.51667
+epoch: 003 [1776/2267 ( 78%)], train_loss: 0.34513
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.53199
+epoch: 003 [1936/2267 ( 85%)], train_loss: 0.34108
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.52153
+epoch: 003 [2096/2267 ( 92%)], train_loss: 0.33534
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.53580
+epoch: 003 [2256/2267 (100%)], train_loss: 0.33420
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.49886
+3 epoch, best epoch was updated! valid_loss: 0.49886
+epoch: 004 [  16/2267 (  1%)], train_loss: 0.97061
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.61769
+epoch: 004 [ 176/2267 (  8%)], train_loss: 0.44710
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.57432
+epoch: 004 [ 336/2267 ( 15%)], train_loss: 0.38176
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.60572
+epoch: 004 [ 496/2267 ( 22%)], train_loss: 0.34421
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.50858
+epoch: 004 [ 656/2267 ( 29%)], train_loss: 0.31595
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.52822
+epoch: 004 [ 816/2267 ( 36%)], train_loss: 0.29514
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.52860
+epoch: 004 [ 976/2267 ( 43%)], train_loss: 0.28290
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.51429
+epoch: 004 [1136/2267 ( 50%)], train_loss: 0.27788
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.52498
+epoch: 004 [1296/2267 ( 57%)], train_loss: 0.27526
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.50767
+epoch: 004 [1456/2267 ( 64%)], train_loss: 0.27213
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.51581
+epoch: 004 [1616/2267 ( 71%)], train_loss: 0.26806
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.50784
+epoch: 004 [1776/2267 ( 78%)], train_loss: 0.26455
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.49844
+4 epoch, best epoch was updated! valid_loss: 0.49844
+epoch: 004 [1936/2267 ( 85%)], train_loss: 0.26020
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.50129
+epoch: 004 [2096/2267 ( 92%)], train_loss: 0.25719
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.51666
+epoch: 004 [2256/2267 (100%)], train_loss: 0.25354
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.49850
+epoch: 005 [  16/2267 (  1%)], train_loss: 0.59019
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.52181
+epoch: 005 [ 176/2267 (  8%)], train_loss: 0.21532
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.49260
+5 epoch, best epoch was updated! valid_loss: 0.49260
+epoch: 005 [ 336/2267 ( 15%)], train_loss: 0.18503
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.50201
+epoch: 005 [ 496/2267 ( 22%)], train_loss: 0.17897
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.49101
+5 epoch, best epoch was updated! valid_loss: 0.49101
+epoch: 005 [ 656/2267 ( 29%)], train_loss: 0.17299
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.49758
+epoch: 005 [ 816/2267 ( 36%)], train_loss: 0.16768
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.48966
+5 epoch, best epoch was updated! valid_loss: 0.48966
+epoch: 005 [ 976/2267 ( 43%)], train_loss: 0.16407
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.49499
+epoch: 005 [1136/2267 ( 50%)], train_loss: 0.16575
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.48639
+5 epoch, best epoch was updated! valid_loss: 0.48639
+epoch: 005 [1296/2267 ( 57%)], train_loss: 0.16599
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.49987
+epoch: 005 [1456/2267 ( 64%)], train_loss: 0.16754
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.49214
+epoch: 005 [1616/2267 ( 71%)], train_loss: 0.16783
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.51211
+epoch: 005 [1776/2267 ( 78%)], train_loss: 0.16764
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.50725
+epoch: 005 [1936/2267 ( 85%)], train_loss: 0.16893
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.50924
+epoch: 005 [2096/2267 ( 92%)], train_loss: 0.16904
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.51091
+epoch: 005 [2256/2267 (100%)], train_loss: 0.17071
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.62988
+epoch: 006 [  16/2267 (  1%)], train_loss: 1.02627
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.82188
+epoch: 006 [ 176/2267 (  8%)], train_loss: 0.94493
+----Validation Results Summary----
+Epoch: [6] valid_loss: 1.06179
+epoch: 006 [ 336/2267 ( 15%)], train_loss: 0.99706
+----Validation Results Summary----
+Epoch: [6] valid_loss: 1.01911
+epoch: 006 [ 496/2267 ( 22%)], train_loss: 0.98504
+----Validation Results Summary----
+Epoch: [6] valid_loss: 1.02071
+epoch: 006 [ 656/2267 ( 29%)], train_loss: 0.98925
+----Validation Results Summary----
+Epoch: [6] valid_loss: 1.02085
+epoch: 006 [ 816/2267 ( 36%)], train_loss: 0.97742
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.98588
+epoch: 006 [ 976/2267 ( 43%)], train_loss: 0.96504
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.94875
+epoch: 006 [1136/2267 ( 50%)], train_loss: 0.95884
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.91298
+epoch: 006 [1296/2267 ( 57%)], train_loss: 0.95698
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.87338
+epoch: 006 [1456/2267 ( 64%)], train_loss: 0.94402
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.84570
+epoch: 006 [1616/2267 ( 71%)], train_loss: 0.92897
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.80526
+epoch: 006 [1776/2267 ( 78%)], train_loss: 0.90961
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.79402
+epoch: 006 [1936/2267 ( 85%)], train_loss: 0.89844
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.85807
+epoch: 006 [2096/2267 ( 92%)], train_loss: 0.87934
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.71094
+epoch: 006 [2256/2267 (100%)], train_loss: 0.85624
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.68667
+epoch: 007 [  16/2267 (  1%)], train_loss: 0.79544
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.70104
+epoch: 007 [ 176/2267 (  8%)], train_loss: 0.54248
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.63046
+epoch: 007 [ 336/2267 ( 15%)], train_loss: 0.53969
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.62657
+epoch: 007 [ 496/2267 ( 22%)], train_loss: 0.52405
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.60683
+epoch: 007 [ 656/2267 ( 29%)], train_loss: 0.51277
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.59967
+epoch: 007 [ 816/2267 ( 36%)], train_loss: 0.49552
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.60105
+epoch: 007 [ 976/2267 ( 43%)], train_loss: 0.48807
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.59454
+epoch: 007 [1136/2267 ( 50%)], train_loss: 0.48281
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.59186
+epoch: 007 [1296/2267 ( 57%)], train_loss: 0.47843
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.58594
+epoch: 007 [1456/2267 ( 64%)], train_loss: 0.47445
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.58261
+epoch: 007 [1616/2267 ( 71%)], train_loss: 0.47329
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.58552
+epoch: 007 [1776/2267 ( 78%)], train_loss: 0.46933
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.58309
+epoch: 007 [1936/2267 ( 85%)], train_loss: 0.46876
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.58127
+epoch: 007 [2096/2267 ( 92%)], train_loss: 0.46276
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.58080
+epoch: 007 [2256/2267 (100%)], train_loss: 0.45840
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.58077
+----
+----
+FOLD: 1
+Model pushed to 1 GPU(s), type TITAN RTX.
+epoch: 000 [  16/2267 (  1%)], train_loss: 2.10743
+----Validation Results Summary----
+Epoch: [0] valid_loss: 1.36816
+0 epoch, best epoch was updated! valid_loss: 1.36816
+epoch: 000 [ 176/2267 (  8%)], train_loss: 1.23298
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.95664
+0 epoch, best epoch was updated! valid_loss: 0.95664
+epoch: 000 [ 336/2267 ( 15%)], train_loss: 1.13833
+----Validation Results Summary----
+Epoch: [0] valid_loss: 1.42824
+epoch: 000 [ 496/2267 ( 22%)], train_loss: 1.15690
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.99659
+epoch: 000 [ 656/2267 ( 29%)], train_loss: 1.11837
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.98907
+epoch: 000 [ 816/2267 ( 36%)], train_loss: 1.10784
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.97974
+epoch: 000 [ 976/2267 ( 43%)], train_loss: 1.09697
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.98359
+epoch: 000 [1136/2267 ( 50%)], train_loss: 1.09459
+----Validation Results Summary----
+Epoch: [0] valid_loss: 1.12803
+epoch: 000 [1296/2267 ( 57%)], train_loss: 1.08887
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.98089
+epoch: 000 [1456/2267 ( 64%)], train_loss: 1.09096
+----Validation Results Summary----
+Epoch: [0] valid_loss: 1.24440
+epoch: 000 [1616/2267 ( 71%)], train_loss: 1.09557
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.99444
+epoch: 000 [1776/2267 ( 78%)], train_loss: 1.09720
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.98248
+epoch: 000 [1936/2267 ( 85%)], train_loss: 1.09490
+----Validation Results Summary----
+Epoch: [0] valid_loss: 1.00625
+epoch: 000 [2096/2267 ( 92%)], train_loss: 1.08153
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.99347
+epoch: 000 [2256/2267 (100%)], train_loss: 1.07913
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.97864
+epoch: 001 [  16/2267 (  1%)], train_loss: 1.19199
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.97927
+epoch: 001 [ 176/2267 (  8%)], train_loss: 1.01673
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.98467
+epoch: 001 [ 336/2267 ( 15%)], train_loss: 1.02285
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.97951
+epoch: 001 [ 496/2267 ( 22%)], train_loss: 1.03920
+----Validation Results Summary----
+Epoch: [1] valid_loss: 1.02646
+epoch: 001 [ 656/2267 ( 29%)], train_loss: 1.05845
+----Validation Results Summary----
+Epoch: [1] valid_loss: 1.04676
+epoch: 001 [ 816/2267 ( 36%)], train_loss: 1.06900
+----Validation Results Summary----
+Epoch: [1] valid_loss: 1.00406
+epoch: 001 [ 976/2267 ( 43%)], train_loss: 1.05646
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.97878
+epoch: 001 [1136/2267 ( 50%)], train_loss: 1.05893
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.99381
+epoch: 001 [1296/2267 ( 57%)], train_loss: 1.06212
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.98219
+epoch: 001 [1456/2267 ( 64%)], train_loss: 1.06933
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.98837
+epoch: 001 [1616/2267 ( 71%)], train_loss: 1.06780
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.98230
+epoch: 001 [1776/2267 ( 78%)], train_loss: 1.06111
+----Validation Results Summary----
+Epoch: [1] valid_loss: 1.04019
+epoch: 001 [1936/2267 ( 85%)], train_loss: 1.05568
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.98000
+epoch: 001 [2096/2267 ( 92%)], train_loss: 1.05317
+----Validation Results Summary----
+Epoch: [1] valid_loss: 1.00339
+epoch: 001 [2256/2267 (100%)], train_loss: 1.05630
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.97989
+epoch: 002 [  16/2267 (  1%)], train_loss: 0.82587
+----Validation Results Summary----
+Epoch: [2] valid_loss: 1.03034
+epoch: 002 [ 176/2267 (  8%)], train_loss: 1.00274
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.97875
+epoch: 002 [ 336/2267 ( 15%)], train_loss: 1.02567
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.99807
+epoch: 002 [ 496/2267 ( 22%)], train_loss: 1.04690
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.99436
+epoch: 002 [ 656/2267 ( 29%)], train_loss: 1.02677
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.99525
+epoch: 002 [ 816/2267 ( 36%)], train_loss: 1.01133
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.99070
+epoch: 002 [ 976/2267 ( 43%)], train_loss: 1.04249
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.99072
+epoch: 002 [1136/2267 ( 50%)], train_loss: 1.05427
+----Validation Results Summary----
+Epoch: [2] valid_loss: 1.08628
+epoch: 002 [1296/2267 ( 57%)], train_loss: 1.06981
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.99496
+epoch: 002 [1456/2267 ( 64%)], train_loss: 1.06628
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.99074
+epoch: 002 [1616/2267 ( 71%)], train_loss: 1.05569
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.98183
+epoch: 002 [1776/2267 ( 78%)], train_loss: 1.05245
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.98378
+epoch: 002 [1936/2267 ( 85%)], train_loss: 1.04624
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.97898
+epoch: 002 [2096/2267 ( 92%)], train_loss: 1.04455
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.98919
+epoch: 002 [2256/2267 (100%)], train_loss: 1.04932
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.98005
+epoch: 003 [  16/2267 (  1%)], train_loss: 0.92211
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.99795
+epoch: 003 [ 176/2267 (  8%)], train_loss: 1.07508
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.99925
+epoch: 003 [ 336/2267 ( 15%)], train_loss: 1.11747
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.98237
+epoch: 003 [ 496/2267 ( 22%)], train_loss: 1.10348
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.98247
+epoch: 003 [ 656/2267 ( 29%)], train_loss: 1.07252
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.97913
+epoch: 003 [ 816/2267 ( 36%)], train_loss: 1.06425
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.99681
+epoch: 003 [ 976/2267 ( 43%)], train_loss: 1.05118
+----Validation Results Summary----
+Epoch: [3] valid_loss: 1.07175
+epoch: 003 [1136/2267 ( 50%)], train_loss: 1.06036
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.97932
+epoch: 003 [1296/2267 ( 57%)], train_loss: 1.05180
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.97863
+epoch: 003 [1456/2267 ( 64%)], train_loss: 1.05761
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.99523
+epoch: 003 [1616/2267 ( 71%)], train_loss: 1.05633
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.97899
+epoch: 003 [1776/2267 ( 78%)], train_loss: 1.05905
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.98279
+epoch: 003 [1936/2267 ( 85%)], train_loss: 1.06007
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.97897
+epoch: 003 [2096/2267 ( 92%)], train_loss: 1.05382
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.98414
+epoch: 003 [2256/2267 (100%)], train_loss: 1.05368
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.98416
+epoch: 004 [  16/2267 (  1%)], train_loss: 0.76009
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.98167
+epoch: 004 [ 176/2267 (  8%)], train_loss: 1.08789
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.98174
+epoch: 004 [ 336/2267 ( 15%)], train_loss: 1.11074
+----Validation Results Summary----
+Epoch: [4] valid_loss: 1.01148
+epoch: 004 [ 496/2267 ( 22%)], train_loss: 1.06520
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.98028
+epoch: 004 [ 656/2267 ( 29%)], train_loss: 1.07518
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.98922
+epoch: 004 [ 816/2267 ( 36%)], train_loss: 1.06974
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.99512
+epoch: 004 [ 976/2267 ( 43%)], train_loss: 1.06603
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.99403
+epoch: 004 [1136/2267 ( 50%)], train_loss: 1.06682
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.98761
+epoch: 004 [1296/2267 ( 57%)], train_loss: 1.06108
+----Validation Results Summary----
+Epoch: [4] valid_loss: 1.01555
+epoch: 004 [1456/2267 ( 64%)], train_loss: 1.05210
+----Validation Results Summary----
+Epoch: [4] valid_loss: 1.00777
+epoch: 004 [1616/2267 ( 71%)], train_loss: 1.05591
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.98677
+epoch: 004 [1776/2267 ( 78%)], train_loss: 1.05672
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.98532
+epoch: 004 [1936/2267 ( 85%)], train_loss: 1.05786
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.98975
+epoch: 004 [2096/2267 ( 92%)], train_loss: 1.05342
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.98427
+epoch: 004 [2256/2267 (100%)], train_loss: 1.04640
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.98843
+epoch: 005 [  16/2267 (  1%)], train_loss: 1.10246
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.98734
+epoch: 005 [ 176/2267 (  8%)], train_loss: 0.98861
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.97930
+epoch: 005 [ 336/2267 ( 15%)], train_loss: 1.00859
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.97977
+epoch: 005 [ 496/2267 ( 22%)], train_loss: 1.01816
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.99153
+epoch: 005 [ 656/2267 ( 29%)], train_loss: 1.00953
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.98195
+epoch: 005 [ 816/2267 ( 36%)], train_loss: 1.00267
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.98476
+epoch: 005 [ 976/2267 ( 43%)], train_loss: 1.01245
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.98810
+epoch: 005 [1136/2267 ( 50%)], train_loss: 1.01906
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.98214
+epoch: 005 [1296/2267 ( 57%)], train_loss: 1.01816
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.98378
+epoch: 005 [1456/2267 ( 64%)], train_loss: 1.02013
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.97883
+epoch: 005 [1616/2267 ( 71%)], train_loss: 1.02585
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.98192
+epoch: 005 [1776/2267 ( 78%)], train_loss: 1.02446
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.97906
+epoch: 005 [1936/2267 ( 85%)], train_loss: 1.03024
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.98003
+epoch: 005 [2096/2267 ( 92%)], train_loss: 1.03404
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.97882
+epoch: 005 [2256/2267 (100%)], train_loss: 1.03075
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.98326
+epoch: 006 [  16/2267 (  1%)], train_loss: 1.09894
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.98394
+epoch: 006 [ 176/2267 (  8%)], train_loss: 1.09821
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.98171
+epoch: 006 [ 336/2267 ( 15%)], train_loss: 1.09686
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.97931
+epoch: 006 [ 496/2267 ( 22%)], train_loss: 1.06176
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.97890
+epoch: 006 [ 656/2267 ( 29%)], train_loss: 1.05528
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.97967
+epoch: 006 [ 816/2267 ( 36%)], train_loss: 1.04851
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.97870
+epoch: 006 [ 976/2267 ( 43%)], train_loss: 1.05179
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.97863
+epoch: 006 [1136/2267 ( 50%)], train_loss: 1.06080
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.97888
+epoch: 006 [1296/2267 ( 57%)], train_loss: 1.05504
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.97963
+epoch: 006 [1456/2267 ( 64%)], train_loss: 1.04476
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.98960
+epoch: 006 [1616/2267 ( 71%)], train_loss: 1.04213
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.98175
+epoch: 006 [1776/2267 ( 78%)], train_loss: 1.03345
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.97865
+epoch: 006 [1936/2267 ( 85%)], train_loss: 1.03457
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.98164
+epoch: 006 [2096/2267 ( 92%)], train_loss: 1.03041
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.99239
+epoch: 006 [2256/2267 (100%)], train_loss: 1.03367
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.98123
+epoch: 007 [  16/2267 (  1%)], train_loss: 0.91403
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.98025
+epoch: 007 [ 176/2267 (  8%)], train_loss: 1.05399
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.97870
+epoch: 007 [ 336/2267 ( 15%)], train_loss: 1.04168
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.97878
+epoch: 007 [ 496/2267 ( 22%)], train_loss: 1.03559
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.98123
+epoch: 007 [ 656/2267 ( 29%)], train_loss: 1.04815
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.98455
+epoch: 007 [ 816/2267 ( 36%)], train_loss: 1.02739
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.98392
+epoch: 007 [ 976/2267 ( 43%)], train_loss: 1.02950
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.98098
+epoch: 007 [1136/2267 ( 50%)], train_loss: 1.03955
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.97904
+epoch: 007 [1296/2267 ( 57%)], train_loss: 1.03670
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.97863
+epoch: 007 [1456/2267 ( 64%)], train_loss: 1.02739
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.97868
+epoch: 007 [1616/2267 ( 71%)], train_loss: 1.03038
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.97883
+epoch: 007 [1776/2267 ( 78%)], train_loss: 1.03513
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.97885
+epoch: 007 [1936/2267 ( 85%)], train_loss: 1.03475
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.97881
+epoch: 007 [2096/2267 ( 92%)], train_loss: 1.03074
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.97879
+epoch: 007 [2256/2267 (100%)], train_loss: 1.03005
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.97879
+----
+----
+FOLD: 2
+Model pushed to 1 GPU(s), type TITAN RTX.
+epoch: 000 [  16/2267 (  1%)], train_loss: 2.00328
+----Validation Results Summary----
+Epoch: [0] valid_loss: 1.92663
+0 epoch, best epoch was updated! valid_loss: 1.92663
+epoch: 000 [ 176/2267 (  8%)], train_loss: 1.18727
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.83799
+0 epoch, best epoch was updated! valid_loss: 0.83799
+epoch: 000 [ 336/2267 ( 15%)], train_loss: 1.03845
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.84700
+epoch: 000 [ 496/2267 ( 22%)], train_loss: 1.01189
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.76755
+0 epoch, best epoch was updated! valid_loss: 0.76755
+epoch: 000 [ 656/2267 ( 29%)], train_loss: 0.95459
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.77886
+epoch: 000 [ 816/2267 ( 36%)], train_loss: 0.91206
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.80037
+epoch: 000 [ 976/2267 ( 43%)], train_loss: 0.88049
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.67306
+0 epoch, best epoch was updated! valid_loss: 0.67306
+epoch: 000 [1136/2267 ( 50%)], train_loss: 0.86123
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.65335
+0 epoch, best epoch was updated! valid_loss: 0.65335
+epoch: 000 [1296/2267 ( 57%)], train_loss: 0.83544
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.77367
+epoch: 000 [1456/2267 ( 64%)], train_loss: 0.83233
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.74708
+epoch: 000 [1616/2267 ( 71%)], train_loss: 0.81935
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.70548
+epoch: 000 [1776/2267 ( 78%)], train_loss: 0.80653
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.59943
+0 epoch, best epoch was updated! valid_loss: 0.59943
+epoch: 000 [1936/2267 ( 85%)], train_loss: 0.79653
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.65808
+epoch: 000 [2096/2267 ( 92%)], train_loss: 0.78295
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.58005
+0 epoch, best epoch was updated! valid_loss: 0.58005
+epoch: 000 [2256/2267 (100%)], train_loss: 0.77036
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.58139
+epoch: 001 [  16/2267 (  1%)], train_loss: 0.98853
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.63490
+epoch: 001 [ 176/2267 (  8%)], train_loss: 0.62286
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.85385
+epoch: 001 [ 336/2267 ( 15%)], train_loss: 0.62931
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.65199
+epoch: 001 [ 496/2267 ( 22%)], train_loss: 0.64948
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.70960
+epoch: 001 [ 656/2267 ( 29%)], train_loss: 0.64062
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.59787
+epoch: 001 [ 816/2267 ( 36%)], train_loss: 0.64908
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.69075
+epoch: 001 [ 976/2267 ( 43%)], train_loss: 0.62723
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.59074
+epoch: 001 [1136/2267 ( 50%)], train_loss: 0.60782
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.55513
+1 epoch, best epoch was updated! valid_loss: 0.55513
+epoch: 001 [1296/2267 ( 57%)], train_loss: 0.59841
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.63348
+epoch: 001 [1456/2267 ( 64%)], train_loss: 0.59233
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.60114
+epoch: 001 [1616/2267 ( 71%)], train_loss: 0.58739
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.54781
+1 epoch, best epoch was updated! valid_loss: 0.54781
+epoch: 001 [1776/2267 ( 78%)], train_loss: 0.58502
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.57308
+epoch: 001 [1936/2267 ( 85%)], train_loss: 0.58105
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.65752
+epoch: 001 [2096/2267 ( 92%)], train_loss: 0.57587
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.56872
+epoch: 001 [2256/2267 (100%)], train_loss: 0.56861
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.58040
+epoch: 002 [  16/2267 (  1%)], train_loss: 0.57861
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.66816
+epoch: 002 [ 176/2267 (  8%)], train_loss: 0.51811
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.72039
+epoch: 002 [ 336/2267 ( 15%)], train_loss: 0.55010
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.52513
+2 epoch, best epoch was updated! valid_loss: 0.52513
+epoch: 002 [ 496/2267 ( 22%)], train_loss: 0.50822
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.56506
+epoch: 002 [ 656/2267 ( 29%)], train_loss: 0.47256
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.54235
+epoch: 002 [ 816/2267 ( 36%)], train_loss: 0.46906
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.51959
+2 epoch, best epoch was updated! valid_loss: 0.51959
+epoch: 002 [ 976/2267 ( 43%)], train_loss: 0.46139
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.50339
+2 epoch, best epoch was updated! valid_loss: 0.50339
+epoch: 002 [1136/2267 ( 50%)], train_loss: 0.45038
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.56937
+epoch: 002 [1296/2267 ( 57%)], train_loss: 0.44599
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.60827
+epoch: 002 [1456/2267 ( 64%)], train_loss: 0.44312
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.49793
+2 epoch, best epoch was updated! valid_loss: 0.49793
+epoch: 002 [1616/2267 ( 71%)], train_loss: 0.43702
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.51056
+epoch: 002 [1776/2267 ( 78%)], train_loss: 0.43873
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.51773
+epoch: 002 [1936/2267 ( 85%)], train_loss: 0.43762
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.50945
+epoch: 002 [2096/2267 ( 92%)], train_loss: 0.43494
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.51073
+epoch: 002 [2256/2267 (100%)], train_loss: 0.42995
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.49492
+2 epoch, best epoch was updated! valid_loss: 0.49492
+epoch: 003 [  16/2267 (  1%)], train_loss: 0.63958
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.53317
+epoch: 003 [ 176/2267 (  8%)], train_loss: 0.36731
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.53751
+epoch: 003 [ 336/2267 ( 15%)], train_loss: 0.35035
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.56979
+epoch: 003 [ 496/2267 ( 22%)], train_loss: 0.33170
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.53816
+epoch: 003 [ 656/2267 ( 29%)], train_loss: 0.32682
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.50676
+epoch: 003 [ 816/2267 ( 36%)], train_loss: 0.31833
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.50843
+epoch: 003 [ 976/2267 ( 43%)], train_loss: 0.30537
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.50010
+epoch: 003 [1136/2267 ( 50%)], train_loss: 0.30061
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.54617
+epoch: 003 [1296/2267 ( 57%)], train_loss: 0.30242
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.49507
+epoch: 003 [1456/2267 ( 64%)], train_loss: 0.29738
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.51842
+epoch: 003 [1616/2267 ( 71%)], train_loss: 0.29852
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.53666
+epoch: 003 [1776/2267 ( 78%)], train_loss: 0.29972
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.50465
+epoch: 003 [1936/2267 ( 85%)], train_loss: 0.29989
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.51086
+epoch: 003 [2096/2267 ( 92%)], train_loss: 0.29844
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.52202
+epoch: 003 [2256/2267 (100%)], train_loss: 0.29746
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.50883
+epoch: 004 [  16/2267 (  1%)], train_loss: 1.13369
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.54275
+epoch: 004 [ 176/2267 (  8%)], train_loss: 0.30486
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.51258
+epoch: 004 [ 336/2267 ( 15%)], train_loss: 0.26056
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.49499
+epoch: 004 [ 496/2267 ( 22%)], train_loss: 0.24248
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.51169
+epoch: 004 [ 656/2267 ( 29%)], train_loss: 0.23687
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.50468
+epoch: 004 [ 816/2267 ( 36%)], train_loss: 0.23698
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.49787
+epoch: 004 [ 976/2267 ( 43%)], train_loss: 0.24034
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.50980
+epoch: 004 [1136/2267 ( 50%)], train_loss: 0.23737
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.51065
+epoch: 004 [1296/2267 ( 57%)], train_loss: 0.23968
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.49126
+4 epoch, best epoch was updated! valid_loss: 0.49126
+epoch: 004 [1456/2267 ( 64%)], train_loss: 0.24160
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.53032
+epoch: 004 [1616/2267 ( 71%)], train_loss: 0.24200
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.49935
+epoch: 004 [1776/2267 ( 78%)], train_loss: 0.24240
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.51266
+epoch: 004 [1936/2267 ( 85%)], train_loss: 0.24025
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.49276
+epoch: 004 [2096/2267 ( 92%)], train_loss: 0.23753
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.50644
+epoch: 004 [2256/2267 (100%)], train_loss: 0.23571
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.49194
+epoch: 005 [  16/2267 (  1%)], train_loss: 0.84844
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.49471
+epoch: 005 [ 176/2267 (  8%)], train_loss: 0.22759
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.49520
+epoch: 005 [ 336/2267 ( 15%)], train_loss: 0.19344
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.48965
+5 epoch, best epoch was updated! valid_loss: 0.48965
+epoch: 005 [ 496/2267 ( 22%)], train_loss: 0.18335
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.48644
+5 epoch, best epoch was updated! valid_loss: 0.48644
+epoch: 005 [ 656/2267 ( 29%)], train_loss: 0.17518
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.49169
+epoch: 005 [ 816/2267 ( 36%)], train_loss: 0.17241
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.48315
+5 epoch, best epoch was updated! valid_loss: 0.48315
+epoch: 005 [ 976/2267 ( 43%)], train_loss: 0.17369
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.49062
+epoch: 005 [1136/2267 ( 50%)], train_loss: 0.17336
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.48670
+epoch: 005 [1296/2267 ( 57%)], train_loss: 0.17083
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.49181
+epoch: 005 [1456/2267 ( 64%)], train_loss: 0.16778
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.49034
+epoch: 005 [1616/2267 ( 71%)], train_loss: 0.16817
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.53823
+epoch: 005 [1776/2267 ( 78%)], train_loss: 0.17056
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.50005
+epoch: 005 [1936/2267 ( 85%)], train_loss: 0.16818
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.49300
+epoch: 005 [2096/2267 ( 92%)], train_loss: 0.16579
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.48913
+epoch: 005 [2256/2267 (100%)], train_loss: 0.16461
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.48703
+epoch: 006 [  16/2267 (  1%)], train_loss: 0.49111
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.48337
+epoch: 006 [ 176/2267 (  8%)], train_loss: 0.14038
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.49363
+epoch: 006 [ 336/2267 ( 15%)], train_loss: 0.12627
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.49264
+epoch: 006 [ 496/2267 ( 22%)], train_loss: 0.11875
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.48470
+epoch: 006 [ 656/2267 ( 29%)], train_loss: 0.11329
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.48294
+6 epoch, best epoch was updated! valid_loss: 0.48294
+epoch: 006 [ 816/2267 ( 36%)], train_loss: 0.11366
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.49227
+epoch: 006 [ 976/2267 ( 43%)], train_loss: 0.10869
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.48776
+epoch: 006 [1136/2267 ( 50%)], train_loss: 0.10601
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.48234
+6 epoch, best epoch was updated! valid_loss: 0.48234
+epoch: 006 [1296/2267 ( 57%)], train_loss: 0.10274
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.48314
+epoch: 006 [1456/2267 ( 64%)], train_loss: 0.10142
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.48550
+epoch: 006 [1616/2267 ( 71%)], train_loss: 0.10285
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.48381
+epoch: 006 [1776/2267 ( 78%)], train_loss: 0.10274
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.48340
+epoch: 006 [1936/2267 ( 85%)], train_loss: 0.10270
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.48439
+epoch: 006 [2096/2267 ( 92%)], train_loss: 0.10125
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.48258
+epoch: 006 [2256/2267 (100%)], train_loss: 0.09997
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.48513
+epoch: 007 [  16/2267 (  1%)], train_loss: 1.00493
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.48793
+epoch: 007 [ 176/2267 (  8%)], train_loss: 0.15335
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.48184
+7 epoch, best epoch was updated! valid_loss: 0.48184
+epoch: 007 [ 336/2267 ( 15%)], train_loss: 0.10450
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.48259
+epoch: 007 [ 496/2267 ( 22%)], train_loss: 0.08866
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.48304
+epoch: 007 [ 656/2267 ( 29%)], train_loss: 0.08299
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.48348
+epoch: 007 [ 816/2267 ( 36%)], train_loss: 0.07895
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.48503
+epoch: 007 [ 976/2267 ( 43%)], train_loss: 0.07716
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.48464
+epoch: 007 [1136/2267 ( 50%)], train_loss: 0.07439
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.48386
+epoch: 007 [1296/2267 ( 57%)], train_loss: 0.07304
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.48369
+epoch: 007 [1456/2267 ( 64%)], train_loss: 0.07222
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.48314
+epoch: 007 [1616/2267 ( 71%)], train_loss: 0.07002
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.48311
+epoch: 007 [1776/2267 ( 78%)], train_loss: 0.06891
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.48307
+epoch: 007 [1936/2267 ( 85%)], train_loss: 0.06753
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.48306
+epoch: 007 [2096/2267 ( 92%)], train_loss: 0.06667
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.48310
+epoch: 007 [2256/2267 (100%)], train_loss: 0.06576
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.48311
+----
+----
+FOLD: 3
+Model pushed to 1 GPU(s), type TITAN RTX.
+epoch: 000 [  16/2267 (  1%)], train_loss: 1.74930
+----Validation Results Summary----
+Epoch: [0] valid_loss: 1.62151
+0 epoch, best epoch was updated! valid_loss: 1.62151
+epoch: 000 [ 176/2267 (  8%)], train_loss: 1.15428
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.90125
+0 epoch, best epoch was updated! valid_loss: 0.90125
+epoch: 000 [ 336/2267 ( 15%)], train_loss: 1.07323
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.94800
+epoch: 000 [ 496/2267 ( 22%)], train_loss: 1.01084
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.97530
+epoch: 000 [ 656/2267 ( 29%)], train_loss: 0.95786
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.79834
+0 epoch, best epoch was updated! valid_loss: 0.79834
+epoch: 000 [ 816/2267 ( 36%)], train_loss: 0.95288
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.79289
+0 epoch, best epoch was updated! valid_loss: 0.79289
+epoch: 000 [ 976/2267 ( 43%)], train_loss: 0.92397
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.75720
+0 epoch, best epoch was updated! valid_loss: 0.75720
+epoch: 000 [1136/2267 ( 50%)], train_loss: 0.90495
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.76047
+epoch: 000 [1296/2267 ( 57%)], train_loss: 0.88063
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.71190
+0 epoch, best epoch was updated! valid_loss: 0.71190
+epoch: 000 [1456/2267 ( 64%)], train_loss: 0.85527
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.90510
+epoch: 000 [1616/2267 ( 71%)], train_loss: 0.84537
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.63082
+0 epoch, best epoch was updated! valid_loss: 0.63082
+epoch: 000 [1776/2267 ( 78%)], train_loss: 0.82591
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.71857
+epoch: 000 [1936/2267 ( 85%)], train_loss: 0.81089
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.60288
+0 epoch, best epoch was updated! valid_loss: 0.60288
+epoch: 000 [2096/2267 ( 92%)], train_loss: 0.79677
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.61223
+epoch: 000 [2256/2267 (100%)], train_loss: 0.78359
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.61900
+epoch: 001 [  16/2267 (  1%)], train_loss: 1.17088
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.76034
+epoch: 001 [ 176/2267 (  8%)], train_loss: 0.59481
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.59317
+1 epoch, best epoch was updated! valid_loss: 0.59317
+epoch: 001 [ 336/2267 ( 15%)], train_loss: 0.59228
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.58588
+1 epoch, best epoch was updated! valid_loss: 0.58588
+epoch: 001 [ 496/2267 ( 22%)], train_loss: 0.54769
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.55700
+1 epoch, best epoch was updated! valid_loss: 0.55700
+epoch: 001 [ 656/2267 ( 29%)], train_loss: 0.55083
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.57498
+epoch: 001 [ 816/2267 ( 36%)], train_loss: 0.53068
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.63990
+epoch: 001 [ 976/2267 ( 43%)], train_loss: 0.53399
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.54279
+1 epoch, best epoch was updated! valid_loss: 0.54279
+epoch: 001 [1136/2267 ( 50%)], train_loss: 0.53302
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.67454
+epoch: 001 [1296/2267 ( 57%)], train_loss: 0.53258
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.62001
+epoch: 001 [1456/2267 ( 64%)], train_loss: 0.54669
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.55348
+epoch: 001 [1616/2267 ( 71%)], train_loss: 0.55328
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.65009
+epoch: 001 [1776/2267 ( 78%)], train_loss: 0.55327
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.57815
+epoch: 001 [1936/2267 ( 85%)], train_loss: 0.55033
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.54563
+epoch: 001 [2096/2267 ( 92%)], train_loss: 0.55114
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.72334
+epoch: 001 [2256/2267 (100%)], train_loss: 0.55634
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.57139
+epoch: 002 [  16/2267 (  1%)], train_loss: 0.42776
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.67913
+epoch: 002 [ 176/2267 (  8%)], train_loss: 0.46734
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.55285
+epoch: 002 [ 336/2267 ( 15%)], train_loss: 0.42396
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.54764
+epoch: 002 [ 496/2267 ( 22%)], train_loss: 0.42394
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.57760
+epoch: 002 [ 656/2267 ( 29%)], train_loss: 0.41948
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.54888
+epoch: 002 [ 816/2267 ( 36%)], train_loss: 0.41016
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.60743
+epoch: 002 [ 976/2267 ( 43%)], train_loss: 0.40925
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.51560
+2 epoch, best epoch was updated! valid_loss: 0.51560
+epoch: 002 [1136/2267 ( 50%)], train_loss: 0.40657
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.51620
+epoch: 002 [1296/2267 ( 57%)], train_loss: 0.41074
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.53240
+epoch: 002 [1456/2267 ( 64%)], train_loss: 0.40549
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.53337
+epoch: 002 [1616/2267 ( 71%)], train_loss: 0.40042
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.55193
+epoch: 002 [1776/2267 ( 78%)], train_loss: 0.40175
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.56156
+epoch: 002 [1936/2267 ( 85%)], train_loss: 0.40893
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.59553
+epoch: 002 [2096/2267 ( 92%)], train_loss: 0.40505
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.53540
+epoch: 002 [2256/2267 (100%)], train_loss: 0.40541
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.55687
+epoch: 003 [  16/2267 (  1%)], train_loss: 0.55372
+----Validation Results Summary----
+Epoch: [3] valid_loss: 1.05567
+epoch: 003 [ 176/2267 (  8%)], train_loss: 0.57877
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.70677
+epoch: 003 [ 336/2267 ( 15%)], train_loss: 0.51999
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.67124
+epoch: 003 [ 496/2267 ( 22%)], train_loss: 0.49080
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.56889
+epoch: 003 [ 656/2267 ( 29%)], train_loss: 0.45747
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.56968
+epoch: 003 [ 816/2267 ( 36%)], train_loss: 0.43960
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.63898
+epoch: 003 [ 976/2267 ( 43%)], train_loss: 0.42046
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.52968
+epoch: 003 [1136/2267 ( 50%)], train_loss: 0.40701
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.52656
+epoch: 003 [1296/2267 ( 57%)], train_loss: 0.39741
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.55505
+epoch: 003 [1456/2267 ( 64%)], train_loss: 0.39070
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.53490
+epoch: 003 [1616/2267 ( 71%)], train_loss: 0.38207
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.52147
+epoch: 003 [1776/2267 ( 78%)], train_loss: 0.37346
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.53295
+epoch: 003 [1936/2267 ( 85%)], train_loss: 0.36478
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.55606
+epoch: 003 [2096/2267 ( 92%)], train_loss: 0.35808
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.54977
+epoch: 003 [2256/2267 (100%)], train_loss: 0.35458
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.51461
+3 epoch, best epoch was updated! valid_loss: 0.51461
+epoch: 004 [  16/2267 (  1%)], train_loss: 1.55006
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.54995
+epoch: 004 [ 176/2267 (  8%)], train_loss: 0.38627
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.51558
+epoch: 004 [ 336/2267 ( 15%)], train_loss: 0.32596
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.52105
+epoch: 004 [ 496/2267 ( 22%)], train_loss: 0.30483
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.51949
+epoch: 004 [ 656/2267 ( 29%)], train_loss: 0.28418
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.52405
+epoch: 004 [ 816/2267 ( 36%)], train_loss: 0.27573
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.52423
+epoch: 004 [ 976/2267 ( 43%)], train_loss: 0.26498
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.53121
+epoch: 004 [1136/2267 ( 50%)], train_loss: 0.26760
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.55043
+epoch: 004 [1296/2267 ( 57%)], train_loss: 0.26891
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.50869
+4 epoch, best epoch was updated! valid_loss: 0.50869
+epoch: 004 [1456/2267 ( 64%)], train_loss: 0.26626
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.52273
+epoch: 004 [1616/2267 ( 71%)], train_loss: 0.26373
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.51027
+epoch: 004 [1776/2267 ( 78%)], train_loss: 0.25976
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.53208
+epoch: 004 [1936/2267 ( 85%)], train_loss: 0.25882
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.54402
+epoch: 004 [2096/2267 ( 92%)], train_loss: 0.25868
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.50935
+epoch: 004 [2256/2267 (100%)], train_loss: 0.25788
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.51927
+epoch: 005 [  16/2267 (  1%)], train_loss: 0.41586
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.57344
+epoch: 005 [ 176/2267 (  8%)], train_loss: 0.25628
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.60114
+epoch: 005 [ 336/2267 ( 15%)], train_loss: 0.23443
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.54704
+epoch: 005 [ 496/2267 ( 22%)], train_loss: 0.22130
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.52573
+epoch: 005 [ 656/2267 ( 29%)], train_loss: 0.20528
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.51695
+epoch: 005 [ 816/2267 ( 36%)], train_loss: 0.19718
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.52215
+epoch: 005 [ 976/2267 ( 43%)], train_loss: 0.18883
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.51233
+epoch: 005 [1136/2267 ( 50%)], train_loss: 0.18244
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.50997
+epoch: 005 [1296/2267 ( 57%)], train_loss: 0.17939
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.52587
+epoch: 005 [1456/2267 ( 64%)], train_loss: 0.17823
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.53544
+epoch: 005 [1616/2267 ( 71%)], train_loss: 0.17728
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.51960
+epoch: 005 [1776/2267 ( 78%)], train_loss: 0.17434
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.50785
+5 epoch, best epoch was updated! valid_loss: 0.50785
+epoch: 005 [1936/2267 ( 85%)], train_loss: 0.17217
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.50739
+5 epoch, best epoch was updated! valid_loss: 0.50739
+epoch: 005 [2096/2267 ( 92%)], train_loss: 0.16964
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.50724
+5 epoch, best epoch was updated! valid_loss: 0.50724
+epoch: 005 [2256/2267 (100%)], train_loss: 0.16745
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.51220
+epoch: 006 [  16/2267 (  1%)], train_loss: 0.52910
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.51077
+epoch: 006 [ 176/2267 (  8%)], train_loss: 0.13516
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.50397
+6 epoch, best epoch was updated! valid_loss: 0.50397
+epoch: 006 [ 336/2267 ( 15%)], train_loss: 0.11448
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.50837
+epoch: 006 [ 496/2267 ( 22%)], train_loss: 0.11594
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.50960
+epoch: 006 [ 656/2267 ( 29%)], train_loss: 0.11260
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.50938
+epoch: 006 [ 816/2267 ( 36%)], train_loss: 0.11267
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.51266
+epoch: 006 [ 976/2267 ( 43%)], train_loss: 0.11529
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.50948
+epoch: 006 [1136/2267 ( 50%)], train_loss: 0.11593
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.50306
+6 epoch, best epoch was updated! valid_loss: 0.50306
+epoch: 006 [1296/2267 ( 57%)], train_loss: 0.11611
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.51058
+epoch: 006 [1456/2267 ( 64%)], train_loss: 0.11414
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.50870
+epoch: 006 [1616/2267 ( 71%)], train_loss: 0.11255
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.50813
+epoch: 006 [1776/2267 ( 78%)], train_loss: 0.11211
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.51505
+epoch: 006 [1936/2267 ( 85%)], train_loss: 0.11207
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.51702
+epoch: 006 [2096/2267 ( 92%)], train_loss: 0.11236
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.50660
+epoch: 006 [2256/2267 (100%)], train_loss: 0.11134
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.50881
+epoch: 007 [  16/2267 (  1%)], train_loss: 0.80356
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.50971
+epoch: 007 [ 176/2267 (  8%)], train_loss: 0.13575
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.50815
+epoch: 007 [ 336/2267 ( 15%)], train_loss: 0.10235
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.50760
+epoch: 007 [ 496/2267 ( 22%)], train_loss: 0.09113
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.50983
+epoch: 007 [ 656/2267 ( 29%)], train_loss: 0.08552
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.50789
+epoch: 007 [ 816/2267 ( 36%)], train_loss: 0.08295
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.50626
+epoch: 007 [ 976/2267 ( 43%)], train_loss: 0.08128
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.50680
+epoch: 007 [1136/2267 ( 50%)], train_loss: 0.07859
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.50819
+epoch: 007 [1296/2267 ( 57%)], train_loss: 0.07776
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.50880
+epoch: 007 [1456/2267 ( 64%)], train_loss: 0.07665
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.50816
+epoch: 007 [1616/2267 ( 71%)], train_loss: 0.07524
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.50748
+epoch: 007 [1776/2267 ( 78%)], train_loss: 0.07476
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.50713
+epoch: 007 [1936/2267 ( 85%)], train_loss: 0.07336
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.50711
+epoch: 007 [2096/2267 ( 92%)], train_loss: 0.07274
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.50707
+epoch: 007 [2256/2267 (100%)], train_loss: 0.07227
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.50707
+----
+----
+FOLD: 4
+Model pushed to 1 GPU(s), type TITAN RTX.
+epoch: 000 [  16/2268 (  1%)], train_loss: 1.70421
+----Validation Results Summary----
+Epoch: [0] valid_loss: 1.96566
+0 epoch, best epoch was updated! valid_loss: 1.96566
+epoch: 000 [ 176/2268 (  8%)], train_loss: 1.14014
+----Validation Results Summary----
+Epoch: [0] valid_loss: 1.00794
+0 epoch, best epoch was updated! valid_loss: 1.00794
+epoch: 000 [ 336/2268 ( 15%)], train_loss: 1.09010
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.99824
+0 epoch, best epoch was updated! valid_loss: 0.99824
+epoch: 000 [ 496/2268 ( 22%)], train_loss: 1.06006
+----Validation Results Summary----
+Epoch: [0] valid_loss: 1.02973
+epoch: 000 [ 656/2268 ( 29%)], train_loss: 1.06829
+----Validation Results Summary----
+Epoch: [0] valid_loss: 1.10131
+epoch: 000 [ 816/2268 ( 36%)], train_loss: 1.06618
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.98855
+0 epoch, best epoch was updated! valid_loss: 0.98855
+epoch: 000 [ 976/2268 ( 43%)], train_loss: 1.06706
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.98839
+0 epoch, best epoch was updated! valid_loss: 0.98839
+epoch: 000 [1136/2268 ( 50%)], train_loss: 1.07067
+----Validation Results Summary----
+Epoch: [0] valid_loss: 1.01143
+epoch: 000 [1296/2268 ( 57%)], train_loss: 1.06518
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.98981
+epoch: 000 [1456/2268 ( 64%)], train_loss: 1.04980
+----Validation Results Summary----
+Epoch: [0] valid_loss: 1.02295
+epoch: 000 [1616/2268 ( 71%)], train_loss: 1.04704
+----Validation Results Summary----
+Epoch: [0] valid_loss: 1.01968
+epoch: 000 [1776/2268 ( 78%)], train_loss: 1.05013
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.99151
+epoch: 000 [1936/2268 ( 85%)], train_loss: 1.05737
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.99161
+epoch: 000 [2096/2268 ( 92%)], train_loss: 1.06292
+----Validation Results Summary----
+Epoch: [0] valid_loss: 0.99193
+epoch: 000 [2256/2268 ( 99%)], train_loss: 1.07008
+----Validation Results Summary----
+Epoch: [0] valid_loss: 1.03097
+epoch: 001 [  16/2268 (  1%)], train_loss: 1.42003
+----Validation Results Summary----
+Epoch: [1] valid_loss: 1.00653
+epoch: 001 [ 176/2268 (  8%)], train_loss: 1.05829
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.98711
+1 epoch, best epoch was updated! valid_loss: 0.98711
+epoch: 001 [ 336/2268 ( 15%)], train_loss: 1.00795
+----Validation Results Summary----
+Epoch: [1] valid_loss: 1.00065
+epoch: 001 [ 496/2268 ( 22%)], train_loss: 1.02975
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.99331
+epoch: 001 [ 656/2268 ( 29%)], train_loss: 1.03829
+----Validation Results Summary----
+Epoch: [1] valid_loss: 1.08401
+epoch: 001 [ 816/2268 ( 36%)], train_loss: 1.02749
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.98982
+epoch: 001 [ 976/2268 ( 43%)], train_loss: 1.02789
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.98709
+1 epoch, best epoch was updated! valid_loss: 0.98709
+epoch: 001 [1136/2268 ( 50%)], train_loss: 1.03774
+----Validation Results Summary----
+Epoch: [1] valid_loss: 1.01163
+epoch: 001 [1296/2268 ( 57%)], train_loss: 1.04094
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.99107
+epoch: 001 [1456/2268 ( 64%)], train_loss: 1.04253
+----Validation Results Summary----
+Epoch: [1] valid_loss: 1.00608
+epoch: 001 [1616/2268 ( 71%)], train_loss: 1.05044
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.98897
+epoch: 001 [1776/2268 ( 78%)], train_loss: 1.05449
+----Validation Results Summary----
+Epoch: [1] valid_loss: 1.02014
+epoch: 001 [1936/2268 ( 85%)], train_loss: 1.05555
+----Validation Results Summary----
+Epoch: [1] valid_loss: 1.03283
+epoch: 001 [2096/2268 ( 92%)], train_loss: 1.05827
+----Validation Results Summary----
+Epoch: [1] valid_loss: 1.02653
+epoch: 001 [2256/2268 ( 99%)], train_loss: 1.05860
+----Validation Results Summary----
+Epoch: [1] valid_loss: 0.98693
+1 epoch, best epoch was updated! valid_loss: 0.98693
+epoch: 002 [  16/2268 (  1%)], train_loss: 1.08401
+----Validation Results Summary----
+Epoch: [2] valid_loss: 1.06943
+epoch: 002 [ 176/2268 (  8%)], train_loss: 1.12121
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.98732
+epoch: 002 [ 336/2268 ( 15%)], train_loss: 1.04039
+----Validation Results Summary----
+Epoch: [2] valid_loss: 1.01881
+epoch: 002 [ 496/2268 ( 22%)], train_loss: 1.05709
+----Validation Results Summary----
+Epoch: [2] valid_loss: 1.03095
+epoch: 002 [ 656/2268 ( 29%)], train_loss: 1.05494
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.99556
+epoch: 002 [ 816/2268 ( 36%)], train_loss: 1.05499
+----Validation Results Summary----
+Epoch: [2] valid_loss: 1.00805
+epoch: 002 [ 976/2268 ( 43%)], train_loss: 1.05257
+----Validation Results Summary----
+Epoch: [2] valid_loss: 1.02202
+epoch: 002 [1136/2268 ( 50%)], train_loss: 1.05288
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.98697
+epoch: 002 [1296/2268 ( 57%)], train_loss: 1.06044
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.98769
+epoch: 002 [1456/2268 ( 64%)], train_loss: 1.06061
+----Validation Results Summary----
+Epoch: [2] valid_loss: 1.00337
+epoch: 002 [1616/2268 ( 71%)], train_loss: 1.05431
+----Validation Results Summary----
+Epoch: [2] valid_loss: 1.00534
+epoch: 002 [1776/2268 ( 78%)], train_loss: 1.06226
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.99472
+epoch: 002 [1936/2268 ( 85%)], train_loss: 1.06259
+----Validation Results Summary----
+Epoch: [2] valid_loss: 0.99024
+epoch: 002 [2096/2268 ( 92%)], train_loss: 1.06307
+----Validation Results Summary----
+Epoch: [2] valid_loss: 1.04183
+epoch: 002 [2256/2268 ( 99%)], train_loss: 1.06606
+----Validation Results Summary----
+Epoch: [2] valid_loss: 1.04113
+epoch: 003 [  16/2268 (  1%)], train_loss: 1.20747
+----Validation Results Summary----
+Epoch: [3] valid_loss: 1.00560
+epoch: 003 [ 176/2268 (  8%)], train_loss: 1.05690
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.99362
+epoch: 003 [ 336/2268 ( 15%)], train_loss: 1.05271
+----Validation Results Summary----
+Epoch: [3] valid_loss: 1.01914
+epoch: 003 [ 496/2268 ( 22%)], train_loss: 1.03171
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.99345
+epoch: 003 [ 656/2268 ( 29%)], train_loss: 1.05140
+----Validation Results Summary----
+Epoch: [3] valid_loss: 1.08417
+epoch: 003 [ 816/2268 ( 36%)], train_loss: 1.03379
+----Validation Results Summary----
+Epoch: [3] valid_loss: 1.02909
+epoch: 003 [ 976/2268 ( 43%)], train_loss: 1.04463
+----Validation Results Summary----
+Epoch: [3] valid_loss: 1.03169
+epoch: 003 [1136/2268 ( 50%)], train_loss: 1.05516
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.99616
+epoch: 003 [1296/2268 ( 57%)], train_loss: 1.04763
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.99940
+epoch: 003 [1456/2268 ( 64%)], train_loss: 1.05093
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.99643
+epoch: 003 [1616/2268 ( 71%)], train_loss: 1.05972
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.99399
+epoch: 003 [1776/2268 ( 78%)], train_loss: 1.05337
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.99563
+epoch: 003 [1936/2268 ( 85%)], train_loss: 1.04872
+----Validation Results Summary----
+Epoch: [3] valid_loss: 1.03076
+epoch: 003 [2096/2268 ( 92%)], train_loss: 1.04702
+----Validation Results Summary----
+Epoch: [3] valid_loss: 0.98941
+epoch: 003 [2256/2268 ( 99%)], train_loss: 1.04682
+----Validation Results Summary----
+Epoch: [3] valid_loss: 1.00646
+epoch: 004 [  16/2268 (  1%)], train_loss: 1.18441
+----Validation Results Summary----
+Epoch: [4] valid_loss: 1.00919
+epoch: 004 [ 176/2268 (  8%)], train_loss: 1.04152
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.99594
+epoch: 004 [ 336/2268 ( 15%)], train_loss: 1.04359
+----Validation Results Summary----
+Epoch: [4] valid_loss: 1.01061
+epoch: 004 [ 496/2268 ( 22%)], train_loss: 1.05410
+----Validation Results Summary----
+Epoch: [4] valid_loss: 1.00214
+epoch: 004 [ 656/2268 ( 29%)], train_loss: 1.03881
+----Validation Results Summary----
+Epoch: [4] valid_loss: 1.00484
+epoch: 004 [ 816/2268 ( 36%)], train_loss: 1.05267
+----Validation Results Summary----
+Epoch: [4] valid_loss: 1.00445
+epoch: 004 [ 976/2268 ( 43%)], train_loss: 1.04050
+----Validation Results Summary----
+Epoch: [4] valid_loss: 1.02291
+epoch: 004 [1136/2268 ( 50%)], train_loss: 1.05661
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.99111
+epoch: 004 [1296/2268 ( 57%)], train_loss: 1.05413
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.98846
+epoch: 004 [1456/2268 ( 64%)], train_loss: 1.04813
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.98905
+epoch: 004 [1616/2268 ( 71%)], train_loss: 1.04510
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.98986
+epoch: 004 [1776/2268 ( 78%)], train_loss: 1.04314
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.99639
+epoch: 004 [1936/2268 ( 85%)], train_loss: 1.04451
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.98700
+epoch: 004 [2096/2268 ( 92%)], train_loss: 1.04456
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.99283
+epoch: 004 [2256/2268 ( 99%)], train_loss: 1.03994
+----Validation Results Summary----
+Epoch: [4] valid_loss: 0.98801
+epoch: 005 [  16/2268 (  1%)], train_loss: 1.39116
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.98830
+epoch: 005 [ 176/2268 (  8%)], train_loss: 1.06193
+----Validation Results Summary----
+Epoch: [5] valid_loss: 1.00338
+epoch: 005 [ 336/2268 ( 15%)], train_loss: 1.03158
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.99431
+epoch: 005 [ 496/2268 ( 22%)], train_loss: 0.99511
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.99868
+epoch: 005 [ 656/2268 ( 29%)], train_loss: 1.00251
+----Validation Results Summary----
+Epoch: [5] valid_loss: 1.00039
+epoch: 005 [ 816/2268 ( 36%)], train_loss: 1.01171
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.99244
+epoch: 005 [ 976/2268 ( 43%)], train_loss: 1.02879
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.98890
+epoch: 005 [1136/2268 ( 50%)], train_loss: 1.03104
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.99159
+epoch: 005 [1296/2268 ( 57%)], train_loss: 1.02564
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.98827
+epoch: 005 [1456/2268 ( 64%)], train_loss: 1.03082
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.98758
+epoch: 005 [1616/2268 ( 71%)], train_loss: 1.02396
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.98714
+epoch: 005 [1776/2268 ( 78%)], train_loss: 1.02684
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.98706
+epoch: 005 [1936/2268 ( 85%)], train_loss: 1.02759
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.98965
+epoch: 005 [2096/2268 ( 92%)], train_loss: 1.02604
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.98811
+epoch: 005 [2256/2268 ( 99%)], train_loss: 1.03211
+----Validation Results Summary----
+Epoch: [5] valid_loss: 0.98694
+epoch: 006 [  16/2268 (  1%)], train_loss: 1.11834
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.98811
+epoch: 006 [ 176/2268 (  8%)], train_loss: 1.06011
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.98695
+epoch: 006 [ 336/2268 ( 15%)], train_loss: 1.06856
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.99166
+epoch: 006 [ 496/2268 ( 22%)], train_loss: 1.05936
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.98800
+epoch: 006 [ 656/2268 ( 29%)], train_loss: 1.05214
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.99144
+epoch: 006 [ 816/2268 ( 36%)], train_loss: 1.04276
+----Validation Results Summary----
+Epoch: [6] valid_loss: 1.00668
+epoch: 006 [ 976/2268 ( 43%)], train_loss: 1.04778
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.99100
+epoch: 006 [1136/2268 ( 50%)], train_loss: 1.04474
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.98730
+epoch: 006 [1296/2268 ( 57%)], train_loss: 1.04002
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.98724
+epoch: 006 [1456/2268 ( 64%)], train_loss: 1.03649
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.98781
+epoch: 006 [1616/2268 ( 71%)], train_loss: 1.04127
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.98702
+epoch: 006 [1776/2268 ( 78%)], train_loss: 1.03303
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.98693
+epoch: 006 [1936/2268 ( 85%)], train_loss: 1.02854
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.98790
+epoch: 006 [2096/2268 ( 92%)], train_loss: 1.02902
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.98756
+epoch: 006 [2256/2268 ( 99%)], train_loss: 1.02628
+----Validation Results Summary----
+Epoch: [6] valid_loss: 0.98753
+epoch: 007 [  16/2268 (  1%)], train_loss: 1.34492
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.98796
+epoch: 007 [ 176/2268 (  8%)], train_loss: 1.06759
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.98693
+epoch: 007 [ 336/2268 ( 15%)], train_loss: 1.03804
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.98798
+epoch: 007 [ 496/2268 ( 22%)], train_loss: 1.04419
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.98719
+epoch: 007 [ 656/2268 ( 29%)], train_loss: 1.02326
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.98710
+epoch: 007 [ 816/2268 ( 36%)], train_loss: 1.00853
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.98710
+epoch: 007 [ 976/2268 ( 43%)], train_loss: 1.01067
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.98697
+epoch: 007 [1136/2268 ( 50%)], train_loss: 1.01194
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.98696
+epoch: 007 [1296/2268 ( 57%)], train_loss: 1.00582
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.98695
+epoch: 007 [1456/2268 ( 64%)], train_loss: 1.01923
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.98698
+epoch: 007 [1616/2268 ( 71%)], train_loss: 1.01966
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.98704
+epoch: 007 [1776/2268 ( 78%)], train_loss: 1.01975
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.98698
+epoch: 007 [1936/2268 ( 85%)], train_loss: 1.02090
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.98695
+epoch: 007 [2096/2268 ( 92%)], train_loss: 1.02234
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.98694
+epoch: 007 [2256/2268 ( 99%)], train_loss: 1.02624
+----Validation Results Summary----
+Epoch: [7] valid_loss: 0.98694
+----
+0.7486
