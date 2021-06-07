@@ -38,7 +38,7 @@ class CFG:
     folds = [0, 1, 2, 3, 4]
     N_FOLDS = 5
     LR = 5e-5
-    max_len = 250 # 256
+    max_len = 250
     train_bs = 16
     valid_bs = 32
     model_name = 'roberta-base'
@@ -200,6 +200,8 @@ class RoBERTaBase(nn.Module):
         sequence_output = self.layer_norm(sequence_output)
 
         logits = self.l0(self.dropout(sequence_output))
+
+        logits = logits + roberta_outputs[1]
 
         return logits.squeeze(-1)
 
@@ -395,14 +397,14 @@ for fold in range(5):
     train_sampler = torchdata.RandomSampler(train_dataset)
 
     train_dataloader = torch.utils.data.DataLoader(
-        train_dataset, batch_size=CFG.train_bs, num_workers=0, pin_memory=True, shuffle=True, sampler=train_sampler
+        train_dataset, batch_size=CFG.train_bs, num_workers=0, pin_memory=True, drop_last=False, sampler=train_sampler
     )
     
     valid_dataset = CommonLitDataset(df=val_df, excerpt=val_df.excerpt.values, tokenizer=tokenizer, max_len=CFG.max_len)
     valid_sampler = torchdata.SequentialSampler(valid_dataset)
 
     valid_dataloader = torch.utils.data.DataLoader(
-        valid_dataset, batch_size=CFG.valid_bs, num_workers=0, pin_memory=True, shuffle=False, sampler=valid_sampler
+        valid_dataset, batch_size=CFG.valid_bs, num_workers=0, pin_memory=True, drop_last=False, sampler=valid_sampler
     )
     
     param_optimizer = list(model.named_parameters())
@@ -413,10 +415,7 @@ for fold in range(5):
     ]
 
     num_train_steps = int(len(trn_df) / CFG.train_bs * CFG.epochs)   
-    # optimizer = torch.optim.Adam(model.parameters(), lr=CFG.LR)
-    optimizer = transformers.AdamW(optimizer_parameters, lr=CFG.LR)
-    # scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, eta_min=1e-5, T_max=CFG.epochs)
-    # scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0=CFG.epochs, T_mult=1)
+    optimizer = transformers.AdamW(optimizer_parameters, lr=CFG.LR, weight_decay=0.01)
     scheduler = transformers.get_cosine_schedule_with_warmup(
             optimizer,
             num_warmup_steps=0,
