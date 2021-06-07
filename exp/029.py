@@ -345,7 +345,7 @@ for fold in range(5):
     else:
         model = RoBERTaLarge(CFG.model_name)    
 
-    tokenizer = RobertaTokenizer.from_pretrained(CFG.model_path)
+    tokenizer = RobertaTokenizer.from_pretrained(CFG.model_name)
     
     train_dataset = CommonLitDataset(df=trn_df, excerpt=trn_df.excerpt.values, tokenizer=tokenizer, max_len=CFG.max_len)
     train_dataloader = torch.utils.data.DataLoader(
