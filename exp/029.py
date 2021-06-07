@@ -375,8 +375,6 @@ for fold in range(5):
 
     model = model.to(device)
 
-    p = 0
-    patience = 4
     min_loss = 999
     best_score = np.inf
 
@@ -399,13 +397,6 @@ for fold in range(5):
             logger.info(f">>>>>>>> Model Improved From {best_score} ----> {valid_avg['RMSE']}")
             torch.save(model.state_dict(), OUTPUT_DIR+f'fold-{fold}.bin')
             best_score = valid_avg['RMSE']
-            p = 0
-        if p > 0: 
-            logger.info(f'best score is not updated while {p} epochs of training')
-        p += 1
-        if p > patience:
-            logger.info(f'Early Stopping')
-            break
 
 
 if len(CFG.folds) == 1:
