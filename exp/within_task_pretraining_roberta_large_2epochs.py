@@ -45,7 +45,7 @@ class TrainConfig:
     config_name= 'roberta-large'
     tokenizer_name= 'roberta-large'
     use_slow_tokenizer= True
-    per_device_train_batch_size= 8
+    per_device_train_batch_size= 4 # 8
     per_device_eval_batch_size= 8
     learning_rate= 5e-5
     weight_decay= 0.0
