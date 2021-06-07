@@ -34,15 +34,15 @@ class CFG:
     ######################
     EXP_ID = '024'
     seed = 71
-    epochs = 8 # 10
+    epochs = 10
     folds = [0, 1, 2, 3, 4]
     N_FOLDS = 5
     LR = 5e-5
-    max_len = 256
+    max_len = 250 # 256
     train_bs = 16
     valid_bs = 32
-    model_name = 'roberta-large'
-    itpt_path = False # 'itpt/roberta_large/'
+    model_name = 'roberta-base'
+    itpt_path = 'itpt/roberta_base/'
 
 
 def set_seed(seed=42):
@@ -75,6 +75,25 @@ def init_logger(log_file='train.log'):
 
 def calc_loss(y_true, y_pred):
     return  np.sqrt(metrics.mean_squared_error(y_true, y_pred))
+
+
+def convert_examples_to_features(data, tokenizer, max_len, is_test=False):
+    data = data.replace('\n', '')
+    tok = tokenizer.encode_plus(
+        data, 
+        max_length=max_len, 
+        truncation=True,
+        return_attention_mask=True,
+        return_token_type_ids=True
+    )
+    curr_sent = {}
+    padding_length = max_len - len(tok['input_ids'])
+    curr_sent['input_ids'] = tok['input_ids'] + ([0] * padding_length)
+    curr_sent['token_type_ids'] = tok['token_type_ids'] + \
+        ([0] * padding_length)
+    curr_sent['attention_mask'] = tok['attention_mask'] + \
+        ([0] * padding_length)
+    return curr_sent
 
 
 def convert_examples_to_head_and_tail_features(data, tokenizer, max_len):
@@ -123,7 +142,7 @@ class CommonLitDataset:
     def __getitem__(self, item):
         text = str(self.excerpt[item])
 
-        inputs = convert_examples_to_head_and_tail_features(text, self.tokenizer, self.max_len)
+        inputs = convert_examples_to_features(text, self.tokenizer, self.max_len)
         # inputs = self.tokenizer(
         #     text, 
         #     max_length=self.max_len, 
@@ -144,15 +163,31 @@ class CommonLitDataset:
         }
 
 
-class RoBERTaLarge(BertPreTrainedModel):
+class RoBERTaBase(nn.Module):
     def __init__(self, model_path, config):
-        config.output_hidden_states = True
-        super(RoBERTaLarge, self).__init__(config)
-        self.in_features = 1024
+        super(RoBERTaBase, self).__init__()
+        self.config = config
+        self.in_features = 768
         self.dropout = nn.Dropout(p=0.3)
         self.roberta = RobertaModel.from_pretrained(model_path, output_hidden_states=True)
-        self.activation = nn.Tanh()
+        self.layer_norm = nn.LayerNorm(self.in_features)
         self.l0 = nn.Linear(self.in_features, 1)
+
+        self._init_weights(self.layer_norm)
+        self._init_weights(self.l0)
+
+    def _init_weights(self, module):
+        if isinstance(module, nn.Linear):
+            module.weight.data.normal_(mean=0.0, std=self.config.initializer_range)
+            if module.bias is not None:
+                module.bias.data.zero_()
+        elif isinstance(module, nn.Embedding):
+            module.weight.data.normal_(mean=0.0, std=self.config.initializer_range)
+            if module.padding_idx is not None:
+                module.weight.data[module.padding_idx].zero_()
+        elif isinstance(module, nn.LayerNorm):
+            module.bias.data.zero_()
+            module.weight.data.fill_(1.0)
 
     def forward(self, ids, mask, token_type_ids):
         roberta_outputs = self.roberta(
@@ -161,10 +196,10 @@ class RoBERTaLarge(BertPreTrainedModel):
             token_type_ids=token_type_ids
         )
 
-        last_4_hidden = torch.mean(roberta_outputs.last_hidden_state[:, -4:, :], 1)
+        sequence_output = roberta_outputs[1]
+        sequence_output = self.layer_norm(sequence_output)
 
-        x = self.activation(last_4_hidden)
-        logits = self.l0(self.dropout(x))
+        logits = self.l0(self.dropout(sequence_output))
 
         return logits.squeeze(-1)
 
@@ -276,10 +311,10 @@ def calc_cv(model_paths):
     models = []
     for model_path in model_paths:
         if CFG.itpt_path:
-            model = RoBERTaLarge(CFG.itpt_path, config)
+            model = RoBERTaBase(CFG.itpt_path, config)
             print('load itpt model')
         else:
-            model = RoBERTaLarge(CFG.model_name, config)
+            model = RoBERTaBase(CFG.model_name, config)
         model.to("cuda")
         model.load_state_dict(torch.load(CFG.model_path))
         model.eval()
@@ -349,21 +384,25 @@ for fold in range(5):
 
     config = RobertaConfig.from_pretrained(CFG.model_name)
     if CFG.itpt_path:    
-        model = RoBERTaLarge(CFG.itpt_path, config)
+        model = RoBERTaBase(CFG.itpt_path, config)
         print('load itpt model')
     else:
-        model = RoBERTaLarge(CFG.model_name, config)
+        model = RoBERTaBase(CFG.model_name, config)
 
     tokenizer = RobertaTokenizer.from_pretrained(CFG.model_name)     
     
     train_dataset = CommonLitDataset(df=trn_df, excerpt=trn_df.excerpt.values, tokenizer=tokenizer, max_len=CFG.max_len)
+    train_sampler = torchdata.RandomSampler(train_dataset)
+
     train_dataloader = torch.utils.data.DataLoader(
-        train_dataset, batch_size=CFG.train_bs, num_workers=0, pin_memory=True, shuffle=True
+        train_dataset, batch_size=CFG.train_bs, num_workers=0, pin_memory=True, shuffle=True, sampler=train_sampler
     )
     
     valid_dataset = CommonLitDataset(df=val_df, excerpt=val_df.excerpt.values, tokenizer=tokenizer, max_len=CFG.max_len)
+    valid_sampler = torchdata.SequentialSampler(valid_dataset)
+
     valid_dataloader = torch.utils.data.DataLoader(
-        valid_dataset, batch_size=CFG.valid_bs, num_workers=0, pin_memory=True, shuffle=False
+        valid_dataset, batch_size=CFG.valid_bs, num_workers=0, pin_memory=True, shuffle=False, sampler=valid_sampler
     )
     
     param_optimizer = list(model.named_parameters())
@@ -376,13 +415,18 @@ for fold in range(5):
     num_train_steps = int(len(trn_df) / CFG.train_bs * CFG.epochs)   
     # optimizer = torch.optim.Adam(model.parameters(), lr=CFG.LR)
     optimizer = transformers.AdamW(optimizer_parameters, lr=CFG.LR)
-    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, eta_min=1e-5, T_max=CFG.epochs)
+    # scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, eta_min=1e-5, T_max=CFG.epochs)
     # scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0=CFG.epochs, T_mult=1)
+    scheduler = transformers.get_cosine_schedule_with_warmup(
+            optimizer,
+            num_warmup_steps=0,
+            num_training_steps=num_train_steps
+    )
 
     model = model.to(device)
 
     p = 0
-    patience = 4 # 3
+    patience = 3
     min_loss = 999
     best_score = np.inf
 
@@ -407,12 +451,12 @@ for fold in range(5):
             torch.save(model.state_dict(), OUTPUT_DIR+f'fold-{fold}.bin')
             best_score = valid_avg['RMSE']
             p = 0
-        if p > 0: 
-            logger.info(f'best score is not updated while {p} epochs of training')
-        p += 1
-        if p > patience:
-            logger.info(f'Early Stopping')
-            break
+        # if p > 0: 
+        #     logger.info(f'best score is not updated while {p} epochs of training')
+        # p += 1
+        # if p > patience:
+        #     logger.info(f'Early Stopping')
+        #     break
 
 
 if len(CFG.folds) == 1:
