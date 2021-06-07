@@ -38,11 +38,11 @@ class CFG:
     folds = [0, 1, 2, 3, 4]
     N_FOLDS = 5
     LR = 5e-5
-    max_len = 256 # 220
+    max_len = 256
     train_bs = 16
     valid_bs = 32
-    model_name = 'roberta-base'
-    itpt_path = 'itpt/roberta_base/'
+    model_name = 'roberta-large'
+    itpt_path = 'itpt/roberta_large/'
 
 
 def set_seed(seed=42):
@@ -79,7 +79,7 @@ def calc_loss(y_true, y_pred):
 
 def convert_examples_to_head_and_tail_features(data, tokenizer, max_len):
     head_len = int(max_len//2)
-    tail_len = head_len - 1
+    tail_len = head_len
     
     data = data.replace('\n', '')
     len_tok = len(tokenizer.tokenize(data))
@@ -97,11 +97,15 @@ def convert_examples_to_head_and_tail_features(data, tokenizer, max_len):
         tail_ids = tok['input_ids'][-tail_len:]
         head_mask = tok['attention_mask'][:head_len]
         tail_mask = tok['attention_mask'][-tail_len:]
-        curr_sent['input_ids'] = head_ids + [1] + tail_ids
-        curr_sent['attention_mask'] = head_mask + [0] + tail_mask
+        head_type_ids = tok['token_type_ids'][:head_len]
+        tail_type_ids = tok['token_type_ids'][-tail_len:]
+        curr_sent['input_ids'] = head_ids + tail_ids
+        curr_sent['token_type_ids'] = head_type_ids + tail_type_ids
+        curr_sent['attention_mask'] = head_mask + tail_mask
     else:
         padding_length = max_len - len(tok['input_ids'])
         curr_sent['input_ids'] = tok['input_ids'] + ([1] * padding_length)
+        curr_sent['token_type_ids'] = tok['token_type_ids'] + ([0] * padding_length)
         curr_sent['attention_mask'] = tok['attention_mask'] + ([0] * padding_length)
     return curr_sent
 
@@ -119,33 +123,25 @@ class CommonLitDataset:
     def __getitem__(self, item):
         text = str(self.excerpt[item])
 
-        # inputs = convert_examples_to_head_and_tail_features(text, self.tokenizer, self.max_len)
-        inputs = self.tokenizer(
-            text, 
-            max_length=self.max_len, 
-            padding="max_length", 
-            truncation=True
-        )
+        inputs = convert_examples_to_head_and_tail_features(text, self.tokenizer, self.max_len)
+        # inputs = self.tokenizer(
+        #     text, 
+        #     max_length=self.max_len, 
+        #     padding="max_length", 
+        #     truncation=True
+        # )
 
         ids = inputs["input_ids"]
         mask = inputs["attention_mask"]
+        token_type_ids = inputs["token_type_ids"]
         targets = self.df["target"].values[item]
 
         return {
             "input_ids": torch.tensor(ids, dtype=torch.long),
             "attention_mask": torch.tensor(mask, dtype=torch.long),
+            "token_type_ids": torch.tensor(token_type_ids, dtype=torch.long),
             "targets" : torch.tensor(targets, dtype=torch.float32),
         }
-
-
-class SpatialDropout(nn.Dropout2d):
-    def forward(self, x):
-        x = x.unsqueeze(2)    # (N, T, 1, K)
-        x = x.permute(0, 3, 2, 1)  # (N, K, 1, T)
-        x = super(SpatialDropout, self).forward(x)  # (N, K, 1, T), some features are masked
-        x = x.permute(0, 3, 2, 1)  # (N, T, 1, K)
-        x = x.squeeze(2)  # (N, T, K)
-        return x
 
 
 class RoBERTaLarge(BertPreTrainedModel):
@@ -153,30 +149,30 @@ class RoBERTaLarge(BertPreTrainedModel):
         config.output_hidden_states = True
         super(RoBERTaLarge, self).__init__(config)
         self.in_features = 1024
-        self.dropout = nn.Dropout(p=0.3)
+        self.dropout = nn.Dropout(p=0.5)
         self.roberta = RobertaModel.from_pretrained(model_path, output_hidden_states=True)
         self.activation = nn.Tanh()
+        self.n_use_layer = 4
 
-        n_weights = config.num_hidden_layers + 1
-        weights_init = torch.zeros(n_weights).float()
-        weights_init.data[:-1] = -3
-        self.layer_weights = torch.nn.Parameter(weights_init)
+        self.dense1 = nn.Linear(self.in_features*self.n_use_layer, self.in_features*self.n_use_layer)
+        self.dense2 = nn.Linear(self.in_features*self.n_use_layer, self.in_features*self.n_use_layer)
+        self.classifier = nn.Linear(self.in_features*self.n_use_layer, 1)
 
-        self.l0 = nn.Linear(self.in_features, 1)
-
-        self.init_weights()
-
-    def forward(self, ids, mask):
+    def forward(self, ids, mask, token_type_ids):
         roberta_outputs = self.roberta(
             ids,
-            attention_mask=mask
+            attention_mask=mask,
+            token_type_ids=token_type_ids
         )
 
-        last_4_hidden = torch.mean(roberta_outputs.last_hidden_state[:, -4:, :], 1)
+        pooled_output = torch.cat([roberta_outputs[2][-1*i][:,0] for i in range(1, self.n_use_layer+1)], dim=1)
+        pooled_output = self.dense1(pooled_output)
+        pooled_output = self.dense2(pooled_output)
+        pooled_output = self.dropout(pooled_output)
+        logits = self.classifier(pooled_output)
 
-        x = self.activation(last_4_hidden)
-        logits = self.l0(self.dropout(x))
-
+        # outputs = (logits,) + roberta_outputs[2:]
+        # return outputs[0].squeeze(-1)
         return logits.squeeze(-1)
 
 
@@ -249,8 +245,9 @@ def train_fn(model, data_loader, device, optimizer, scheduler):
         optimizer.zero_grad()
         inputs = data['input_ids'].to(device)
         masks = data['attention_mask'].to(device)
+        token_type_ids = data["token_type_ids"].to(device)
         targets = data['targets'].to(device)
-        outputs = model(inputs, masks)
+        outputs = model(inputs, masks, token_type_ids)
         loss = loss_fn(outputs, targets)
         loss.backward()
         optimizer.step()
@@ -271,8 +268,9 @@ def valid_fn(model, data_loader, device):
         for data in tk0:
             inputs = data['input_ids'].to(device)
             masks = data['attention_mask'].to(device)
+            token_type_ids = data["token_type_ids"].to(device)
             targets = data['targets'].to(device)
-            outputs = model(inputs, masks)
+            outputs = model(inputs, masks, token_type_ids)
             loss = loss_fn(outputs, targets)
             losses.update(loss.item(), inputs.size(0))
             scores.update(targets, outputs)
