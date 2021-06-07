@@ -153,10 +153,11 @@ class RoBERTaLarge(nn.Module):
         self.activation = nn.Tanh()
         self.l0 = nn.Linear(self.in_features, 1)
 
-    def forward(self, ids, mask):
+    def forward(self, ids, mask, token_type_ids):
         roberta_outputs = self.roberta(
             ids,
-            attention_mask=mask
+            attention_mask=mask,
+            token_type_ids=token_type_ids
         )
         
         # last_hidden_states = roberta_outputs.last_hidden_state[:, 0, :] # torch.Size([1, 1024])
@@ -302,8 +303,9 @@ def calc_cv(model_paths):
             with torch.no_grad():
                 inputs = data['input_ids'].to(device)
                 masks = data['attention_mask'].to(device)
+                token_type_ids = data['token_type_ids'].to(device)
 
-                output = model(inputs, masks)
+                output = model(inputs, masks, token_type_ids)
                 output = output.detach().cpu().numpy().tolist()
                 final_output.extend(output)
         logger.info(calc_loss(np.array(final_output), val_df['target'].values))
