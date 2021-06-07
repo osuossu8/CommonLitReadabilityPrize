@@ -34,7 +34,7 @@ class CFG:
     ######################
     EXP_ID = '024'
     seed = 71
-    epochs = 10
+    epochs = 8 # 10
     folds = [0, 1, 2, 3, 4]
     N_FOLDS = 5
     LR = 5e-5
@@ -318,7 +318,7 @@ def calc_cv(model_paths):
         else:
             model = RoBERTaBase(CFG.model_name, config)
         model.to("cuda")
-        model.load_state_dict(torch.load(CFG.model_path))
+        model.load_state_dict(torch.load(model_path))
         model.eval()
         models.append(model)
     
@@ -340,8 +340,9 @@ def calc_cv(model_paths):
             with torch.no_grad():
                 inputs = data['input_ids'].to(device)
                 masks = data['attention_mask'].to(device)
+                token_type_ids = data['token_type_ids'].to(device)
 
-                output = model(inputs, masks)
+                output = model(inputs, masks, token_type_ids)
                 output = output.detach().cpu().numpy().tolist()
                 final_output.extend(output)
         logger.info(calc_loss(np.array(final_output), val_df['target'].values))
@@ -395,7 +396,7 @@ train = pd.read_csv("inputs/train_folds.csv")
 
 print(train.shape)
 train.head()
-
+"""
 # main loop
 for fold in range(5):
     if fold not in CFG.folds:
@@ -481,7 +482,7 @@ for fold in range(5):
         # if p > patience:
         #     logger.info(f'Early Stopping')
         #     break
-
+"""
 
 if len(CFG.folds) == 1:
     pass
