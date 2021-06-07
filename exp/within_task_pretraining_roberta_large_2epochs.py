@@ -54,7 +54,7 @@ class TrainConfig:
     gradient_accumulation_steps= 1
     lr_scheduler_type= 'linear' # 'constant_with_warmup'
     num_warmup_steps= 0
-    output_dir= 'itpt/roberta_learge_2'
+    output_dir= 'itpt/roberta_large_2'
     seed= 2021
     model_type= 'roberta'
     max_seq_length= None
