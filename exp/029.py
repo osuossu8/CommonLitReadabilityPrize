@@ -269,7 +269,7 @@ def calc_cv(model_paths):
     for p in model_paths:
         if CFG.itpt_path:
             model = RoBERTaLarge(CFG.itpt_path)
-            logging.info('load itpt model')
+            logger.info('load itpt model')
         else:
             model = RoBERTaLarge(CFG.model_name)
         model.to("cuda")
@@ -341,7 +341,7 @@ for fold in range(5):
 
     if CFG.itpt_path:
         model = RoBERTaLarge(CFG.itpt_path)
-        logging.info('load itpt model')
+        logger.info('load itpt model')
     else:
         model = RoBERTaLarge(CFG.model_name)    
 
