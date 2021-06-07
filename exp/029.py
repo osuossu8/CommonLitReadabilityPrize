@@ -267,7 +267,11 @@ def valid_fn(model, data_loader, device):
 def calc_cv(model_paths):
     models = []
     for p in model_paths:
-        model = RoBERTaLarge(CFG.model_name)
+        if CFG.itpt_path:
+            model = RoBERTaLarge(CFG.itpt_path)
+            logging.info('load itpt model')
+        else:
+            model = RoBERTaLarge(CFG.model_name)
         model.to("cuda")
         model.load_state_dict(torch.load(p))
         model.eval()
@@ -334,8 +338,13 @@ for fold in range(5):
 
     trn_df = train[train.kfold != fold].reset_index(drop=True)
     val_df = train[train.kfold == fold].reset_index(drop=True)
-    
-    model = RoBERTaLarge(CFG.model_path)
+
+    if CFG.itpt_path:
+        model = RoBERTaLarge(CFG.itpt_path)
+        logging.info('load itpt model')
+    else:
+        model = RoBERTaLarge(CFG.model_name)    
+
     tokenizer = RobertaTokenizer.from_pretrained(CFG.model_path)
     
     train_dataset = CommonLitDataset(df=trn_df, excerpt=trn_df.excerpt.values, tokenizer=tokenizer, max_len=CFG.max_len)
@@ -366,6 +375,8 @@ for fold in range(5):
 
     model = model.to(device)
 
+    p = 0
+    patience = 4
     min_loss = 999
     best_score = np.inf
 
@@ -388,6 +399,13 @@ for fold in range(5):
             logger.info(f">>>>>>>> Model Improved From {best_score} ----> {valid_avg['RMSE']}")
             torch.save(model.state_dict(), OUTPUT_DIR+f'fold-{fold}.bin')
             best_score = valid_avg['RMSE']
+            p = 0
+        if p > 0: 
+            logger.info(f'best score is not updated while {p} epochs of training')
+        p += 1
+        if p > patience:
+            logger.info(f'Early Stopping')
+            break
 
 
 if len(CFG.folds) == 1:
