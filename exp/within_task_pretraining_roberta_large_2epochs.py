@@ -52,7 +52,7 @@ class TrainConfig:
     num_train_epochs= 2 # 1 # change to 5
     max_train_steps= None
     gradient_accumulation_steps= 1
-    lr_scheduler_type= 'get_linear_schedule_with_warmup' # 'constant_with_warmup'
+    lr_scheduler_type= 'linear' # 'constant_with_warmup'
     num_warmup_steps= 0
     output_dir= 'itpt/roberta_learge_2'
     seed= 2021
