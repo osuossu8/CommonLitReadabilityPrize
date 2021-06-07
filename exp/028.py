@@ -37,10 +37,10 @@ class CFG:
     epochs = 10
     folds = [0, 1, 2, 3, 4]
     N_FOLDS = 5
-    # LR = 3e-5
-    LR = 7e-5 # 5e-5
+    LR = 5e-5
     train_bs = 8 * 2
     valid_bs = 16 * 2
+    log_interval = 20
 
 
 def set_seed(seed=42):
@@ -132,7 +132,7 @@ class RoBERTaLarge(nn.Module):
     def __init__(self, model_path):
         super(RoBERTaLarge, self).__init__()
         self.in_features = 1024
-        self.dropout = nn.Dropout(0.1)
+        self.dropout = nn.Dropout(0.3)
         self.roberta = RobertaModel.from_pretrained(model_path)
         self.activation = nn.Tanh()
         self.l0 = nn.Linear(self.in_features, 1)
@@ -143,7 +143,7 @@ class RoBERTaLarge(nn.Module):
             attention_mask=mask
         )
         
-        last_n_hidden = torch.mean(roberta_outputs.last_hidden_state[:, -8:, :], 1)
+        last_n_hidden = torch.mean(roberta_outputs.last_hidden_state[:, -4:, :], 1)
 
         x = self.activation(last_n_hidden)
         logits = self.l0(self.dropout(x))
@@ -209,13 +209,13 @@ def loss_fn(logits, targets):
     return loss
         
         
-def train_fn(model, data_loader, device, optimizer, scheduler):
+def train_fn(epoch, model, train_data_loader, valid_data_loader, device, optimizer, scheduler, best_score):
     model.train()
     losses = AverageMeter()
     scores = MetricMeter()
-    tk0 = tqdm(data_loader, total=len(data_loader))
+    tk0 = tqdm(train_data_loader, total=len(train_data_loader))
     
-    for data in tk0:
+    for batch_idx, data in enumerate(tk0):
         optimizer.zero_grad()
         inputs = data['input_ids'].to(device)
         masks = data['attention_mask'].to(device)
@@ -228,7 +228,18 @@ def train_fn(model, data_loader, device, optimizer, scheduler):
         losses.update(loss.item(), inputs.size(0))
         scores.update(targets, outputs)
         tk0.set_postfix(loss=losses.avg)
-    return scores.avg, losses.avg
+
+        if batch_idx % CFG.log_interval == 0:
+            valid_avg, valid_loss = valid_fn(model, data_loader, device)
+
+            logger.info(f"Epoch {epoch+1}, Step {batch_idx} - valid_rmse:{valid_avg['RMSE']:0.5f}")
+
+            if valid_avg['RMSE'] < best_score:
+                logger.info(f">>>>>>>> Model Improved From {best_score} ----> {valid_avg['RMSE']}")
+                torch.save(model.state_dict(), OUTPUT_DIR+f'fold-{fold}.bin')
+                best_score = valid_avg['RMSE']
+
+    return scores.avg, losses.avg, valid_avg, valid_loss, best_score
 
 
 def valid_fn(model, data_loader, device):
@@ -366,9 +377,9 @@ for fold in range(5):
 
         start_time = time.time()
 
-        train_avg, train_loss = train_fn(model, train_dataloader, device, optimizer, scheduler)
+        train_avg, train_loss, valid_avg, valid_loss, best_score = train_fn(epoch, model, train_dataloader, valid_dataloader, device, optimizer, scheduler, best_score)
 
-        valid_avg, valid_loss = valid_fn(model, valid_dataloader, device)
+        # valid_avg, valid_loss = valid_fn(model, valid_dataloader, device)
         scheduler.step()
         
         elapsed = time.time() - start_time
