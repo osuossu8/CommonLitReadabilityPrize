@@ -34,15 +34,16 @@ class CFG:
     ######################
     EXP_ID = '027'
     seed = 71
-    epochs = 10
+    epochs = 2 # 10
     folds = [0, 1, 2, 3, 4]
     N_FOLDS = 5
-    LR = 5e-5
+    LR = 7e-5 # 5e-5
     max_len = 256
     train_bs = 16
     valid_bs = 32
     model_name = 'roberta-large'
     itpt_path = 'itpt/roberta_large_2/'
+    bpe_path = 'inputs/roberta_large'
 
 
 def set_seed(seed=42):
@@ -110,6 +111,14 @@ def convert_examples_to_head_and_tail_features(data, tokenizer, max_len):
     return curr_sent
 
 
+TOKENIZER = tokenizers.ByteLevelBPETokenizer(
+    vocab_file=f"{CFG.bpe_path}/vocab.json",
+    merges_file=f"{CFG.bpe_path}/merges.txt", 
+    lowercase=True,
+    add_prefix_space=True
+)
+
+
 class CommonLitDataset:
     def __init__(self, df, excerpt, tokenizer, max_len):
         self.excerpt = excerpt
@@ -123,7 +132,7 @@ class CommonLitDataset:
     def __getitem__(self, item):
         text = str(self.excerpt[item])
 
-        inputs = convert_examples_to_head_and_tail_features(text, self.tokenizer, self.max_len)
+        # inputs = convert_examples_to_head_and_tail_features(text, self.tokenizer, self.max_len)
         # inputs = self.tokenizer(
         #     text, 
         #     max_length=self.max_len, 
@@ -131,9 +140,17 @@ class CommonLitDataset:
         #     truncation=True
         # )
 
-        ids = inputs["input_ids"]
-        mask = inputs["attention_mask"]
-        token_type_ids = inputs["token_type_ids"]
+        tok_text = TOKENIZER.encode(text)
+        input_ids = tok_text.ids
+
+        padding_length = self.max_len - len(input_ids)
+        ids = input_ids + ([1] * padding_length)
+        token_type_ids = [1] * len(input_ids) + ([0] * padding_length)
+        mask = [1] * len(token_type_ids)
+
+        # ids = inputs["input_ids"]
+        # mask = inputs["attention_mask"]
+        # token_type_ids = inputs["token_type_ids"]
         targets = self.df["target"].values[item]
 
         return {
@@ -148,7 +165,8 @@ class RoBERTaLarge(nn.Module):
     def __init__(self, model_path):
         super(RoBERTaLarge, self).__init__()
         self.in_features = 1024
-        self.dropout = nn.Dropout(0.3)
+        # self.dropout = nn.Dropout(0.3)
+        self.dropout = nn.Dropout(0.1)
         self.roberta = RobertaModel.from_pretrained(model_path)
         self.activation = nn.Tanh()
         self.l0 = nn.Linear(self.in_features, 1)
@@ -163,6 +181,7 @@ class RoBERTaLarge(nn.Module):
         # last_hidden_states = roberta_outputs.last_hidden_state[:, 0, :] # torch.Size([1, 1024])
         # pooler_output = roberta_outputs.pooler_output # torch.Size([1, 1024])
 
+        # last_4_hidden = torch.mean(roberta_outputs.last_hidden_state[:, -4:, :], 1)
         last_4_hidden = torch.mean(roberta_outputs.last_hidden_state[:, -4:, :], 1)
 
         x = self.activation(last_4_hidden)
@@ -387,8 +406,6 @@ for fold in range(5):
 
     model = model.to(device)
 
-    p = 0
-    patience = 3
     min_loss = 999
     best_score = np.inf
 
@@ -412,13 +429,6 @@ for fold in range(5):
             logger.info(f">>>>>>>> Model Improved From {best_score} ----> {valid_avg['RMSE']}")
             torch.save(model.state_dict(), OUTPUT_DIR+f'fold-{fold}.bin')
             best_score = valid_avg['RMSE']
-            p = 0
-        # if p > 0: 
-        #     logger.info(f'best score is not updated while {p} epochs of training')
-        # p += 1
-        # if p > patience:
-        #     logger.info(f'Early Stopping')
-        #     break
 
 
 if len(CFG.folds) == 1:
