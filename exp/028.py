@@ -230,7 +230,7 @@ def train_fn(epoch, model, train_data_loader, valid_data_loader, device, optimiz
         tk0.set_postfix(loss=losses.avg)
 
         if batch_idx % CFG.log_interval == 0:
-            valid_avg, valid_loss = valid_fn(model, data_loader, device)
+            valid_avg, valid_loss = valid_fn(model, valid_data_loader, device)
 
             logger.info(f"Epoch {epoch+1}, Step {batch_idx} - valid_rmse:{valid_avg['RMSE']:0.5f}")
 
