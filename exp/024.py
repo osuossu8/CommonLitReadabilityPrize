@@ -201,7 +201,10 @@ class RoBERTaBase(nn.Module):
 
         logits = self.l0(self.dropout(sequence_output))
 
-        logits = logits + roberta_outputs[1]
+        print(logits.shape)
+        print(roberta_outputs[1][0, :].shape)
+
+        logits = logits + roberta_outputs[1][:, 0]
 
         return logits.squeeze(-1)
 
