@@ -80,7 +80,7 @@ def calc_loss(y_true, y_pred):
 
 def convert_examples_to_head_and_tail_features(data, tokenizer, max_len):
     head_len = int(max_len//2)
-    tail_len = head_len
+    tail_len = head_len - 1
     
     data = data.replace('\n', '')
     len_tok = len(tokenizer.tokenize(data))
@@ -98,8 +98,8 @@ def convert_examples_to_head_and_tail_features(data, tokenizer, max_len):
         tail_ids = tok['input_ids'][-tail_len:]
         head_mask = tok['attention_mask'][:head_len]
         tail_mask = tok['attention_mask'][-tail_len:]
-        curr_sent['input_ids'] = head_ids + tail_ids
-        curr_sent['attention_mask'] = head_mask + tail_mask
+        curr_sent['input_ids'] = head_ids + [2] + tail_ids
+        curr_sent['attention_mask'] = head_mask + [1] + tail_mask
     else:
         padding_length = max_len - len(tok['input_ids'])
         curr_sent['input_ids'] = tok['input_ids'] + ([1] * padding_length)
@@ -119,14 +119,14 @@ class CommonLitDataset:
 
     def __getitem__(self, item):
         text = str(self.excerpt[item])
-        inputs = self.tokenizer(
-            text, 
-            max_length=self.max_len, 
-            padding="max_length", 
-            truncation=True
-        )
+        # inputs = self.tokenizer(
+        #     text, 
+        #     max_length=self.max_len, 
+        #     padding="max_length", 
+        #     truncation=True
+        # )
 
-        # inputs = convert_examples_to_head_and_tail_features(text, tokenizer, self.max_len)
+        inputs = convert_examples_to_head_and_tail_features(text, tokenizer, self.max_len)
 
         ids = inputs["input_ids"]
         mask = inputs["attention_mask"]
@@ -145,8 +145,7 @@ class RoBERTaLarge(nn.Module):
         self.in_features = 1024
         self.dropout = nn.Dropout(0.3)
         self.roberta = RobertaModel.from_pretrained(model_path)
-
-        self.layer_norm = nn.LayerNorm(self.in_features)
+        self.activation = nn.Tanh()
         self.l0 = nn.Linear(self.in_features, 1)
 
     def forward(self, ids, mask):
@@ -154,10 +153,10 @@ class RoBERTaLarge(nn.Module):
             ids,
             attention_mask=mask
         )
+        
+        last_n_hidden = torch.mean(roberta_outputs.last_hidden_state[:, -4:, :], 1)
 
-        sequence_output = roberta_outputs[1]
-        x = self.layer_norm(sequence_output)       
-
+        x = self.activation(last_n_hidden)
         logits = self.l0(self.dropout(x))
         return logits.squeeze(-1)
 
