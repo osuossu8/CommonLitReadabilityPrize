@@ -34,16 +34,16 @@ class CFG:
     ######################
     EXP_ID = '033'
     seed = 71
-    epochs = 7 # 10
+    epochs = 8 # 10
     folds = [0, 1, 2, 3, 4]
     N_FOLDS = 5
     LR = 5e-5
     max_len = 256
     train_bs = 8 * 2
     valid_bs = 16 * 2
-    log_interval = 10
+    log_interval = 10 # 20
     model_name = 'roberta-large'
-    itpt_path = 'itpt/roberta_large/' # 'itpt/roberta_large_2/'
+    itpt_path = 'itpt/roberta_large_2/'
 
 
 def set_seed(seed=42):
@@ -168,8 +168,12 @@ class RoBERTaLarge(nn.Module):
         self.in_features = 1024
         self.dropout = nn.Dropout(0.3)
         self.roberta = RobertaModel.from_pretrained(model_path)
+
+        self.lstm1 = nn.LSTM(self.in_features, 4, bidirectional=True, batch_first=True)
+        self.lstm2 = nn.LSTM(4 * 2, self.in_features, bidirectional=True, batch_first=True)
+
         self.activation = nn.Tanh()
-        self.l0 = nn.Linear(self.in_features, 1)
+        self.l0 = nn.Linear(self.in_features * 2, 1)
 
     def forward(self, ids, mask):
         roberta_outputs = self.roberta(
@@ -177,9 +181,14 @@ class RoBERTaLarge(nn.Module):
             attention_mask=mask
         )
         
-        last_n_hidden = torch.mean(roberta_outputs.last_hidden_state[:, -4:, :], 1)
+        # last_n_hidden = torch.mean(roberta_outputs.last_hidden_state[:, -4:, :], 1)
+        last_n_hidden = roberta_outputs.last_hidden_state[:, -4:, :] # bs, 4, 1024
 
-        x = self.activation(last_n_hidden)
+        h_lstm1, _ = self.lstm1(last_n_hidden) # bs, 4, 8
+        h_lstm2, _ = self.lstm2(h_lstm1) # bs, 4, 2048
+        avg_pool = torch.mean(h_lstm2, 1) # bs, 2048
+
+        x = self.activation(avg_pool)
         logits = self.l0(self.dropout(x))
         return logits.squeeze(-1)
 
