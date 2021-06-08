@@ -34,10 +34,10 @@ class CFG:
     ######################
     EXP_ID = '033'
     seed = 71
-    epochs = 8 # 10
+    epochs = 10
     folds = [0, 1, 2, 3, 4]
     N_FOLDS = 5
-    LR = 7e-5 # 5e-5
+    LR = 5e-5
     max_len = 256
     train_bs = 8 * 2
     valid_bs = 16 * 2
@@ -139,29 +139,6 @@ class CommonLitDataset:
         }
 
 
-class AttentionBlock(nn.Module):
-  def __init__(self, in_features, middle_features, out_features):
-    super().__init__()
-    self.in_features = in_features
-    self.middle_features = middle_features
-    self.out_features = out_features
-
-    self.W = nn.Linear(in_features, middle_features)
-    self.V = nn.Linear(middle_features, out_features)
-
-  def forward(self, features):
-    att = torch.tanh(self.W(features))
-
-    score = self.V(att)
-
-    attention_weights = torch.softmax(score, dim=1)
-
-    context_vector = attention_weights * features
-    context_vector = torch.sum(context_vector, dim=1)
-
-    return context_vector
-
-
 class RoBERTaLarge(nn.Module):
     def __init__(self, model_path):
         super(RoBERTaLarge, self).__init__()
@@ -169,7 +146,7 @@ class RoBERTaLarge(nn.Module):
         self.dropout = nn.Dropout(0.3)
         self.roberta = RobertaModel.from_pretrained(model_path)
 
-        self.activation = nn.Tanh()
+        self.layer_norm = nn.LayerNorm(self.in_features)
         self.l0 = nn.Linear(self.in_features, 1)
 
     def forward(self, ids, mask):
@@ -177,10 +154,10 @@ class RoBERTaLarge(nn.Module):
             ids,
             attention_mask=mask
         )
-        
-        last_n_hidden = torch.mean(roberta_outputs.last_hidden_state[:, -2:, :], 1)
 
-        x = self.activation(last_n_hidden)
+        sequence_output = roberta_outputs[1]
+        x = self.layer_norm(sequence_output)       
+
         logits = self.l0(self.dropout(x))
         return logits.squeeze(-1)
 
@@ -411,6 +388,9 @@ for fold in range(5):
     best_score = np.inf
 
     for epoch in range(CFG.epochs):
+        if (epoch+1) == 9:
+            # CFG.epochs = 10 is good for lr_scheduling, but no socre improvement at epoch 9, 10
+            break
 
         logger.info("Starting {} epoch...".format(epoch+1))
 
