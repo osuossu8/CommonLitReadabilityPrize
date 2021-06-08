@@ -43,7 +43,7 @@ class CFG:
     valid_bs = 16 * 2
     log_interval = 10 # 20
     model_name = 'roberta-large'
-    itpt_path = 'itpt/roberta_large_2/'
+    itpt_path = 'itpt/roberta_large_squad_2/'
 
 
 def set_seed(seed=42):
@@ -119,14 +119,14 @@ class CommonLitDataset:
 
     def __getitem__(self, item):
         text = str(self.excerpt[item])
-        # inputs = self.tokenizer(
-        #     text, 
-        #     max_length=self.max_len, 
-        #     padding="max_length", 
-        #     truncation=True
-        # )
+        inputs = self.tokenizer(
+            text, 
+            max_length=self.max_len, 
+            padding="max_length", 
+            truncation=True
+        )
 
-        inputs = convert_examples_to_head_and_tail_features(text, tokenizer, self.max_len)
+        # inputs = convert_examples_to_head_and_tail_features(text, tokenizer, self.max_len)
 
         ids = inputs["input_ids"]
         mask = inputs["attention_mask"]
