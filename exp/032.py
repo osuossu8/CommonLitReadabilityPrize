@@ -32,7 +32,7 @@ class CFG:
     ######################
     # Globals #
     ######################
-    EXP_ID = '031'
+    EXP_ID = '032'
     seed = 71
     epochs = 10
     folds = [0, 1, 2, 3, 4]
@@ -41,9 +41,9 @@ class CFG:
     max_len = 256
     train_bs = 8 * 2
     valid_bs = 16 * 2
-    log_interval = 20
+    log_interval = 10 # 20
     model_name = 'roberta-large'
-    itpt_path = False # 'itpt/roberta_large_2/'
+    itpt_path = 'itpt/roberta_large_2/'
 
 
 def set_seed(seed=42):
