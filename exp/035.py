@@ -134,15 +134,15 @@ class CommonLitDataset:
         # inputs = convert_examples_to_head_and_tail_features(text, tokenizer, self.max_len)
 
         ids = inputs["input_ids"]
-        # mask = inputs["attention_mask"]
+        mask = inputs["attention_mask"]
 
-        mask = []
+        tfidf = []
         for i in ids:
             m = tokenizer.decode([i]).replace(' ', '').lower()
             try:
-                mask.append(tmp_tfidf_dic[m] > 0.05)
+                tfidf.append(tmp_tfidf_dic[m])
             except:
-                mask.append(0)
+                tfidf.append(0)
 
 
         targets = self.df["target"].values[item]
@@ -151,6 +151,7 @@ class CommonLitDataset:
             "input_ids": torch.tensor(ids, dtype=torch.long),
             "attention_mask": torch.tensor(mask, dtype=torch.long),
             "targets" : torch.tensor(targets, dtype=torch.float32),
+            "tfidf" : torch.tensor(tfidf, dtype=torch.float32),
         }
 
 
@@ -184,9 +185,10 @@ class RoBERTaLarge(nn.Module):
         self.dropout = nn.Dropout(0.3)
         self.roberta = RobertaModel.from_pretrained(model_path)
         self.activation = nn.Tanh()
-        self.l0 = nn.Linear(self.in_features, 1)
+        self.l0 = nn.Linear(self.in_features, 256)
+        self.last_linear = nn.Linear(16, 1)
 
-    def forward(self, ids, mask):
+    def forward(self, ids, mask, tfidf):
         roberta_outputs = self.roberta(
             ids,
             attention_mask=mask
@@ -195,7 +197,8 @@ class RoBERTaLarge(nn.Module):
         last_n_hidden = torch.mean(roberta_outputs.last_hidden_state[:, -4:, :], 1)
 
         x = self.activation(last_n_hidden)
-        logits = self.l0(self.dropout(x))
+        logits = self.l0(self.dropout(x)) * tfidf.T # (bs, 256) * (256, bs)
+        logits = self.last_linear(logits)
         return logits.squeeze(-1)
 
 
@@ -269,7 +272,8 @@ def train_fn(epoch, model, train_data_loader, valid_data_loader, device, optimiz
         inputs = data['input_ids'].to(device)
         masks = data['attention_mask'].to(device)
         targets = data['targets'].to(device)
-        outputs = model(inputs, masks)
+        tfidf = data['tfidf'].to(device)
+        outputs = model(inputs, masks, tfidf)
         loss = loss_fn(outputs, targets)
         loss.backward()
         optimizer.step()
@@ -302,7 +306,8 @@ def valid_fn(model, data_loader, device):
             inputs = data['input_ids'].to(device)
             masks = data['attention_mask'].to(device)
             targets = data['targets'].to(device)
-            outputs = model(inputs, masks)
+            tfidf = data['tfidf'].to(device)
+            outputs = model(inputs, masks, tfidf)
             loss = loss_fn(outputs, targets)
             losses.update(loss.item(), inputs.size(0))
             scores.update(targets, outputs)
