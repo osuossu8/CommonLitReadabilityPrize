@@ -139,32 +139,6 @@ class CommonLitDataset:
         }
 
 
-from torch.autograd import Variable
-from torch.nn.parameter import Parameter
-
-
-class Flatten(nn.Module):
-    def forward(self, input):
-        return input.view(input.size(0), -1)
-
-
-def gem(x, p=3, eps=1e-6):
-    return F.avg_pool2d(x.clamp(min=eps).pow(p), (x.size(-2), x.size(-1))).pow(1./p)
-
-
-class GeM(nn.Module):
-    def __init__(self, p=3, eps=1e-6):
-        super(GeM,self).__init__()
-        self.p = Parameter(torch.ones(1)*p)
-        self.eps = eps
-
-    def forward(self, x):
-        return gem(x, p=self.p, eps=self.eps)
-
-    def __repr__(self):
-        return self.__class__.__name__ + '(' + 'p=' + '{:.4f}'.format(self.p.data.tolist()[0]) + ', ' + 'eps=' + str(self.eps) + ')'
-
-
 class RoBERTaLarge(nn.Module):
     def __init__(self, model_path):
         super(RoBERTaLarge, self).__init__()
@@ -172,9 +146,8 @@ class RoBERTaLarge(nn.Module):
         self.dropout = nn.Dropout(0.3)
         self.roberta = RobertaModel.from_pretrained(model_path)
         self.conv1d = nn.Conv1d(self.in_features, self.in_features//4, 1, stride=1, padding=0, dilation=1, groups=1, bias=True, padding_mode='zeros')
-        self.flatten = Flatten()
         self.activation = nn.Tanh()
-        self.l0 = nn.Linear(self.in_features, 1)
+        self.l0 = nn.Linear(self.in_features//4, 1)
 
     def forward(self, ids, mask):
         roberta_outputs = self.roberta(
@@ -186,9 +159,10 @@ class RoBERTaLarge(nn.Module):
         last_n_hidden = roberta_outputs.last_hidden_state[:, -4:, :].transpose(1, 2) # bs, 1024, 4
 
         last_n_hidden = self.conv1d(last_n_hidden).transpose(1, 2) # bs, 4, 256
-        last_n_hidden = last_n_hidden.reshape(-1, 4 * 256) # bs, 4 * 256
-        x = self.activation(last_n_hidden)
-        logits = self.l0(self.dropout(x))
+        x = torch.mean(last_n_hidden, 1)
+        # x = self.activation(x) 
+        logits = self.l0(x)
+        # logits = self.l0(self.dropout(x))
         return logits.squeeze(-1)
 
 
