@@ -145,20 +145,18 @@ class RoBERTaLarge(nn.Module):
         self.in_features = 1024
         self.dropout = nn.Dropout(0.3)
         self.roberta = RobertaModel.from_pretrained(model_path)
-        self.conv1d = nn.Conv1d(self.in_features, self.in_features//4, 1, stride=1, padding=0, dilation=1, groups=1, bias=True, padding_mode='zeros')
-        self.activation = nn.Tanh()
-        self.l0 = nn.Linear(24, 1)
+        self.conv1d = nn.Conv1d(self.in_features, 512, 3, stride=1, padding=0, dilation=1, groups=1, bias=True, padding_mode='zeros')
+        self.l0 = nn.Linear(512, 1)
 
     def forward(self, ids, mask):
         roberta_outputs = self.roberta(
             ids,
             attention_mask=mask
         )
-        
-        last_n_hidden = roberta_outputs.last_hidden_state.transpose(1, 2) # bs, 1024, 24
 
-        last_n_hidden = self.conv1d(last_n_hidden) # bs, 256, 24
-        x = torch.mean(last_n_hidden, 1).view(-1, 24) # bs, 1, 24
+        last_n_hidden = roberta_outputs.last_hidden_state[:, -4:, :].transpose(1, 2) # bs, 1024, 4
+        last_n_hidden = self.conv1d(last_n_hidden).transpose(1, 2) # bs, 2, 512
+        x = torch.mean(last_n_hidden, 1)
         logits = self.l0(x)
         return logits.squeeze(-1)
 
@@ -259,7 +257,7 @@ def valid_fn(model, data_loader, device):
     model.eval()
     losses = AverageMeter()
     scores = MetricMeter()
-    len_loader = len(data_loader)
+    # len_loader = len(data_loader) - 1
     tk0 = tqdm(data_loader, total=len(data_loader))
 
     with torch.no_grad():
