@@ -122,8 +122,6 @@ class CommonLitDataset:
     def __getitem__(self, item):
         text = str(self.excerpt[item])
 
-        tmp_tfidf_dic = self.tfidf_df.loc[item].to_dict()
-
         inputs = self.tokenizer(
             text, 
             max_length=self.max_len, 
@@ -135,15 +133,7 @@ class CommonLitDataset:
 
         ids = inputs["input_ids"]
         mask = inputs["attention_mask"]
-
-        tfidf = []
-        for i in ids:
-            m = tokenizer.decode([i]).replace(' ', '').lower()
-            try:
-                tfidf.append(tmp_tfidf_dic[m])
-            except:
-                tfidf.append(0)
-
+        tfidf = self.tfidf_df.values[item]
 
         targets = self.df["target"].values[item]
 
@@ -324,8 +314,9 @@ def calc_cv(model_paths):
             with torch.no_grad():
                 inputs = data['input_ids'].to(device)
                 masks = data['attention_mask'].to(device)
+                tfidf = data['tfidf'].to(device)
 
-                output = model(inputs, masks)
+                output = model(inputs, masks, tfidf)
                 output = output.detach().cpu().numpy().tolist()
                 final_output.extend(output)
         logger.info(calc_loss(np.array(final_output), val_df['target'].values))
