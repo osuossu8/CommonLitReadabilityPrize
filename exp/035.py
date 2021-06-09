@@ -177,12 +177,12 @@ class RoBERTaLarge(nn.Module):
         )
 
     def forward(self, ids, mask):
-        _, _, hidden_states = self.roberta(
+        roberta_outputs = self.roberta(
             ids,
             attention_mask=mask
         )
-        
-        hidden_states_cls_embeddings = [x[:, 0] for x in hidden_states[-4:]]
+
+        hidden_states_cls_embeddings = [x[:, 0] for x in roberta_outputs.hidden_states[-4:]]
         x = torch.cat(hidden_states_cls_embeddings, dim=-1)
         logits = self.cls_token_head(x)
         return logits.squeeze(-1)
