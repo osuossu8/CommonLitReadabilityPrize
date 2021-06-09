@@ -154,7 +154,7 @@ class RoBERTaLarge(nn.Module):
         self.activation = nn.Tanh()
         self.l0 = nn.Linear(self.in_features, 64)
         self.l1 = nn.Linear(128, 64)
-        self.dropout1(0.1)
+        self.dropout1 = nn.Dropout(0.1)
         self.last_linear = nn.Linear(64, 1)
 
     def forward(self, ids, mask, tfidf):
