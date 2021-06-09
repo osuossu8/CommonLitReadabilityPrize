@@ -163,7 +163,6 @@ class RoBERTaLarge(nn.Module):
         self.roberta = RobertaModel.from_pretrained(model_path)
         self.activation = nn.Tanh()
         self.l0 = nn.Linear(self.in_features, 128)
-        self.l1 = nn.Linear(256, 128)
         self.last_linear = nn.Linear(128, 1)
 
     def forward(self, ids, mask, tfidf):
@@ -175,7 +174,8 @@ class RoBERTaLarge(nn.Module):
         last_n_hidden = torch.mean(roberta_outputs.last_hidden_state[:, -4:, :], 1)
 
         x = self.activation(last_n_hidden)
-        logits = self.l0(self.dropout(x)) + tfidf # bs, 128
+        logits = self.l0(self.dropout(x))
+        logits = logits + tfidf # bs, 128
         logits = self.last_linear(logits)
         return logits.squeeze(-1)
 
@@ -443,10 +443,10 @@ class TextPreprocessor(object):
 
     def preprocess(self, sentence):
         sentence = sentence.fillna(" ")
-        sentence = sentence.progress_apply(lambda x: self._pre_preprocess(x))
-        sentence = sentence.progress_apply(lambda x: self.clean_puncts(x))
-        sentence = sentence.progress_apply(lambda x: self.clean_stopwords(x))
-        sentence = sentence.progress_apply(lambda x: self.rm_num(x))
+        sentence = sentence.map(lambda x: self._pre_preprocess(x))
+        sentence = sentence.map(lambda x: self.clean_puncts(x))
+        sentence = sentence.map(lambda x: self.clean_stopwords(x))
+        sentence = sentence.map(lambda x: self.rm_num(x))
         return sentence
 
        
