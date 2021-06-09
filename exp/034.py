@@ -185,8 +185,9 @@ class RoBERTaLarge(nn.Module):
         self.dropout = nn.Dropout(0.3)
         self.roberta = RobertaModel.from_pretrained(model_path)
         self.activation = nn.Tanh()
-        self.l0 = nn.Linear(self.in_features, 256)
-        self.last_linear = nn.Linear(256, 1)
+        self.l0 = nn.Linear(self.in_features, 128)
+        self.l1 = nn.Linear(256, 128)
+        self.last_linear = nn.Linear(128, 1)
 
     def forward(self, ids, mask, tfidf):
         roberta_outputs = self.roberta(
@@ -197,8 +198,7 @@ class RoBERTaLarge(nn.Module):
         last_n_hidden = torch.mean(roberta_outputs.last_hidden_state[:, -4:, :], 1)
 
         x = self.activation(last_n_hidden)
-        x = self.l0(self.dropout(x))
-        logits = x + tfidf # bs, 256
+        logits = self.l0(self.dropout(x)) + self.l1(tfidf) # bs, 128
         logits = self.last_linear(logits)
         return logits.squeeze(-1)
 
