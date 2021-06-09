@@ -21,7 +21,6 @@ from typing import List
 
 from sklearn import model_selection
 from sklearn import metrics
-from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 
 from tqdm import tqdm
 from transformers import RobertaConfig, RobertaModel, RobertaTokenizer
@@ -109,21 +108,17 @@ def convert_examples_to_head_and_tail_features(data, tokenizer, max_len):
 
 
 class CommonLitDataset:
-    def __init__(self, df, excerpt, tokenizer, max_len, tfidf):
+    def __init__(self, df, excerpt, tokenizer, max_len):
         self.excerpt = excerpt
         self.tokenizer = tokenizer
         self.max_len = max_len
         self.df = df
-        self.tfidf_df = tfidf
 
     def __len__(self):
         return len(self.excerpt)
 
     def __getitem__(self, item):
         text = str(self.excerpt[item])
-
-        tmp_tfidf_dic = self.tfidf_df.loc[item].to_dict()
-
         inputs = self.tokenizer(
             text, 
             max_length=self.max_len, 
@@ -135,23 +130,12 @@ class CommonLitDataset:
 
         ids = inputs["input_ids"]
         mask = inputs["attention_mask"]
-
-        tfidf = []
-        for i in ids:
-            m = tokenizer.decode([i]).replace(' ', '').lower()
-            try:
-                tfidf.append(tmp_tfidf_dic[m])
-            except:
-                tfidf.append(0)
-
-
         targets = self.df["target"].values[item]
 
         return {
             "input_ids": torch.tensor(ids, dtype=torch.long),
             "attention_mask": torch.tensor(mask, dtype=torch.long),
             "targets" : torch.tensor(targets, dtype=torch.float32),
-            "tfidf" : torch.tensor(tfidf, dtype=torch.float32),
         }
 
 
@@ -182,24 +166,25 @@ class RoBERTaLarge(nn.Module):
     def __init__(self, model_path):
         super(RoBERTaLarge, self).__init__()
         self.in_features = 1024
-        self.dropout = nn.Dropout(0.3)
-        self.roberta = RobertaModel.from_pretrained(model_path)
-        self.activation = nn.Tanh()
-        self.l0 = nn.Linear(self.in_features, 256)
-        self.last_linear = nn.Linear(256, 1)
+        self.roberta = RobertaModel.from_pretrained(model_path, output_hidden_states=True)
 
-    def forward(self, ids, mask, tfidf):
-        roberta_outputs = self.roberta(
+        self.cls_token_head = nn.Sequential(
+            nn.Dropout(0.1),
+            nn.Linear(self.in_features * 4, self.in_features),
+            nn.ReLU(inplace=True),
+            nn.Dropout(0.1),
+            nn.Linear(self.in_features, 1)
+        )
+
+    def forward(self, ids, mask):
+        _, _, hidden_states = self.roberta(
             ids,
             attention_mask=mask
         )
         
-        last_n_hidden = torch.mean(roberta_outputs.last_hidden_state[:, -4:, :], 1)
-
-        x = self.activation(last_n_hidden)
-        logits = self.l0(self.dropout(x))
-        logits = logits * tfidf
-        logits = self.last_linear(logits)
+        hidden_states_cls_embeddings = [x[:, 0] for x in hidden_states[-4:]]
+        x = torch.cat(hidden_states_cls_embeddings, dim=-1)
+        logits = self.cls_token_head(x)
         return logits.squeeze(-1)
 
 
@@ -273,8 +258,7 @@ def train_fn(epoch, model, train_data_loader, valid_data_loader, device, optimiz
         inputs = data['input_ids'].to(device)
         masks = data['attention_mask'].to(device)
         targets = data['targets'].to(device)
-        tfidf = data['tfidf'].to(device)
-        outputs = model(inputs, masks, tfidf)
+        outputs = model(inputs, masks)
         loss = loss_fn(outputs, targets)
         loss.backward()
         optimizer.step()
@@ -307,8 +291,7 @@ def valid_fn(model, data_loader, device):
             inputs = data['input_ids'].to(device)
             masks = data['attention_mask'].to(device)
             targets = data['targets'].to(device)
-            tfidf = data['tfidf'].to(device)
-            outputs = model(inputs, masks, tfidf)
+            outputs = model(inputs, masks)
             loss = loss_fn(outputs, targets)
             losses.update(loss.item(), inputs.size(0))
             scores.update(targets, outputs)
@@ -377,25 +360,6 @@ device = get_device()
 # data
 train = pd.read_csv("inputs/train_folds.csv")
 
-corpus = train['excerpt'].values
-
-count_vectorizer = CountVectorizer()
-X_count = count_vectorizer.fit_transform(corpus)
-
-# scikit-learn の TF-IDF 実装
-tfidf_vectorizer = TfidfVectorizer()
-X_tfidf = tfidf_vectorizer.fit_transform(corpus)
-
-# IDF を表示する
-print('--- IDF (Inverse Document Frequency) ---')
-idf_df = pd.DataFrame(data=[tfidf_vectorizer.idf_],
-                  columns=tfidf_vectorizer.get_feature_names())
-
-# TF-IDF を表示する
-print('--- TF-IDF ---')
-tf_idf_df = pd.DataFrame(data=X_tfidf.toarray(),
-                         columns=tfidf_vectorizer.get_feature_names())
-
 print(train.shape)
 train.head()
 
@@ -418,12 +382,12 @@ for fold in range(5):
 
     tokenizer = RobertaTokenizer.from_pretrained(CFG.model_name)
     
-    train_dataset = CommonLitDataset(df=trn_df, excerpt=trn_df.excerpt.values, tokenizer=tokenizer, max_len=CFG.max_len, tfidf=tf_idf_df)
+    train_dataset = CommonLitDataset(df=trn_df, excerpt=trn_df.excerpt.values, tokenizer=tokenizer, max_len=CFG.max_len)
     train_dataloader = torch.utils.data.DataLoader(
         train_dataset, batch_size=CFG.train_bs, num_workers=0, pin_memory=True, shuffle=True
     )
     
-    valid_dataset = CommonLitDataset(df=val_df, excerpt=val_df.excerpt.values, tokenizer=tokenizer, max_len=CFG.max_len, tfidf=tf_idf_df)
+    valid_dataset = CommonLitDataset(df=val_df, excerpt=val_df.excerpt.values, tokenizer=tokenizer, max_len=CFG.max_len)
     valid_dataloader = torch.utils.data.DataLoader(
         valid_dataset, batch_size=CFG.valid_bs, num_workers=0, pin_memory=True, shuffle=False
     )
@@ -450,7 +414,9 @@ for fold in range(5):
     best_score = np.inf
 
     for epoch in range(CFG.epochs):
-
+        if (epoch+1) == 9:
+            # CFG.epochs = 10 is good for lr_scheduling, but no socre improvement at epoch 9, 10
+            break
         logger.info("Starting {} epoch...".format(epoch+1))
 
         start_time = time.time()
