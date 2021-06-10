@@ -1,0 +1,589 @@
+========================================================================================================================
+Fold 0 Training
+========================================================================================================================
+load itpt model
+Starting 1 epoch...
+Epoch 1, Step 15 - valid_rmse:0.72908
+>>>>>>>> Model Improved From inf ----> 0.7290813104275286
+Epoch 1, Step 30 - valid_rmse:0.78439
+Epoch 1, Step 45 - valid_rmse:0.69734
+>>>>>>>> Model Improved From 0.7290813104275286 ----> 0.6973383225931966
+Epoch 1, Step 60 - valid_rmse:0.60020
+>>>>>>>> Model Improved From 0.6973383225931966 ----> 0.600204713983433
+Epoch 1, Step 75 - valid_rmse:0.65849
+Epoch 1, Step 90 - valid_rmse:0.66232
+Epoch 1, Step 105 - valid_rmse:0.57958
+>>>>>>>> Model Improved From 0.600204713983433 ----> 0.5795845624216428
+Epoch 1, Step 120 - valid_rmse:0.65666
+Epoch 1, Step 135 - valid_rmse:0.63277
+Epoch 1 - avg_train_loss: 0.69562  avg_val_loss: 0.62873  time: 225s
+Epoch 1 - train_rmse:0.71656  valid_rmse:0.63277
+Starting 2 epoch...
+Epoch 2, Step 15 - valid_rmse:0.56333
+>>>>>>>> Model Improved From 0.5795845624216428 ----> 0.5633291673065911
+Epoch 2, Step 30 - valid_rmse:0.54326
+>>>>>>>> Model Improved From 0.5633291673065911 ----> 0.5432607887605707
+Epoch 2, Step 45 - valid_rmse:0.53722
+>>>>>>>> Model Improved From 0.5432607887605707 ----> 0.5372227000619961
+Epoch 2, Step 60 - valid_rmse:0.67350
+Epoch 2, Step 75 - valid_rmse:0.52689
+>>>>>>>> Model Improved From 0.5372227000619961 ----> 0.5268912391971107
+Epoch 2, Step 90 - valid_rmse:0.56322
+Epoch 2, Step 105 - valid_rmse:0.52495
+>>>>>>>> Model Improved From 0.5268912391971107 ----> 0.5249513725680818
+Epoch 2, Step 120 - valid_rmse:0.55907
+Epoch 2, Step 135 - valid_rmse:0.65650
+Epoch 2 - avg_train_loss: 0.49357  avg_val_loss: 0.65167  time: 239s
+Epoch 2 - train_rmse:0.50829  valid_rmse:0.65650
+Starting 3 epoch...
+Epoch 3, Step 15 - valid_rmse:0.71073
+Epoch 3, Step 30 - valid_rmse:0.53709
+Epoch 3, Step 45 - valid_rmse:0.55908
+Epoch 3, Step 60 - valid_rmse:0.53389
+Epoch 3, Step 75 - valid_rmse:0.52246
+>>>>>>>> Model Improved From 0.5249513725680818 ----> 0.5224606624247976
+Epoch 3, Step 90 - valid_rmse:0.52619
+Epoch 3, Step 105 - valid_rmse:0.51783
+>>>>>>>> Model Improved From 0.5224606624247976 ----> 0.5178261301223465
+Epoch 3, Step 120 - valid_rmse:0.54563
+Epoch 3, Step 135 - valid_rmse:0.53979
+Epoch 3 - avg_train_loss: 0.39444  avg_val_loss: 0.53438  time: 222s
+Epoch 3 - train_rmse:0.41229  valid_rmse:0.53979
+Starting 4 epoch...
+Epoch 4, Step 15 - valid_rmse:0.57962
+Epoch 4, Step 30 - valid_rmse:0.52477
+Epoch 4, Step 45 - valid_rmse:0.50865
+>>>>>>>> Model Improved From 0.5178261301223465 ----> 0.5086488285684244
+Epoch 4, Step 60 - valid_rmse:0.54276
+Epoch 4, Step 75 - valid_rmse:0.51211
+Epoch 4, Step 90 - valid_rmse:0.51879
+Epoch 4, Step 105 - valid_rmse:0.55274
+Epoch 4, Step 120 - valid_rmse:0.53728
+Epoch 4, Step 135 - valid_rmse:0.51760
+Epoch 4 - avg_train_loss: 0.31828  avg_val_loss: 0.51327  time: 216s
+Epoch 4 - train_rmse:0.32797  valid_rmse:0.51760
+Starting 5 epoch...
+Epoch 5, Step 15 - valid_rmse:0.80151
+Epoch 5, Step 30 - valid_rmse:0.50639
+>>>>>>>> Model Improved From 0.5086488285684244 ----> 0.506387229447044
+Epoch 5, Step 45 - valid_rmse:0.61134
+Epoch 5, Step 60 - valid_rmse:0.51454
+Epoch 5, Step 75 - valid_rmse:0.50175
+>>>>>>>> Model Improved From 0.506387229447044 ----> 0.5017543290395734
+Epoch 5, Step 90 - valid_rmse:0.50614
+Epoch 5, Step 105 - valid_rmse:0.50976
+Epoch 5, Step 120 - valid_rmse:0.49833
+>>>>>>>> Model Improved From 0.5017543290395734 ----> 0.4983304258062802
+Epoch 5, Step 135 - valid_rmse:0.49229
+>>>>>>>> Model Improved From 0.4983304258062802 ----> 0.49229022796254557
+Epoch 5 - avg_train_loss: 0.27242  avg_val_loss: 0.48912  time: 234s
+Epoch 5 - train_rmse:0.28776  valid_rmse:0.49229
+Starting 6 epoch...
+Epoch 6, Step 15 - valid_rmse:0.59868
+Epoch 6, Step 30 - valid_rmse:0.50535
+Epoch 6, Step 45 - valid_rmse:0.50357
+Epoch 6, Step 60 - valid_rmse:0.51096
+Epoch 6, Step 75 - valid_rmse:0.49400
+Epoch 6, Step 90 - valid_rmse:0.50953
+Epoch 6, Step 105 - valid_rmse:0.49299
+Epoch 6, Step 120 - valid_rmse:0.52720
+Epoch 6, Step 135 - valid_rmse:0.51066
+Epoch 6 - avg_train_loss: 0.21234  avg_val_loss: 0.50623  time: 209s
+Epoch 6 - train_rmse:0.22215  valid_rmse:0.51066
+Starting 7 epoch...
+Epoch 7, Step 15 - valid_rmse:0.59481
+Epoch 7, Step 30 - valid_rmse:0.50238
+Epoch 7, Step 45 - valid_rmse:0.51538
+Epoch 7, Step 60 - valid_rmse:0.50151
+Epoch 7, Step 75 - valid_rmse:0.50939
+Epoch 7, Step 90 - valid_rmse:0.49827
+Epoch 7, Step 105 - valid_rmse:0.49527
+Epoch 7, Step 120 - valid_rmse:0.49534
+Epoch 7, Step 135 - valid_rmse:0.49678
+Epoch 7 - avg_train_loss: 0.16269  avg_val_loss: 0.49230  time: 209s
+Epoch 7 - train_rmse:0.17149  valid_rmse:0.49678
+Starting 8 epoch...
+Epoch 8, Step 15 - valid_rmse:0.61567
+Epoch 8, Step 30 - valid_rmse:0.52935
+Epoch 8, Step 45 - valid_rmse:0.50129
+Epoch 8, Step 60 - valid_rmse:0.49369
+Epoch 8, Step 75 - valid_rmse:0.49079
+>>>>>>>> Model Improved From 0.49229022796254557 ----> 0.49078836720240837
+Epoch 8, Step 90 - valid_rmse:0.49495
+Epoch 8, Step 105 - valid_rmse:0.50067
+Epoch 8, Step 120 - valid_rmse:0.48894
+>>>>>>>> Model Improved From 0.49078836720240837 ----> 0.4889367232660157
+Epoch 8, Step 135 - valid_rmse:0.48636
+>>>>>>>> Model Improved From 0.4889367232660157 ----> 0.4863560584262298
+Epoch 8 - avg_train_loss: 0.13958  avg_val_loss: 0.48209  time: 231s
+Epoch 8 - train_rmse:0.15212  valid_rmse:0.48636
+========================================================================================================================
+Fold 1 Training
+========================================================================================================================
+load itpt model
+Starting 1 epoch...
+Epoch 1, Step 15 - valid_rmse:1.05354
+>>>>>>>> Model Improved From inf ----> 1.053537159278624
+Epoch 1, Step 30 - valid_rmse:0.88163
+>>>>>>>> Model Improved From 1.053537159278624 ----> 0.881632576914667
+Epoch 1, Step 45 - valid_rmse:0.61305
+>>>>>>>> Model Improved From 0.881632576914667 ----> 0.6130504691026134
+Epoch 1, Step 60 - valid_rmse:0.67501
+Epoch 1, Step 75 - valid_rmse:0.58920
+>>>>>>>> Model Improved From 0.6130504691026134 ----> 0.5891983229711019
+Epoch 1, Step 90 - valid_rmse:0.72225
+Epoch 1, Step 105 - valid_rmse:0.57416
+>>>>>>>> Model Improved From 0.5891983229711019 ----> 0.5741566925434671
+Epoch 1, Step 120 - valid_rmse:0.65723
+Epoch 1, Step 135 - valid_rmse:0.57677
+Epoch 1 - avg_train_loss: 0.69366  avg_val_loss: 0.56998  time: 237s
+Epoch 1 - train_rmse:0.71873  valid_rmse:0.57677
+Starting 2 epoch...
+Epoch 2, Step 15 - valid_rmse:0.89317
+Epoch 2, Step 30 - valid_rmse:0.65151
+Epoch 2, Step 45 - valid_rmse:0.60846
+Epoch 2, Step 60 - valid_rmse:0.53659
+>>>>>>>> Model Improved From 0.5741566925434671 ----> 0.5365938042408869
+Epoch 2, Step 75 - valid_rmse:0.60398
+Epoch 2, Step 90 - valid_rmse:0.57255
+Epoch 2, Step 105 - valid_rmse:0.53014
+>>>>>>>> Model Improved From 0.5365938042408869 ----> 0.5301390468635525
+Epoch 2, Step 120 - valid_rmse:0.53188
+Epoch 2, Step 135 - valid_rmse:0.51637
+>>>>>>>> Model Improved From 0.5301390468635525 ----> 0.5163736538411878
+Epoch 2 - avg_train_loss: 0.49856  avg_val_loss: 0.51000  time: 231s
+Epoch 2 - train_rmse:0.51375  valid_rmse:0.51637
+Starting 3 epoch...
+Epoch 3, Step 15 - valid_rmse:0.70710
+Epoch 3, Step 30 - valid_rmse:0.55697
+Epoch 3, Step 45 - valid_rmse:0.53937
+Epoch 3, Step 60 - valid_rmse:0.54638
+Epoch 3, Step 75 - valid_rmse:0.58473
+Epoch 3, Step 90 - valid_rmse:0.54318
+Epoch 3, Step 105 - valid_rmse:0.52271
+Epoch 3, Step 120 - valid_rmse:0.51684
+Epoch 3, Step 135 - valid_rmse:0.55413
+Epoch 3 - avg_train_loss: 0.37357  avg_val_loss: 0.54880  time: 210s
+Epoch 3 - train_rmse:0.38733  valid_rmse:0.55413
+Starting 4 epoch...
+Epoch 4, Step 15 - valid_rmse:0.56142
+Epoch 4, Step 30 - valid_rmse:0.53166
+Epoch 4, Step 45 - valid_rmse:0.54210
+Epoch 4, Step 60 - valid_rmse:0.54440
+Epoch 4, Step 75 - valid_rmse:0.54718
+Epoch 4, Step 90 - valid_rmse:0.52594
+Epoch 4, Step 105 - valid_rmse:0.50750
+>>>>>>>> Model Improved From 0.5163736538411878 ----> 0.5074960855274812
+Epoch 4, Step 120 - valid_rmse:0.50622
+>>>>>>>> Model Improved From 0.5074960855274812 ----> 0.5062227569151506
+Epoch 4, Step 135 - valid_rmse:0.53736
+Epoch 4 - avg_train_loss: 0.29194  avg_val_loss: 0.52979  time: 224s
+Epoch 4 - train_rmse:0.30327  valid_rmse:0.53736
+Starting 5 epoch...
+Epoch 5, Step 15 - valid_rmse:0.68160
+Epoch 5, Step 30 - valid_rmse:0.51925
+Epoch 5, Step 45 - valid_rmse:0.52613
+Epoch 5, Step 60 - valid_rmse:0.52511
+Epoch 5, Step 75 - valid_rmse:0.52408
+Epoch 5, Step 90 - valid_rmse:0.51537
+Epoch 5, Step 105 - valid_rmse:0.52356
+Epoch 5, Step 120 - valid_rmse:0.50127
+>>>>>>>> Model Improved From 0.5062227569151506 ----> 0.5012714196699424
+Epoch 5, Step 135 - valid_rmse:0.50025
+>>>>>>>> Model Improved From 0.5012714196699424 ----> 0.5002527485131054
+Epoch 5 - avg_train_loss: 0.23895  avg_val_loss: 0.49432  time: 223s
+Epoch 5 - train_rmse:0.25190  valid_rmse:0.50025
+Starting 6 epoch...
+Epoch 6, Step 15 - valid_rmse:0.57933
+Epoch 6, Step 30 - valid_rmse:0.52285
+Epoch 6, Step 45 - valid_rmse:0.52061
+Epoch 6, Step 60 - valid_rmse:0.51667
+Epoch 6, Step 75 - valid_rmse:0.51441
+Epoch 6, Step 90 - valid_rmse:0.49719
+>>>>>>>> Model Improved From 0.5002527485131054 ----> 0.49718606024063117
+Epoch 6, Step 105 - valid_rmse:0.50807
+Epoch 6, Step 120 - valid_rmse:0.50726
+Epoch 6, Step 135 - valid_rmse:0.50122
+Epoch 6 - avg_train_loss: 0.19746  avg_val_loss: 0.49399  time: 216s
+Epoch 6 - train_rmse:0.20506  valid_rmse:0.50122
+Starting 7 epoch...
+Epoch 7, Step 15 - valid_rmse:0.53842
+Epoch 7, Step 30 - valid_rmse:0.50496
+Epoch 7, Step 45 - valid_rmse:0.50111
+Epoch 7, Step 60 - valid_rmse:0.50168
+Epoch 7, Step 75 - valid_rmse:0.49743
+Epoch 7, Step 90 - valid_rmse:0.49331
+>>>>>>>> Model Improved From 0.49718606024063117 ----> 0.49331307653080836
+Epoch 7, Step 105 - valid_rmse:0.50721
+Epoch 7, Step 120 - valid_rmse:0.50521
+Epoch 7, Step 135 - valid_rmse:0.50574
+Epoch 7 - avg_train_loss: 0.16120  avg_val_loss: 0.49993  time: 216s
+Epoch 7 - train_rmse:0.17060  valid_rmse:0.50574
+Starting 8 epoch...
+Epoch 8, Step 15 - valid_rmse:0.52042
+Epoch 8, Step 30 - valid_rmse:0.50365
+Epoch 8, Step 45 - valid_rmse:0.50152
+Epoch 8, Step 60 - valid_rmse:0.50095
+Epoch 8, Step 75 - valid_rmse:0.50351
+Epoch 8, Step 90 - valid_rmse:0.49101
+>>>>>>>> Model Improved From 0.49331307653080836 ----> 0.4910097487274469
+Epoch 8, Step 105 - valid_rmse:0.49714
+Epoch 8, Step 120 - valid_rmse:0.49694
+Epoch 8, Step 135 - valid_rmse:0.50327
+Epoch 8 - avg_train_loss: 0.13198  avg_val_loss: 0.49681  time: 218s
+Epoch 8 - train_rmse:0.14437  valid_rmse:0.50327
+========================================================================================================================
+Fold 2 Training
+========================================================================================================================
+load itpt model
+Starting 1 epoch...
+Epoch 1, Step 15 - valid_rmse:0.98495
+>>>>>>>> Model Improved From inf ----> 0.9849476129037971
+Epoch 1, Step 30 - valid_rmse:0.72420
+>>>>>>>> Model Improved From 0.9849476129037971 ----> 0.7242036672550842
+Epoch 1, Step 45 - valid_rmse:0.68451
+>>>>>>>> Model Improved From 0.7242036672550842 ----> 0.6845137339589364
+Epoch 1, Step 60 - valid_rmse:0.74637
+Epoch 1, Step 75 - valid_rmse:0.70831
+Epoch 1, Step 90 - valid_rmse:0.79762
+Epoch 1, Step 105 - valid_rmse:0.62121
+>>>>>>>> Model Improved From 0.6845137339589364 ----> 0.6212056968189897
+Epoch 1, Step 120 - valid_rmse:0.84097
+Epoch 1, Step 135 - valid_rmse:0.61389
+>>>>>>>> Model Improved From 0.6212056968189897 ----> 0.6138875964259932
+Epoch 1 - avg_train_loss: 0.74456  avg_val_loss: 0.60697  time: 239s
+Epoch 1 - train_rmse:0.76530  valid_rmse:0.61389
+Starting 2 epoch...
+Epoch 2, Step 15 - valid_rmse:0.84378
+Epoch 2, Step 30 - valid_rmse:0.67047
+Epoch 2, Step 45 - valid_rmse:0.60612
+>>>>>>>> Model Improved From 0.6138875964259932 ----> 0.6061154118067958
+Epoch 2, Step 60 - valid_rmse:0.58659
+>>>>>>>> Model Improved From 0.6061154118067958 ----> 0.5865870026229087
+Epoch 2, Step 75 - valid_rmse:0.59442
+Epoch 2, Step 90 - valid_rmse:0.57908
+>>>>>>>> Model Improved From 0.5865870026229087 ----> 0.5790801339002491
+Epoch 2, Step 105 - valid_rmse:0.56686
+>>>>>>>> Model Improved From 0.5790801339002491 ----> 0.5668582045392896
+Epoch 2, Step 120 - valid_rmse:0.57606
+Epoch 2, Step 135 - valid_rmse:0.55364
+>>>>>>>> Model Improved From 0.5668582045392896 ----> 0.5536434658782823
+Epoch 2 - avg_train_loss: 0.53128  avg_val_loss: 0.54644  time: 241s
+Epoch 2 - train_rmse:0.54629  valid_rmse:0.55364
+Starting 3 epoch...
+Epoch 3, Step 15 - valid_rmse:0.69824
+Epoch 3, Step 30 - valid_rmse:0.56959
+Epoch 3, Step 45 - valid_rmse:0.57581
+Epoch 3, Step 60 - valid_rmse:0.61725
+Epoch 3, Step 75 - valid_rmse:0.59928
+Epoch 3, Step 90 - valid_rmse:0.56347
+Epoch 3, Step 105 - valid_rmse:0.56589
+Epoch 3, Step 120 - valid_rmse:0.57424
+Epoch 3, Step 135 - valid_rmse:0.53577
+>>>>>>>> Model Improved From 0.5536434658782823 ----> 0.5357660016862744
+Epoch 3 - avg_train_loss: 0.39022  avg_val_loss: 0.53017  time: 217s
+Epoch 3 - train_rmse:0.40373  valid_rmse:0.53577
+Starting 4 epoch...
+Epoch 4, Step 15 - valid_rmse:0.80876
+Epoch 4, Step 30 - valid_rmse:0.59855
+Epoch 4, Step 45 - valid_rmse:0.54057
+Epoch 4, Step 60 - valid_rmse:0.55633
+Epoch 4, Step 75 - valid_rmse:0.59543
+Epoch 4, Step 90 - valid_rmse:0.57913
+Epoch 4, Step 105 - valid_rmse:0.53554
+>>>>>>>> Model Improved From 0.5357660016862744 ----> 0.5355378758037933
+Epoch 4, Step 120 - valid_rmse:0.56678
+Epoch 4, Step 135 - valid_rmse:0.53053
+>>>>>>>> Model Improved From 0.5355378758037933 ----> 0.530529770977252
+Epoch 4 - avg_train_loss: 0.34407  avg_val_loss: 0.52291  time: 223s
+Epoch 4 - train_rmse:0.36589  valid_rmse:0.53053
+Starting 5 epoch...
+Epoch 5, Step 15 - valid_rmse:0.66554
+Epoch 5, Step 30 - valid_rmse:0.55609
+Epoch 5, Step 45 - valid_rmse:0.55454
+Epoch 5, Step 60 - valid_rmse:0.54430
+Epoch 5, Step 75 - valid_rmse:0.52985
+>>>>>>>> Model Improved From 0.530529770977252 ----> 0.5298487439482177
+Epoch 5, Step 90 - valid_rmse:0.56564
+Epoch 5, Step 105 - valid_rmse:0.53136
+Epoch 5, Step 120 - valid_rmse:0.54094
+Epoch 5, Step 135 - valid_rmse:0.56293
+Epoch 5 - avg_train_loss: 0.27137  avg_val_loss: 0.55329  time: 216s
+Epoch 5 - train_rmse:0.28255  valid_rmse:0.56293
+Starting 6 epoch...
+Epoch 6, Step 15 - valid_rmse:0.71987
+Epoch 6, Step 30 - valid_rmse:0.58657
+Epoch 6, Step 45 - valid_rmse:0.57047
+Epoch 6, Step 60 - valid_rmse:0.55439
+Epoch 6, Step 75 - valid_rmse:0.54079
+Epoch 6, Step 90 - valid_rmse:0.55370
+Epoch 6, Step 105 - valid_rmse:0.53415
+Epoch 6, Step 120 - valid_rmse:0.53117
+Epoch 6, Step 135 - valid_rmse:0.52192
+>>>>>>>> Model Improved From 0.5298487439482177 ----> 0.521921842082547
+Epoch 6 - avg_train_loss: 0.23535  avg_val_loss: 0.51391  time: 216s
+Epoch 6 - train_rmse:0.25133  valid_rmse:0.52192
+Starting 7 epoch...
+Epoch 7, Step 15 - valid_rmse:0.57848
+Epoch 7, Step 30 - valid_rmse:0.52998
+Epoch 7, Step 45 - valid_rmse:0.54717
+Epoch 7, Step 60 - valid_rmse:0.52525
+Epoch 7, Step 75 - valid_rmse:0.55214
+Epoch 7, Step 90 - valid_rmse:0.53007
+Epoch 7, Step 105 - valid_rmse:0.53017
+Epoch 7, Step 120 - valid_rmse:0.52122
+>>>>>>>> Model Improved From 0.521921842082547 ----> 0.5212152515393713
+Epoch 7, Step 135 - valid_rmse:0.52283
+Epoch 7 - avg_train_loss: 0.17362  avg_val_loss: 0.51384  time: 216s
+Epoch 7 - train_rmse:0.18100  valid_rmse:0.52283
+Starting 8 epoch...
+Epoch 8, Step 15 - valid_rmse:0.53665
+Epoch 8, Step 30 - valid_rmse:0.52002
+>>>>>>>> Model Improved From 0.5212152515393713 ----> 0.5200237779431695
+Epoch 8, Step 45 - valid_rmse:0.52462
+Epoch 8, Step 60 - valid_rmse:0.52550
+Epoch 8, Step 75 - valid_rmse:0.52417
+Epoch 8, Step 90 - valid_rmse:0.51885
+>>>>>>>> Model Improved From 0.5200237779431695 ----> 0.5188528790675158
+Epoch 8, Step 105 - valid_rmse:0.52051
+Epoch 8, Step 120 - valid_rmse:0.52225
+Epoch 8, Step 135 - valid_rmse:0.52118
+Epoch 8 - avg_train_loss: 0.13728  avg_val_loss: 0.51377  time: 224s
+Epoch 8 - train_rmse:0.14689  valid_rmse:0.52118
+========================================================================================================================
+Fold 3 Training
+========================================================================================================================
+load itpt model
+Starting 1 epoch...
+Epoch 1, Step 15 - valid_rmse:0.83705
+>>>>>>>> Model Improved From inf ----> 0.8370513600811638
+Epoch 1, Step 30 - valid_rmse:0.71247
+>>>>>>>> Model Improved From 0.8370513600811638 ----> 0.7124656344381154
+Epoch 1, Step 45 - valid_rmse:0.70357
+>>>>>>>> Model Improved From 0.7124656344381154 ----> 0.7035722584214265
+Epoch 1, Step 60 - valid_rmse:0.69221
+>>>>>>>> Model Improved From 0.7035722584214265 ----> 0.6922091066391358
+Epoch 1, Step 75 - valid_rmse:0.74100
+Epoch 1, Step 90 - valid_rmse:0.66271
+>>>>>>>> Model Improved From 0.6922091066391358 ----> 0.6627066076633784
+Epoch 1, Step 105 - valid_rmse:0.67062
+Epoch 1, Step 120 - valid_rmse:0.64454
+>>>>>>>> Model Improved From 0.6627066076633784 ----> 0.6445368589596701
+Epoch 1, Step 135 - valid_rmse:0.66920
+Epoch 1 - avg_train_loss: 0.70808  avg_val_loss: 0.66338  time: 247s
+Epoch 1 - train_rmse:0.72873  valid_rmse:0.66920
+Starting 2 epoch...
+Epoch 2, Step 15 - valid_rmse:0.82144
+Epoch 2, Step 30 - valid_rmse:0.61291
+>>>>>>>> Model Improved From 0.6445368589596701 ----> 0.6129128138022211
+Epoch 2, Step 45 - valid_rmse:0.64025
+Epoch 2, Step 60 - valid_rmse:0.62380
+Epoch 2, Step 75 - valid_rmse:0.57717
+>>>>>>>> Model Improved From 0.6129128138022211 ----> 0.5771744661953904
+Epoch 2, Step 90 - valid_rmse:0.54411
+>>>>>>>> Model Improved From 0.5771744661953904 ----> 0.5441138573841279
+Epoch 2, Step 105 - valid_rmse:0.54064
+>>>>>>>> Model Improved From 0.5441138573841279 ----> 0.5406362667292565
+Epoch 2, Step 120 - valid_rmse:0.60770
+Epoch 2, Step 135 - valid_rmse:0.55911
+Epoch 2 - avg_train_loss: 0.49703  avg_val_loss: 0.55619  time: 236s
+Epoch 2 - train_rmse:0.50952  valid_rmse:0.55911
+Starting 3 epoch...
+Epoch 3, Step 15 - valid_rmse:0.57091
+Epoch 3, Step 30 - valid_rmse:0.67492
+Epoch 3, Step 45 - valid_rmse:0.60021
+Epoch 3, Step 60 - valid_rmse:0.55168
+Epoch 3, Step 75 - valid_rmse:0.56930
+Epoch 3, Step 90 - valid_rmse:0.53091
+>>>>>>>> Model Improved From 0.5406362667292565 ----> 0.5309105657415114
+Epoch 3, Step 105 - valid_rmse:0.59048
+Epoch 3, Step 120 - valid_rmse:0.57871
+Epoch 3, Step 135 - valid_rmse:0.55591
+Epoch 3 - avg_train_loss: 0.40948  avg_val_loss: 0.55264  time: 217s
+Epoch 3 - train_rmse:0.42029  valid_rmse:0.55591
+Starting 4 epoch...
+Epoch 4, Step 15 - valid_rmse:0.64196
+Epoch 4, Step 30 - valid_rmse:0.62589
+Epoch 4, Step 45 - valid_rmse:0.53156
+Epoch 4, Step 60 - valid_rmse:0.53196
+Epoch 4, Step 75 - valid_rmse:0.53579
+Epoch 4, Step 90 - valid_rmse:0.54399
+Epoch 4, Step 105 - valid_rmse:0.51366
+>>>>>>>> Model Improved From 0.5309105657415114 ----> 0.5136645736311202
+Epoch 4, Step 120 - valid_rmse:0.52801
+Epoch 4, Step 135 - valid_rmse:0.53073
+Epoch 4 - avg_train_loss: 0.29945  avg_val_loss: 0.52800  time: 216s
+Epoch 4 - train_rmse:0.30821  valid_rmse:0.53073
+Starting 5 epoch...
+Epoch 5, Step 15 - valid_rmse:0.77629
+Epoch 5, Step 30 - valid_rmse:0.56847
+Epoch 5, Step 45 - valid_rmse:0.52430
+Epoch 5, Step 60 - valid_rmse:0.52505
+Epoch 5, Step 75 - valid_rmse:0.51614
+Epoch 5, Step 90 - valid_rmse:0.51255
+>>>>>>>> Model Improved From 0.5136645736311202 ----> 0.5125508645823872
+Epoch 5, Step 105 - valid_rmse:0.52062
+Epoch 5, Step 120 - valid_rmse:0.53114
+Epoch 5, Step 135 - valid_rmse:0.53863
+Epoch 5 - avg_train_loss: 0.25861  avg_val_loss: 0.53541  time: 215s
+Epoch 5 - train_rmse:0.27687  valid_rmse:0.53863
+Starting 6 epoch...
+Epoch 6, Step 15 - valid_rmse:0.68940
+Epoch 6, Step 30 - valid_rmse:0.56075
+Epoch 6, Step 45 - valid_rmse:0.54016
+Epoch 6, Step 60 - valid_rmse:0.55002
+Epoch 6, Step 75 - valid_rmse:0.53978
+Epoch 6, Step 90 - valid_rmse:0.52045
+Epoch 6, Step 105 - valid_rmse:0.52590
+Epoch 6, Step 120 - valid_rmse:0.52733
+Epoch 6, Step 135 - valid_rmse:0.53839
+Epoch 6 - avg_train_loss: 0.21358  avg_val_loss: 0.53524  time: 209s
+Epoch 6 - train_rmse:0.22728  valid_rmse:0.53839
+Starting 7 epoch...
+Epoch 7, Step 15 - valid_rmse:0.60852
+Epoch 7, Step 30 - valid_rmse:0.59018
+Epoch 7, Step 45 - valid_rmse:0.52406
+Epoch 7, Step 60 - valid_rmse:0.52458
+Epoch 7, Step 75 - valid_rmse:0.51240
+>>>>>>>> Model Improved From 0.5125508645823872 ----> 0.5124020330831691
+Epoch 7, Step 90 - valid_rmse:0.55127
+Epoch 7, Step 105 - valid_rmse:0.51968
+Epoch 7, Step 120 - valid_rmse:0.52330
+Epoch 7, Step 135 - valid_rmse:0.51518
+Epoch 7 - avg_train_loss: 0.20992  avg_val_loss: 0.51238  time: 215s
+Epoch 7 - train_rmse:0.22147  valid_rmse:0.51518
+Starting 8 epoch...
+Epoch 8, Step 15 - valid_rmse:0.66155
+Epoch 8, Step 30 - valid_rmse:0.55323
+Epoch 8, Step 45 - valid_rmse:0.51598
+Epoch 8, Step 60 - valid_rmse:0.51391
+Epoch 8, Step 75 - valid_rmse:0.51343
+Epoch 8, Step 90 - valid_rmse:0.52161
+Epoch 8, Step 105 - valid_rmse:0.51278
+Epoch 8, Step 120 - valid_rmse:0.51245
+Epoch 8, Step 135 - valid_rmse:0.51489
+Epoch 8 - avg_train_loss: 0.17143  avg_val_loss: 0.51203  time: 209s
+Epoch 8 - train_rmse:0.18632  valid_rmse:0.51489
+========================================================================================================================
+Fold 4 Training
+========================================================================================================================
+load itpt model
+Starting 1 epoch...
+Epoch 1, Step 15 - valid_rmse:0.96264
+>>>>>>>> Model Improved From inf ----> 0.9626381022465501
+Epoch 1, Step 30 - valid_rmse:0.76077
+>>>>>>>> Model Improved From 0.9626381022465501 ----> 0.7607725431794026
+Epoch 1, Step 45 - valid_rmse:0.84041
+Epoch 1, Step 60 - valid_rmse:0.73743
+>>>>>>>> Model Improved From 0.7607725431794026 ----> 0.7374282266104613
+Epoch 1, Step 75 - valid_rmse:0.59605
+>>>>>>>> Model Improved From 0.7374282266104613 ----> 0.5960517414717063
+Epoch 1, Step 90 - valid_rmse:0.56947
+>>>>>>>> Model Improved From 0.5960517414717063 ----> 0.5694734714680062
+Epoch 1, Step 105 - valid_rmse:0.60599
+Epoch 1, Step 120 - valid_rmse:0.61339
+Epoch 1, Step 135 - valid_rmse:0.56920
+>>>>>>>> Model Improved From 0.5694734714680062 ----> 0.5691989597612401
+Epoch 1 - avg_train_loss: 0.69891  avg_val_loss: 0.56474  time: 245s
+Epoch 1 - train_rmse:0.72514  valid_rmse:0.56920
+Starting 2 epoch...
+Epoch 2, Step 15 - valid_rmse:0.57326
+Epoch 2, Step 30 - valid_rmse:0.53073
+>>>>>>>> Model Improved From 0.5691989597612401 ----> 0.5307278359066826
+Epoch 2, Step 45 - valid_rmse:0.58799
+Epoch 2, Step 60 - valid_rmse:0.61937
+Epoch 2, Step 75 - valid_rmse:0.53910
+Epoch 2, Step 90 - valid_rmse:0.54316
+Epoch 2, Step 105 - valid_rmse:0.56470
+Epoch 2, Step 120 - valid_rmse:0.61420
+Epoch 2, Step 135 - valid_rmse:0.54592
+Epoch 2 - avg_train_loss: 0.50514  avg_val_loss: 0.54128  time: 216s
+Epoch 2 - train_rmse:0.52113  valid_rmse:0.54592
+Starting 3 epoch...
+Epoch 3, Step 15 - valid_rmse:0.57200
+Epoch 3, Step 30 - valid_rmse:0.52563
+>>>>>>>> Model Improved From 0.5307278359066826 ----> 0.5256299175611924
+Epoch 3, Step 45 - valid_rmse:0.55992
+Epoch 3, Step 60 - valid_rmse:0.56811
+Epoch 3, Step 75 - valid_rmse:0.51623
+>>>>>>>> Model Improved From 0.5256299175611924 ----> 0.5162294019271512
+Epoch 3, Step 90 - valid_rmse:0.52773
+Epoch 3, Step 105 - valid_rmse:0.52128
+Epoch 3, Step 120 - valid_rmse:0.53740
+Epoch 3, Step 135 - valid_rmse:0.57969
+Epoch 3 - avg_train_loss: 0.38226  avg_val_loss: 0.57551  time: 224s
+Epoch 3 - train_rmse:0.39297  valid_rmse:0.57969
+Starting 4 epoch...
+Epoch 4, Step 15 - valid_rmse:0.91028
+Epoch 4, Step 30 - valid_rmse:0.70069
+Epoch 4, Step 45 - valid_rmse:0.57697
+Epoch 4, Step 60 - valid_rmse:0.53182
+Epoch 4, Step 75 - valid_rmse:0.54020
+Epoch 4, Step 90 - valid_rmse:0.53350
+Epoch 4, Step 105 - valid_rmse:0.53105
+Epoch 4, Step 120 - valid_rmse:0.52937
+Epoch 4, Step 135 - valid_rmse:0.53306
+Epoch 4 - avg_train_loss: 0.34034  avg_val_loss: 0.52836  time: 209s
+Epoch 4 - train_rmse:0.36627  valid_rmse:0.53306
+Starting 5 epoch...
+Epoch 5, Step 15 - valid_rmse:0.77737
+Epoch 5, Step 30 - valid_rmse:0.55064
+Epoch 5, Step 45 - valid_rmse:0.54408
+Epoch 5, Step 60 - valid_rmse:0.53279
+Epoch 5, Step 75 - valid_rmse:0.52807
+Epoch 5, Step 90 - valid_rmse:0.52169
+Epoch 5, Step 105 - valid_rmse:0.52305
+Epoch 5, Step 120 - valid_rmse:0.50845
+>>>>>>>> Model Improved From 0.5162294019271512 ----> 0.5084514763203068
+Epoch 5, Step 135 - valid_rmse:0.50930
+Epoch 5 - avg_train_loss: 0.25747  avg_val_loss: 0.50464  time: 215s
+Epoch 5 - train_rmse:0.26868  valid_rmse:0.50930
+Starting 6 epoch...
+Epoch 6, Step 15 - valid_rmse:0.76113
+Epoch 6, Step 30 - valid_rmse:0.54481
+Epoch 6, Step 45 - valid_rmse:0.52276
+Epoch 6, Step 60 - valid_rmse:0.50933
+Epoch 6, Step 75 - valid_rmse:0.50964
+Epoch 6, Step 90 - valid_rmse:0.52195
+Epoch 6, Step 105 - valid_rmse:0.50611
+>>>>>>>> Model Improved From 0.5084514763203068 ----> 0.5061133557831367
+Epoch 6, Step 120 - valid_rmse:0.52714
+Epoch 6, Step 135 - valid_rmse:0.51789
+Epoch 6 - avg_train_loss: 0.21011  avg_val_loss: 0.51228  time: 216s
+Epoch 6 - train_rmse:0.22468  valid_rmse:0.51789
+Starting 7 epoch...
+Epoch 7, Step 15 - valid_rmse:0.65781
+Epoch 7, Step 30 - valid_rmse:0.50378
+>>>>>>>> Model Improved From 0.5061133557831367 ----> 0.5037836755110655
+Epoch 7, Step 45 - valid_rmse:0.50587
+Epoch 7, Step 60 - valid_rmse:0.51222
+Epoch 7, Step 75 - valid_rmse:0.53009
+Epoch 7, Step 90 - valid_rmse:0.51397
+Epoch 7, Step 105 - valid_rmse:0.51968
+Epoch 7, Step 120 - valid_rmse:0.51983
+Epoch 7, Step 135 - valid_rmse:0.51510
+Epoch 7 - avg_train_loss: 0.17986  avg_val_loss: 0.50990  time: 216s
+Epoch 7 - train_rmse:0.19126  valid_rmse:0.51510
+Starting 8 epoch...
+Epoch 8, Step 15 - valid_rmse:0.55714
+Epoch 8, Step 30 - valid_rmse:0.53213
+Epoch 8, Step 45 - valid_rmse:0.51829
+Epoch 8, Step 60 - valid_rmse:0.51930
+Epoch 8, Step 75 - valid_rmse:0.50864
+Epoch 8, Step 90 - valid_rmse:0.51491
+Epoch 8, Step 105 - valid_rmse:0.52074
+Epoch 8, Step 120 - valid_rmse:0.50884
+Epoch 8, Step 135 - valid_rmse:0.50973
+Epoch 8 - avg_train_loss: 0.14260  avg_val_loss: 0.50443  time: 209s
+Epoch 8 - train_rmse:0.15180  valid_rmse:0.50973
+load itpt model
+load itpt model
+load itpt model
+load itpt model
+load itpt model
+0.4863560634927042
+0.49100974826545607
+0.518852877553337
+0.5124020343000217
+0.5037836771671353
+cv score 0.5026316534492415
