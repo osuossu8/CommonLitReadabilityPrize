@@ -142,7 +142,7 @@ class CommonLitDataset:
 # https://huggingface.co/sentence-transformers/nli-roberta-large
 # Mean Pooling - Take attention mask into account for correct averaging
 def mean_pooling(model_output, attention_mask):
-    token_embeddings = model_output # [0] #First element of model_output contains all token embeddings
+    token_embeddings = model_output[0] #First element of model_output contains all token embeddings
     input_mask_expanded = attention_mask.unsqueeze(-1).expand(token_embeddings.size()).float()
     sum_embeddings = torch.sum(token_embeddings * input_mask_expanded, 1)
     sum_mask = torch.clamp(input_mask_expanded.sum(1), min=1e-9)
@@ -155,7 +155,7 @@ class RoBERTaLarge(nn.Module):
         self.in_features = 1024
         self.dropout = nn.Dropout(0.3)
         self.roberta = RobertaModel.from_pretrained(model_path)
-        self.activation = nn.Tanh()
+        self.activation = nn.PReLU(inplace=True) # nn.Tanh()
         self.l0 = nn.Linear(self.in_features, 1)
 
     def forward(self, ids, mask):
@@ -164,9 +164,7 @@ class RoBERTaLarge(nn.Module):
             attention_mask=mask
         )
 
-        last_n_hidden = roberta_outputs.last_hidden_state[:, -4:, :]
-
-        sentence_embeddings = mean_pooling(last_n_hidden, mask[:, -4:])        
+        sentence_embeddings = mean_pooling(roberta_outputs, mask)        
         # last_n_hidden = torch.mean(roberta_outputs.last_hidden_state[:, -4:, :], 1)
 
         x = self.activation(sentence_embeddings)
