@@ -38,10 +38,10 @@ class CFG:
     folds = [0, 1, 2, 3, 4]
     N_FOLDS = 5
     LR = 5e-5
-    max_len = 256
+    max_len = 250 # 256
     train_bs = 8 * 2
     valid_bs = 16 * 2
-    log_interval = 40 # 10
+    log_interval = 10
     model_name = 'roberta-large'
     itpt_path = 'itpt/roberta_large_2/'
 
