@@ -155,7 +155,7 @@ class RoBERTaLarge(nn.Module):
         self.in_features = 1024
         self.dropout = nn.Dropout(0.3)
         self.roberta = RobertaModel.from_pretrained(model_path)
-        self.activation = nn.PReLU(inplace=True) # nn.Tanh()
+        self.activation = nn.PReLU() # nn.Tanh()
         self.l0 = nn.Linear(self.in_features, 1)
 
     def forward(self, ids, mask):
