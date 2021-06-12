@@ -349,7 +349,7 @@ print(train.shape)
 # https://www.kaggle.com/konradb/augmented-train-data-backtranslation
 aug = pd.read_csv('inputs/xtrain_aug_es.csv')
 
-aug = pd.merge(aug, df, on='id')[['id', 'url_legal', 'license', 'bt_excerpt', 'target', 'standard_error', 'kfold']]
+aug = pd.merge(aug, train, on='id')[['id', 'url_legal', 'license', 'bt_excerpt', 'target', 'standard_error', 'kfold']]
 aug.columns = ['id', 'url_legal', 'license', 'excerpt', 'target', 'standard_error', 'kfold']
 
 
