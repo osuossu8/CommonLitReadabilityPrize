@@ -24,7 +24,7 @@ mlm_data_val.to_csv('inputs/mlm_data_val.csv', index=False)
 
 aug = pd.read_csv('inputs/xtrain_aug_es.csv')
 aug = pd.merge(aug, train, on='id')[['id', 'url_legal', 'license', 'bt_excerpt', 'target', 'standard_error']]
-aug.columns = ['id', 'url_legal', 'license', 'text', 'target', 'standard_error', 'kfold']
+aug.columns = ['id', 'url_legal', 'license', 'text', 'target', 'standard_error']
 
 mlm_data_aug = aug[['text']]
 
