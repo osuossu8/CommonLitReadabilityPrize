@@ -155,9 +155,8 @@ class RoBERTaLarge(nn.Module):
         self.in_features = 1024
         self.roberta = RobertaModel.from_pretrained(model_path)
 
-        self.batch_norm1 = nn.BatchNorm1d(self.in_features)
-        self.dropout = nn.Dropout(0.1)
-        self.dense1 = nn.utils.weight_norm(nn.Linear(self.in_features, 1))
+        self.dropout = nn.Dropout(0.5)
+        self.l0 = nn.Linear(self.in_features, 1)
         
     def forward(self, ids, mask):
         roberta_outputs = self.roberta(
@@ -167,10 +166,9 @@ class RoBERTaLarge(nn.Module):
 
         sentence_embeddings = mean_pooling(roberta_outputs, mask)        
 
-        x = self.batch_norm1(sentence_embeddings)
-        x = F.leaky_relu(x)
-        x = self.dense1(self.dropout(x))
-        return x.squeeze(-1)
+        x = F.leaky_relu(sentence_embeddings)
+        logits = self.l0(self.dropout(x))
+        return logits.squeeze(-1)
 
 
 # ====================================================
