@@ -37,7 +37,7 @@ class CFG:
     epochs = 10
     folds = [0, 1, 2, 3, 4]
     N_FOLDS = 5
-    LR = 7e-5 # 5e-5
+    LR = 5e-5
     max_len = 256
     train_bs = 8 * 2
     valid_bs = 16 * 2
@@ -149,13 +149,21 @@ def mean_pooling(model_output, attention_mask):
     return sum_embeddings / sum_mask
 
 
+def mean_pooling2(model_output, attention_mask):
+    token_embeddings = model_output[1] #First element of model_output contains all token embeddings
+    input_mask_expanded = attention_mask.unsqueeze(-1).expand(token_embeddings.size()).float()
+    sum_embeddings = torch.sum(token_embeddings * input_mask_expanded, 1)
+    sum_mask = torch.clamp(input_mask_expanded.sum(1), min=1e-9)
+    return sum_embeddings / sum_mask
+
+
 class RoBERTaLarge(nn.Module):
     def __init__(self, model_path):
         super(RoBERTaLarge, self).__init__()
         self.in_features = 1024
-        self.dropout = nn.Dropout(0.1)
+        self.dropout = nn.Dropout(0.3)
         self.roberta = RobertaModel.from_pretrained(model_path)
-        self.activation = nn.Tanh()
+        self.activation = nn.PReLU()
         self.l0 = nn.Linear(self.in_features, 1)
 
     def forward(self, ids, mask):
@@ -165,9 +173,9 @@ class RoBERTaLarge(nn.Module):
         )
 
         # last_n_hidden = torch.mean(roberta_outputs.last_hidden_state[:, -4:, :], 1)
-        last_n_hidden = torch.mean(roberta_outputs.last_hidden_state[:, -3:, :], 1)
-
-        x = self.activation(last_n_hidden)
+        sentence_embeddings = mean_pooling2(roberta_outputs, mask)
+ 
+        x = self.activation(sentence_embeddings)
         logits = self.l0(self.dropout(x))
         return logits.squeeze(-1)
 
