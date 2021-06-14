@@ -43,7 +43,7 @@ class CFG:
     valid_bs = 16 * 2
     log_interval = 10
     model_name = 'roberta-large'
-    itpt_path = 'itpt/roberta_large_2/'
+    itpt_path = 'itpt/roberta_large_5/'
 
 
 def set_seed(seed=42):
@@ -155,8 +155,7 @@ class RoBERTaLarge(nn.Module):
         self.in_features = 1024
         self.dropout = nn.Dropout(0.3)
         self.roberta = RobertaModel.from_pretrained(model_path)
-        # self.activation = nn.PReLU()
-        self.activation = nn.ReLU()
+        self.activation = nn.PReLU()
         self.l0 = nn.Linear(self.in_features, 1)
 
     def forward(self, ids, mask):
