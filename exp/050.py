@@ -23,7 +23,7 @@ from sklearn import model_selection
 from sklearn import metrics
 
 from tqdm import tqdm
-from transformers import RobertaConfig, RobertaModel, RobertaTokenizer
+from transformers import RobertaConfig, RobertaModel, RobertaTokenizer, AutoTokenizer, AutoModel
 
 from apex import amp
 
@@ -42,8 +42,8 @@ class CFG:
     train_bs = 8 * 2
     valid_bs = 16 * 2
     log_interval = 10
-    model_name = 'roberta-large'
-    itpt_path = 'itpt/roberta_large_4' # 'itpt/roberta_large_2/'
+    model_name = 'sentence-transformers/paraphrase-distilroberta-base-v1' # 'roberta-large'
+    itpt_path = False # 'itpt/roberta_large_4' # 'itpt/roberta_large_2/'
 
 
 def set_seed(seed=42):
@@ -149,26 +149,26 @@ def mean_pooling(model_output, attention_mask):
     return sum_embeddings / sum_mask
 
 
-class RoBERTaLarge(nn.Module):
+class DistilRobertaBase(nn.Module):
     def __init__(self, model_path):
-        super(RoBERTaLarge, self).__init__()
-        self.in_features = 1024
+        super(DistilRobertaBase, self).__init__()
+        self.in_features = 768
         self.dropout = nn.Dropout(0.3)
-        self.roberta = RobertaModel.from_pretrained(model_path)
-        # self.activation = nn.PReLU() 
-        self.activation = nn.Tanh()
+        self.auto_model = AutoModel.from_pretrained(model_path)
+        self.activation = nn.PReLU() 
+        # self.activation = nn.Tanh()
         self.l0 = nn.Linear(self.in_features, 1)
 
     def forward(self, ids, mask):
-        roberta_outputs = self.roberta(
+        outputs = self.auto_model(
             ids,
             attention_mask=mask
         )
 
-        # sentence_embeddings = mean_pooling(roberta_outputs, mask)        
-        last_n_hidden = torch.mean(roberta_outputs.last_hidden_state[:, -4:, :], 1)
+        sentence_embeddings = mean_pooling(outputs, mask)        
+        # last_n_hidden = torch.mean(outputs.last_hidden_state[:, -4:, :], 1)
 
-        x = self.activation(last_n_hidden)
+        x = self.activation(sentence_embeddings)
         logits = self.l0(self.dropout(x))
         return logits.squeeze(-1)
 
@@ -288,16 +288,16 @@ def calc_cv(model_paths):
     models = []
     for p in model_paths:
         if CFG.itpt_path:
-            model = RoBERTaLarge(CFG.itpt_path)
+            model = DistilRobertaBase(CFG.itpt_path)
             logger.info('load itpt model')
         else:
-            model = RoBERTaLarge(CFG.model_name)
+            model = DistilRobertaBase(CFG.model_name)
         model.to("cuda")
         model.load_state_dict(torch.load(p))
         model.eval()
         models.append(model)
     
-    tokenizer = RobertaTokenizer.from_pretrained(CFG.model_name)
+    tokenizer = AutoTokenizer.from_pretrained(CFG.model_name)
     
     df = pd.read_csv("inputs/train_folds.csv")
     y_true = []
@@ -360,12 +360,12 @@ for fold in range(5):
     val_df = train[train.kfold == fold].reset_index(drop=True)
 
     if CFG.itpt_path:
-        model = RoBERTaLarge(CFG.itpt_path)
+        model = DistilRobertaBase(CFG.itpt_path)
         logger.info('load itpt model')
     else:
-        model = RoBERTaLarge(CFG.model_name)    
+        model = DistilRobertaBase(CFG.model_name)    
 
-    tokenizer = RobertaTokenizer.from_pretrained(CFG.model_name)
+    tokenizer = AutoTokenizer.from_pretrained(CFG.model_name)
     
     train_dataset = CommonLitDataset(df=trn_df, excerpt=trn_df.excerpt.values, tokenizer=tokenizer, max_len=CFG.max_len)
     train_dataloader = torch.utils.data.DataLoader(
