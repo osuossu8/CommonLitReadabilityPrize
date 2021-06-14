@@ -165,7 +165,8 @@ class RoBERTaLarge(nn.Module):
             attention_mask=mask
         )
 
-        last_n_hidden = roberta_outputs.last_hidden_state[:, -1, :]
+        # last_n_hidden = roberta_outputs.last_hidden_state[:, -1, :]
+        last_n_hidden = torch.mean(roberta_outputs.last_hidden_state[:, -4:, :], 1)
 
         x = self.activation(last_n_hidden)
         logits = self.l0(self.dropout(x))
