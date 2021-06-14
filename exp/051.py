@@ -78,9 +78,10 @@ def calc_loss(y_true, y_pred):
     return  np.sqrt(metrics.mean_squared_error(y_true, y_pred))
 
 
+# https://arxiv.org/pdf/1905.05583.pdf
 def convert_examples_to_head_and_tail_features(data, tokenizer, max_len):
-    head_len = int(max_len//2)
-    tail_len = head_len
+    head_len = 64 # int(max_len//2)
+    tail_len = 192  # head_len
     
     data = data.replace('\n', '')
     len_tok = len(tokenizer.tokenize(data))
@@ -119,14 +120,14 @@ class CommonLitDataset:
 
     def __getitem__(self, item):
         text = str(self.excerpt[item])
-        inputs = self.tokenizer(
-            text, 
-            max_length=self.max_len, 
-            padding="max_length", 
-            truncation=True
-        )
+        # inputs = self.tokenizer(
+        #     text, 
+        #     max_length=self.max_len, 
+        #     padding="max_length", 
+        #     truncation=True
+        # )
 
-        # inputs = convert_examples_to_head_and_tail_features(text, tokenizer, self.max_len)
+        inputs = convert_examples_to_head_and_tail_features(text, tokenizer, self.max_len)
 
         ids = inputs["input_ids"]
         mask = inputs["attention_mask"]
@@ -149,21 +150,13 @@ def mean_pooling(model_output, attention_mask):
     return sum_embeddings / sum_mask
 
 
-def mean_pooling2(model_output, attention_mask):
-    token_embeddings = model_output[1] #First element of model_output contains all token embeddings
-    input_mask_expanded = attention_mask.unsqueeze(-1).expand(token_embeddings.size()).float()
-    sum_embeddings = torch.sum(token_embeddings * input_mask_expanded, 1)
-    sum_mask = torch.clamp(input_mask_expanded.sum(1), min=1e-9)
-    return sum_embeddings / sum_mask
-
-
 class RoBERTaLarge(nn.Module):
     def __init__(self, model_path):
         super(RoBERTaLarge, self).__init__()
         self.in_features = 1024
         self.dropout = nn.Dropout(0.3)
         self.roberta = RobertaModel.from_pretrained(model_path)
-        self.activation = nn.PReLU()
+        self.activation = nn.Tanh()
         self.l0 = nn.Linear(self.in_features, 1)
 
     def forward(self, ids, mask):
@@ -172,10 +165,9 @@ class RoBERTaLarge(nn.Module):
             attention_mask=mask
         )
 
-        # last_n_hidden = torch.mean(roberta_outputs.last_hidden_state[:, -4:, :], 1)
-        sentence_embeddings = mean_pooling2(roberta_outputs, mask)
- 
-        x = self.activation(sentence_embeddings)
+        last_n_hidden = roberta_outputs.last_hidden_state[:, -1, :]
+
+        x = self.activation(last_n_hidden)
         logits = self.l0(self.dropout(x))
         return logits.squeeze(-1)
 
