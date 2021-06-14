@@ -37,8 +37,8 @@ MODEL_TYPES = tuple(conf.model_type for conf in MODEL_CONFIG_CLASSES)
 
 
 class TrainConfig:
-    train_file= 'mlm_data_aug_children_data.csv'
-    validation_file = 'mlm_data_aug_children_data.csv'
+    train_file= 'inputs/mlm_data_aug_children_data.csv'
+    validation_file = 'inputs/mlm_data_aug_children_data.csv'
     validation_split_percentage= 5
     pad_to_max_length= True
     model_name_or_path= 'roberta-large'
