@@ -41,11 +41,11 @@ class TrainConfig:
     validation_file = 'inputs/mlm_data.csv'
     validation_split_percentage= 5
     pad_to_max_length= True
-    model_name_or_path= 'distil-roberta-base'
-    config_name= 'distil-roberta-base'
-    tokenizer_name= 'distil-roberta-base'
+    model_name_or_path= 'sentence-transformers/paraphrase-distilroberta-base-v1'
+    config_name= 'sentence-transformers/paraphrase-distilroberta-base-v1'
+    tokenizer_name= 'sentence-transformers/paraphrase-distilroberta-base-v1'
     use_slow_tokenizer= True
-    per_device_train_batch_size= 4 # 8
+    per_device_train_batch_size= 8
     per_device_eval_batch_size= 8
     learning_rate= 5e-5
     weight_decay= 0.0
