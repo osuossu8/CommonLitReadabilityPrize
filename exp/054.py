@@ -131,7 +131,10 @@ class CommonLitDataset:
         ids = inputs["input_ids"]
         mask = inputs["attention_mask"]
         targets = self.df["target"].values[item]
-        aux_targets = self.df["aux_target"].values[item]
+        aux = self.df["aux_target"].values[item] + 4
+
+        aux_targets = np.zeros(7, dtype=float)
+        aux_targets[aux] = 1.0
 
         return {
             "input_ids": torch.tensor(ids, dtype=torch.long),
