@@ -173,7 +173,7 @@ def mean_pooling(model_output, attention_mask):
     return sum_embeddings / sum_mask
 
 
-class RoBERTaLarge(nn.Module):
+class RoBERTaLarge2(nn.Module):
     def __init__(self, model_path):
         super(RoBERTaLarge, self).__init__()
         self.in_features = 1024
@@ -199,6 +199,29 @@ class RoBERTaLarge(nn.Module):
         logits = self.l0(self.dropout0(x0))
         aux_logits = torch.sigmoid(self.l1(self.dropout1(x1)))
         return logits.squeeze(-1), aux_logits
+
+
+class RoBERTaLarge(nn.Module):
+    def __init__(self, model_path):
+        super(RoBERTaLarge, self).__init__()
+        self.in_features = 1024
+        self.dropout = nn.Dropout(0.3)
+        self.roberta = RobertaModel.from_pretrained(model_path)
+        self.activation = nn.PReLU()
+        self.l0 = nn.Linear(self.in_features, 8)
+
+    def forward(self, ids, mask):
+        roberta_outputs = self.roberta(
+            ids,
+            attention_mask=mask
+        )
+
+        sentence_embeddings = mean_pooling(roberta_outputs, mask)        
+
+        x = self.activation(sentence_embeddings)
+        x = self.l0(self.dropout(x))
+        logits, aux_logits = x[:, 0], x[:, 1:]
+        return logits.squeeze(-1), torch.sigmoid(aux_logits)
 
 
 # ====================================================
