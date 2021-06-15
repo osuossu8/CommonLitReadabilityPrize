@@ -43,7 +43,7 @@ class CFG:
     valid_bs = 16 * 2
     log_interval = 10
     model_name = 'roberta-large'
-    itpt_path = 'itpt/roberta_large_6/'
+    itpt_path = 'itpt/roberta_large_2/' # 'itpt/roberta_large_6/'
 
 
 def set_seed(seed=42):
@@ -312,6 +312,7 @@ def calc_cv(model_paths):
     tokenizer = RobertaTokenizer.from_pretrained(CFG.model_name)
     
     df = pd.read_csv("inputs/train_folds.csv")
+    df['aux_target'] = np.round(df['target'], 0).astype(np.int8) # 7 classes
     y_true = []
     y_pred = []
     for fold, model in enumerate(models):
@@ -328,7 +329,7 @@ def calc_cv(model_paths):
                 inputs = data['input_ids'].to(device)
                 masks = data['attention_mask'].to(device)
 
-                output = model(inputs, masks)
+                output, _ = model(inputs, masks)
                 output = output.detach().cpu().numpy().tolist()
                 final_output.extend(output)
         logger.info(calc_loss(np.array(final_output), val_df['target'].values))
