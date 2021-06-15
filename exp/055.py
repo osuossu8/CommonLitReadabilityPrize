@@ -43,7 +43,7 @@ class CFG:
     valid_bs = 16 * 2
     log_interval = 10
     model_name = 'roberta-large'
-    itpt_path = 'itpt/roberta_large_5/' # 'itpt/roberta_large_6/'
+    itpt_path = 'itpt/roberta_large_2/' # 'itpt/roberta_large_6/'
 
 
 def set_seed(seed=42):
