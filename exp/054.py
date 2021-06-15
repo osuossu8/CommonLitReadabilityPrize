@@ -131,11 +131,13 @@ class CommonLitDataset:
         ids = inputs["input_ids"]
         mask = inputs["attention_mask"]
         targets = self.df["target"].values[item]
+        aux_targets = self.df["aux_target"].values[item]
 
         return {
             "input_ids": torch.tensor(ids, dtype=torch.long),
             "attention_mask": torch.tensor(mask, dtype=torch.long),
             "targets" : torch.tensor(targets, dtype=torch.float32),
+            "aux_targets" : torch.tensor(aux_targets, dtype=torch.float32),
         }
 
 
@@ -157,6 +159,7 @@ class RoBERTaLarge(nn.Module):
         self.roberta = RobertaModel.from_pretrained(model_path)
         self.activation = nn.PReLU()
         self.l0 = nn.Linear(self.in_features, 1)
+        self.l1 = nn.Linear(self.in_features, 7)
 
     def forward(self, ids, mask):
         roberta_outputs = self.roberta(
@@ -168,7 +171,8 @@ class RoBERTaLarge(nn.Module):
 
         x = self.activation(sentence_embeddings)
         logits = self.l0(self.dropout(x))
-        return logits.squeeze(-1)
+        aux_logits = torch.sigmoid(self.l1(self.dropout(x)))
+        return logits.squeeze(-1), aux_logits
 
 
 # ====================================================
@@ -225,7 +229,11 @@ class RMSELoss(torch.nn.Module):
 
 
 def loss_fn(logits, targets):
-    # loss_fct = RMSELoss()
+    loss_fct = RMSELoss()
+    loss = loss_fct(logits, targets)
+    return loss
+
+def aux_loss_fn(logits, targets):
     loss_fct = nn.BCEWithLogitsLoss()
     loss = loss_fct(logits, targets)
     return loss
@@ -242,8 +250,9 @@ def train_fn(epoch, model, train_data_loader, valid_data_loader, device, optimiz
         inputs = data['input_ids'].to(device)
         masks = data['attention_mask'].to(device)
         targets = data['targets'].to(device)
-        outputs = model(inputs, masks)
-        loss = loss_fn(outputs, targets)
+        aux_targets = data['aux_targets'].to(device)
+        outputs, aux_outs = model(inputs, masks)
+        loss = loss_fn(outputs, targets) * 0.5 + aux_loss_fn(aux_outs, aux_targets) * 0.5
         loss.backward()
         optimizer.step()
         scheduler.step()
@@ -275,8 +284,9 @@ def valid_fn(model, data_loader, device):
             inputs = data['input_ids'].to(device)
             masks = data['attention_mask'].to(device)
             targets = data['targets'].to(device)
-            outputs = model(inputs, masks)
-            loss = loss_fn(outputs, targets)
+            aux_targets = data['aux_targets'].to(device)
+            outputs, aux_outs = model(inputs, masks)
+            loss = loss_fn(outputs, targets) * 0.5 + aux_loss_fn(aux_outs, aux_targets) * 0.5
             losses.update(loss.item(), inputs.size(0))
             scores.update(targets, outputs)
             tk0.set_postfix(loss=losses.avg)
@@ -343,7 +353,7 @@ device = get_device()
 
 # data
 train = pd.read_csv("inputs/train_folds.csv")
-train['aux_target'] = np.round(train['target'], 0).astype(np.int8)
+train['aux_target'] = np.round(train['target'], 0).astype(np.int8) # 7 classes
 
 print(train.shape)
 train.head()
