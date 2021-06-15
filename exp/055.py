@@ -43,7 +43,7 @@ class CFG:
     valid_bs = 16 * 2
     log_interval = 10
     model_name = 'roberta-large'
-    itpt_path = 'itpt/roberta_large_2/' # 'itpt/roberta_large_6/'
+    itpt_path = 'itpt/roberta_large_5/' # 'itpt/roberta_large_6/'
 
 
 def set_seed(seed=42):
@@ -144,6 +144,25 @@ class CommonLitDataset:
         }
 
 
+class AttentionHead(nn.Module):
+    def __init__(self, in_features, hidden_dim, num_targets):
+        super().__init__()
+        self.in_features = in_features
+        self.middle_features = hidden_dim
+        self.W = nn.Linear(in_features, hidden_dim)
+        self.V = nn.Linear(hidden_dim, 1)
+        self.out_features = hidden_dim
+
+    def forward(self, features):
+        att = torch.tanh(self.W(features))
+        score = self.V(att)
+        attention_weights = torch.softmax(score, dim=1)
+        context_vector = attention_weights * features
+        context_vector = torch.sum(context_vector, dim=1)
+
+        return context_vector
+
+
 # https://huggingface.co/sentence-transformers/nli-roberta-large
 # Mean Pooling - Take attention mask into account for correct averaging
 def mean_pooling(model_output, attention_mask):
@@ -159,10 +178,10 @@ class RoBERTaLarge(nn.Module):
         super(RoBERTaLarge, self).__init__()
         self.in_features = 1024
         self.dropout0 = nn.Dropout(0.3)
-        self.dropout1 = nn.Dropout(0.3)
+        self.dropout1 = nn.Dropout(0.1)
         self.roberta = RobertaModel.from_pretrained(model_path)
-        self.activation0 = nn.PReLU()
-        self.activation1 = nn.Tanh()
+        self.activation = nn.PReLU()
+        self.head = AttentionHead(self.in_features, self.in_features, 1)
         self.l0 = nn.Linear(self.in_features, 1)
         self.l1 = nn.Linear(self.in_features, 7)
 
@@ -173,10 +192,9 @@ class RoBERTaLarge(nn.Module):
         )
 
         sentence_embeddings = mean_pooling(roberta_outputs, mask)        
-        last_4_hidden = torch.mean(roberta_outputs.last_hidden_state[:, -4:, :], 1)
 
-        x0 = self.activation0(sentence_embeddings)
-        x1 = self.activation1(last_4_hidden)
+        x0 = self.activation(sentence_embeddings)
+        x1 = self.head(roberta_outputs[0])
 
         logits = self.l0(self.dropout0(x0))
         aux_logits = torch.sigmoid(self.l1(self.dropout1(x1)))
