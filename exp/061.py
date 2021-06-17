@@ -1,6 +1,7 @@
 import gc
 import os
 import math
+import pickle
 import random
 import time
 import warnings
@@ -79,6 +80,12 @@ def init_logger(log_file='train.log'):
     logger.addHandler(handler1)
     logger.addHandler(handler2)
     return logger
+
+
+def unpickle(filename):
+    with open(filename, mode='rb') as fo:
+        p = pickle.load(fo)
+    return p
 
 
 def calc_loss(y_true, y_pred):
