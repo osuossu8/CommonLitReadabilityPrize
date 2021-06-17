@@ -392,8 +392,8 @@ def calc_cv(model_paths):
                 inputs = data['input_ids'].to(device)
                 masks = data['attention_mask'].to(device)
                 numerical_features = data['numerical_features'].to(device)
-
-                output, _ = model(inputs, masks, numerical_features)
+                tfidf = data['tfidf'].to(device)
+                output, _ = model(inputs, masks, numerical_features, tfidf)
                 output = output.detach().cpu().numpy().tolist()
                 final_output.extend(output)
         logger.info(calc_loss(np.array(final_output), val_df['target'].values))
