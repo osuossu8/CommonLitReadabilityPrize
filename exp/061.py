@@ -207,17 +207,21 @@ class RoBERTaLarge(nn.Module):
             nn.Dropout(0.1),
         )
         self.process_use_features = nn.Sequential(
-            nn.Linear(512, 128),
+            nn.Linear(512, 256),
+            nn.BatchNorm1d(256),
+            nn.PReLU(),
+            nn.Dropout(0.1),
+            nn.Linear(256, 128),
             nn.BatchNorm1d(128),
             nn.PReLU(),
             nn.Dropout(0.1),
-            nn.Linear(128, 32),
-            nn.BatchNorm1d(32),
+            nn.Linear(128, 16),
+            nn.BatchNorm1d(16),
             nn.PReLU(),
             nn.Dropout(0.1),
         )
-        self.l0 = nn.Linear(self.in_features + 8 + 32 * 2, 1)
-        self.l1 = nn.Linear(self.in_features + 8 + 32 * 2, 7)
+        self.l0 = nn.Linear(self.in_features + 8 + 32 + 16, 1)
+        self.l1 = nn.Linear(self.in_features + 8 + 32 + 16, 7)
 
     def forward(self, ids, mask, numerical_features, tfidf, use_features):
         roberta_outputs = self.roberta(
@@ -231,9 +235,9 @@ class RoBERTaLarge(nn.Module):
 
         x3 = self.process_tfidf(tfidf) # bs, 32
 
-        x4 = self.process_use_features(use_features) # bs, 32
+        x4 = self.process_use_features(use_features) # bs, 16
 
-        x = torch.cat([x1, x2, x3, x4], 1) # bs, 1024 + 8 + 32 * 2
+        x = torch.cat([x1, x2, x3, x4], 1) # bs, 1024 + 8 + 32 + 16
 
         logits = self.l0(self.dropout(x))
         aux_logits = torch.sigmoid(self.l1(self.dropout(x)))
