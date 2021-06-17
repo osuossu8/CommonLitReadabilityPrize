@@ -359,7 +359,7 @@ def calc_cv(model_paths):
     df = get_sentence_features(df, 'excerpt')
 
     TP = TextPreprocessor()
-    preprocessed_text = TP.preprocess(train['excerpt'])
+    preprocessed_text = TP.preprocess(df['excerpt'])
 
     pipeline = make_pipeline(
                 TfidfVectorizer(max_features=100000),
