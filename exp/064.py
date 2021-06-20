@@ -235,7 +235,7 @@ class RoBERTaLarge(nn.Module):
         conv_avg_pool = torch.mean(conv, 2) # bs, 64
         conv_max_pool, _ = torch.max(conv, 2) # bs, 64
 
-        x1 = self.head(roberta_outputs[0]) # bs, 1024
+        # x1 = self.head(roberta_outputs[0]) # bs, 1024
 
         x2 = self.process_num(numerical_features) # bs, 8
 
