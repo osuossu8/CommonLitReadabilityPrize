@@ -342,6 +342,11 @@ def train_fn(epoch, model, train_data_loader, valid_data_loader, device, optimiz
                 torch.save(model.state_dict(), OUTPUT_DIR+f'fold-{fold}.bin')
                 best_score = valid_avg['RMSE']
 
+            # RuntimeError: cudnn RNN backward can only be called in training mode (_cudnn_rnn_backward_input at /pytorch/aten/src/ATen/native/cudnn/RNN.cpp:877)
+            # https://discuss.pytorch.org/t/pytorch-cudnn-rnn-backward-can-only-be-called-in-training-mode/80080/2
+            # edge case in my code when doing eval on training step
+            model.train() 
+
     return scores.avg, losses.avg, valid_avg, valid_loss, best_score
 
 
