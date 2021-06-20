@@ -207,10 +207,11 @@ class RoBERTaLarge(nn.Module):
             nn.PReLU(),
             nn.Dropout(0.1),
         )
-        self.linear = nn.Linear(self.in_features + 8 + 32 + 64 * 2, 256)
+        # self.linear = nn.Linear(self.in_features + 8 + 32 + 64 * 2, 256)
+        self.linear = nn.Linear(8 + 32 + 64 * 2, 64)
         self.relu = nn.ReLU()
-        self.l0 = nn.Linear(256, 1)
-        self.l1 = nn.Linear(256, 7)
+        self.l0 = nn.Linear(64, 1)
+        self.l1 = nn.Linear(64, 7)
 
     def apply_spatial_dropout(self, h_embedding):
         h_embedding = h_embedding.transpose(1, 2).unsqueeze(2)
@@ -241,9 +242,10 @@ class RoBERTaLarge(nn.Module):
 
         x3 = self.process_tfidf(tfidf) # bs, 32
 
-        x = torch.cat([x1, x2, x3, conv_avg_pool, conv_max_pool], 1) # bs, 1024 + 8 + 32 + 64 * 2
+        # x = torch.cat([x1, x2, x3, conv_avg_pool, conv_max_pool], 1) # bs, 1024 + 8 + 32 + 64 * 2
+        x = torch.cat([x2, x3, conv_avg_pool, conv_max_pool], 1) # bs, 8 + 32 + 64 * 2
 
-        x = self.relu(self.linear(x)) # 256
+        # x = self.relu(self.linear(x)) # 256
 
         logits = self.l0(self.dropout(x))
         aux_logits = torch.sigmoid(self.l1(self.dropout(x)))
