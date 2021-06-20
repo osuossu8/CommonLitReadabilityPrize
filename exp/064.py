@@ -208,10 +208,9 @@ class RoBERTaLarge(nn.Module):
             nn.Dropout(0.1),
         )
         # self.linear = nn.Linear(self.in_features + 8 + 32 + 64 * 2, 256)
-        self.linear = nn.Linear(8 + 32 + 64 * 2, 64)
         self.relu = nn.ReLU()
-        self.l0 = nn.Linear(64, 1)
-        self.l1 = nn.Linear(64, 7)
+        self.l0 = nn.Linear(168, 1)
+        self.l1 = nn.Linear(168, 7)
 
     def apply_spatial_dropout(self, h_embedding):
         h_embedding = h_embedding.transpose(1, 2).unsqueeze(2)
