@@ -265,7 +265,7 @@ class RoBERTaLarge(nn.Module):
 
         # h_embedding = self.roberta.embeddings(ids).transpose(2, 1) # bs, 1024, 256
         # h_embedding = roberta_outputs[0].transpose(2, 1) # bs, 1024, 256
-        h_embedding = self.embedding(x)
+        h_embedding = self.embedding(seqs)
         h_embedding = self.apply_spatial_dropout(h_embedding)
 
         h_lstm, _ = self.lstm(h_embedding)
