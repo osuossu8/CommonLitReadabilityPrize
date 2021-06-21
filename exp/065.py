@@ -184,8 +184,8 @@ class RoBERTaLarge(nn.Module):
         self.in_features = 1024
         self.roberta = RobertaModel.from_pretrained(model_path)
 
-        self.lstm_hidden_size = 128 // 4
-        self.gru_hidden_size = 128 // 4
+        self.lstm_hidden_size = 128
+        self.gru_hidden_size = 128
         self.embedding_dropout = nn.Dropout2d(0.2)
         self.lstm = nn.LSTM(256, self.lstm_hidden_size, bidirectional=True, batch_first=True)
         self.gru = nn.GRU(self.lstm_hidden_size * 2, self.gru_hidden_size, bidirectional=True, batch_first=True)
@@ -204,10 +204,10 @@ class RoBERTaLarge(nn.Module):
             nn.PReLU(),
             nn.Dropout(0.1),
         )
-        # self.linear = nn.Linear(256 * 3, 128)
+        # self.linear = nn.Linear(self.in_features + 8 + 32 + 256 * 3, 200)
         # self.relu = nn.ReLU()
-        self.l0 = nn.Linear(self.in_features + 8 + 32 + 64 * 3, 1)
-        self.l1 = nn.Linear(self.in_features + 8 + 32 + 64 * 3, 7)
+        self.l0 = nn.Linear(self.in_features + 8 + 32 + 256 * 3, 1)
+        self.l1 = nn.Linear(self.in_features + 8 + 32 + 256 * 3, 7)
 
     def apply_spatial_dropout(self, h_embedding):
         h_embedding = h_embedding.transpose(1, 2).unsqueeze(2)
@@ -221,17 +221,18 @@ class RoBERTaLarge(nn.Module):
         )
 
         h_embedding = self.roberta.embeddings(ids).transpose(2, 1) # bs, 1024, 256
+        # h_embedding = roberta_outputs[0].transpose(2, 1) # bs, 1024, 256
         h_embedding = self.apply_spatial_dropout(h_embedding)
 
         h_lstm, _ = self.lstm(h_embedding)
         h_gru, hh_gru = self.gru(h_lstm)
 
-        hh_gru = hh_gru.view(-1, self.gru_hidden_size * 2) # bs, 64
+        hh_gru = hh_gru.view(-1, self.gru_hidden_size * 2) # bs, 256
 
-        avg_pool = torch.mean(h_gru, 1) # bs, 64
-        max_pool, _ = torch.max(h_gru, 1) # bs, 64
+        avg_pool = torch.mean(h_gru, 1) # bs, 256
+        max_pool, _ = torch.max(h_gru, 1) # bs, 256
 
-        conc = torch.cat((hh_gru, avg_pool, max_pool), 1) # bs, 64 * 3
+        conc = torch.cat((hh_gru, avg_pool, max_pool), 1) # bs, 256 * 3
 
         x1 = self.head(roberta_outputs[0]) # bs, 1024
 
@@ -239,9 +240,9 @@ class RoBERTaLarge(nn.Module):
 
         x3 = self.process_tfidf(tfidf) # bs, 32
 
-        x = torch.cat([x1, x2, x3, conc], 1) # bs, 1024 + 8 + 32 + 64 * 3
+        x = torch.cat([x1, x2, x3, conc], 1) # bs, 8 + 32 + 256 * 3
 
-        # x = self.relu(self.linear(conc)) # 256
+        # x = self.relu(self.linear(x)) # bs, 256
 
         logits = self.l0(self.dropout(x))
         aux_logits = torch.sigmoid(self.l1(self.dropout(x)))
