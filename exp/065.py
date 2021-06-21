@@ -205,7 +205,7 @@ class RoBERTaLarge(nn.Module):
             nn.Dropout(0.1),
         )
         # self.linear = nn.Linear(self.in_features + 8 + 32 + 256 * 3, 200)
-        # self.relu = nn.ReLU()
+        self.relu = nn.ReLU()
         self.l0 = nn.Linear(self.in_features + 8 + 32 + 256 * 3, 1)
         self.l1 = nn.Linear(self.in_features + 8 + 32 + 256 * 3, 7)
 
@@ -243,6 +243,7 @@ class RoBERTaLarge(nn.Module):
         x = torch.cat([x1, x2, x3, conc], 1) # bs, 8 + 32 + 256 * 3
 
         # x = self.relu(self.linear(x)) # bs, 256
+        x = self.relu(x)
 
         logits = self.l0(self.dropout(x))
         aux_logits = torch.sigmoid(self.l1(self.dropout(x)))
