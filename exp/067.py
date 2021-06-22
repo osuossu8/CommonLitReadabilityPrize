@@ -195,6 +195,7 @@ class RoBERTaLarge(nn.Module):
             nn.PReLU(),
             nn.Dropout(0.1),
         )
+        self.relu = nn.ReLU()
         self.l0 = nn.Linear(self.in_features + 8 + 32, 1)
         self.l1 = nn.Linear(self.in_features + 8 + 32, 7)
 
@@ -211,6 +212,8 @@ class RoBERTaLarge(nn.Module):
         x3 = self.process_tfidf(tfidf) # bs, 32
 
         x = torch.cat([x1, x2, x3], 1) # bs, 1024 + 8 + 32
+
+        x = self.relu(x)
 
         logits = self.l0(self.dropout(x))
         aux_logits = torch.sigmoid(self.l1(self.dropout(x)))
@@ -535,6 +538,32 @@ def get_sentence_features(train, col):
     train[col + '_num_unique_words'] = train[col].apply(lambda comment: len(set(w for w in comment.split())))
     train[col + '_words_vs_unique'] = train[col + '_num_unique_words'] / train[col + '_num_words'] 
     return train
+
+
+def get_optimizer_params(model):
+    # differential learning rate and weight decay
+    param_optimizer = list(model.named_parameters())
+    learning_rate = 2e-5 # 5e-5
+    no_decay = ['bias', 'gamma', 'beta']
+    group1=['layer.0.','layer.1.','layer.2.','layer.3.']
+    group2=['layer.4.','layer.5.','layer.6.','layer.7.']    
+    group3=['layer.8.','layer.9.','layer.10.','layer.11.']
+    group_all=[
+        'layer.0.','layer.1.','layer.2.','layer.3.','layer.4.','layer.5.','layer.6.','layer.7.','layer.8.','layer.9.','layer.10.','layer.11.',
+        'layer.12.','layer.13.','layer.14.','layer.15.','layer.16.','layer.17.','layer.18.','layer.19.','layer.20.','layer.21.','layer.22.','layer.23.',
+    ]
+    optimizer_parameters = [
+        {'params': [p for n, p in model.roberta.named_parameters() if not any(nd in n for nd in no_decay) and not any(nd in n for nd in group_all)],'weight_decay': 0.01},
+        {'params': [p for n, p in model.roberta.named_parameters() if not any(nd in n for nd in no_decay) and any(nd in n for nd in group1)],'weight_decay': 0.01, 'lr': learning_rate/2.6},
+        {'params': [p for n, p in model.roberta.named_parameters() if not any(nd in n for nd in no_decay) and any(nd in n for nd in group2)],'weight_decay': 0.01, 'lr': learning_rate},
+        {'params': [p for n, p in model.roberta.named_parameters() if not any(nd in n for nd in no_decay) and any(nd in n for nd in group3)],'weight_decay': 0.01, 'lr': learning_rate*2.6},
+        {'params': [p for n, p in model.roberta.named_parameters() if any(nd in n for nd in no_decay) and not any(nd in n for nd in group_all)],'weight_decay': 0.0},
+        {'params': [p for n, p in model.roberta.named_parameters() if any(nd in n for nd in no_decay) and any(nd in n for nd in group1)],'weight_decay': 0.0, 'lr': learning_rate/2.6},
+        {'params': [p for n, p in model.roberta.named_parameters() if any(nd in n for nd in no_decay) and any(nd in n for nd in group2)],'weight_decay': 0.0, 'lr': learning_rate},
+        {'params': [p for n, p in model.roberta.named_parameters() if any(nd in n for nd in no_decay) and any(nd in n for nd in group3)],'weight_decay': 0.0, 'lr': learning_rate*2.6},
+        {'params': [p for n, p in model.named_parameters() if "roberta" not in n], 'lr':1e-3, "momentum" : 0.99},
+    ]
+    return optimizer_parameters
  
        
 OUTPUT_DIR = f'outputs/{CFG.EXP_ID}/'
@@ -604,12 +633,13 @@ for fold in range(5):
         valid_dataset, batch_size=CFG.valid_bs, num_workers=0, pin_memory=True, shuffle=False
     )
     
-    param_optimizer = list(model.named_parameters())
-    no_decay = ["bias", "LayerNorm.bias", "LayerNorm.weight"]
-    optimizer_parameters = [
-        {'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], 'weight_decay': 0.001},
-        {'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], 'weight_decay': 0.0},
-    ]
+    # param_optimizer = list(model.named_parameters())
+    # no_decay = ["bias", "LayerNorm.bias", "LayerNorm.weight"]
+    # optimizer_parameters = [
+    #     {'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], 'weight_decay': 0.001},
+    #     {'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], 'weight_decay': 0.0},
+    # ]
+    optimizer_parameters = get_optimizer_params(model)
 
     num_train_steps = int(len(trn_df) / CFG.train_bs * CFG.epochs)   
     optimizer = transformers.AdamW(optimizer_parameters, lr=CFG.LR)
