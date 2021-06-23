@@ -208,6 +208,11 @@ class RoBERTaLarge(nn.Module):
         self.l0 = nn.Linear(self.in_features + 8 + 32 + 128 * 2, 1)
         self.l1 = nn.Linear(self.in_features + 8 + 32 + 128 * 2, 7)
 
+    def apply_spatial_dropout(self, h_embedding):
+        h_embedding = h_embedding.transpose(1, 2).unsqueeze(2)
+        h_embedding = self.embedding_dropout(h_embedding).squeeze(2).transpose(1, 2)
+        return h_embedding
+
     def forward(self, ids, mask, numerical_features, tfidf):
         roberta_outputs = self.roberta(
             ids,
