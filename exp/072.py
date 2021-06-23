@@ -68,7 +68,7 @@ class CFG:
     epochs = 5
     folds = [0, 1, 2, 3, 4]
     N_FOLDS = 5
-    LR = 2e-5
+    LR = 1e-3
     max_len = 256
     train_bs = 8 * 2
     valid_bs = 16 * 2
@@ -883,7 +883,7 @@ for fold in range(5):
 
         start_time = time.time()
 
-        train_avg, train_loss, valid_avg, valid_loss, best_score = train_fn(model, train_dataloader, device, optimizer, scheduler)
+        train_avg, train_loss = train_fn(model, train_dataloader, device, optimizer, scheduler)
 
         valid_avg, valid_loss = valid_fn(model, valid_dataloader, device)
 
