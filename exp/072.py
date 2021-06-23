@@ -265,8 +265,8 @@ class RoBERTaLarge(nn.Module):
         )
         # self.linear = nn.Linear(self.in_features + 8 + 32 + 256 * 3 + 512, 512)
         # self.relu = nn.ReLU()
-        self.l0 = nn.Linear(8 + 32 + 256 * 5 + 512, 1)
-        self.l1 = nn.Linear(8 + 32 + 256 * 5 + 512, 7)
+        self.l0 = nn.Linear(8 + 32 + 256 * 4 + 512, 1)
+        self.l1 = nn.Linear(8 + 32 + 256 * 4 + 512, 7)
 
     def apply_spatial_dropout(self, h_embedding):
         h_embedding = h_embedding.transpose(1, 2).unsqueeze(2)
@@ -368,11 +368,11 @@ def aux_loss_fn(logits, targets):
     return loss
         
         
-def train_fn(epoch, model, train_data_loader, valid_data_loader, device, optimizer, scheduler, best_score):
+def train_fn(model, data_loader, device, optimizer, scheduler):
     model.train()
     losses = AverageMeter()
     scores = MetricMeter()
-    tk0 = tqdm(train_data_loader, total=len(train_data_loader))
+    tk0 = tqdm(data_loader, total=len(data_loader))
     
     for batch_idx, data in enumerate(tk0):
         optimizer.zero_grad()
@@ -392,23 +392,7 @@ def train_fn(epoch, model, train_data_loader, valid_data_loader, device, optimiz
         losses.update(loss.item(), inputs.size(0))
         scores.update(targets, outputs)
         tk0.set_postfix(loss=losses.avg)
-
-        if (batch_idx > 0) and (batch_idx % CFG.log_interval == 0):
-            valid_avg, valid_loss = valid_fn(model, valid_data_loader, device)
-
-            logger.info(f"Epoch {epoch+1}, Step {batch_idx} - valid_rmse:{valid_avg['RMSE']:0.5f}")
-
-            if valid_avg['RMSE'] < best_score:
-                logger.info(f">>>>>>>> Model Improved From {best_score} ----> {valid_avg['RMSE']}")
-                torch.save(model.state_dict(), OUTPUT_DIR+f'fold-{fold}.bin')
-                best_score = valid_avg['RMSE']
-
-            # RuntimeError: cudnn RNN backward can only be called in training mode (_cudnn_rnn_backward_input at /pytorch/aten/src/ATen/native/cudnn/RNN.cpp:877)
-            # https://discuss.pytorch.org/t/pytorch-cudnn-rnn-backward-can-only-be-called-in-training-mode/80080/2
-            # edge case in my code when doing eval on training step
-            model.train() 
-
-    return scores.avg, losses.avg, valid_avg, valid_loss, best_score
+    return scores.avg, losses.avg
 
 
 def valid_fn(model, data_loader, device):
@@ -881,7 +865,7 @@ for fold in range(5):
     param_optimizer = list(model.named_parameters())
     no_decay = ["bias", "LayerNorm.bias", "LayerNorm.weight"]
     optimizer_parameters = [
-        {'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], 'weight_decay': 0.001},
+        {'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], 'weight_decay': 0.0},
         {'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], 'weight_decay': 0.0},
     ]
 
@@ -899,7 +883,9 @@ for fold in range(5):
 
         start_time = time.time()
 
-        train_avg, train_loss, valid_avg, valid_loss, best_score = train_fn(epoch, model, train_dataloader, valid_dataloader, device, optimizer, scheduler, best_score)
+        train_avg, train_loss, valid_avg, valid_loss, best_score = train_fn(model, train_dataloader, device, optimizer, scheduler)
+
+        valid_avg, valid_loss = valid_fn(model, valid_dataloader, device)
 
         scheduler.step()
         
