@@ -182,9 +182,9 @@ class RoBERTaLarge(nn.Module):
         self.in_features = 1024
         self.roberta = RobertaModel.from_pretrained(model_path)
 
-        lstm_hidden_size = 128
-        gru_hidden_size = 128
-        n_channels = 64
+        lstm_hidden_size = 128 * 2
+        gru_hidden_size = 128 * 2
+        n_channels = 64 * 2
         self.embedding_dropout = nn.Dropout2d(0.2)
         self.lstm = nn.LSTM(256, lstm_hidden_size, bidirectional=True, batch_first=True)
         self.gru = nn.GRU(lstm_hidden_size * 2, gru_hidden_size, bidirectional=True, batch_first=True)
