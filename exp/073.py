@@ -195,7 +195,7 @@ class RoBERTaLarge(nn.Module):
             nn.PReLU(),
             nn.Dropout(0.1),
         )
-        self.act = nn.Tahn()
+        self.act = nn.Tanh()
         self.l0 = nn.Linear(self.in_features + 8 + 32, 1)
         self.l1 = nn.Linear(self.in_features + 8 + 32, 7)
 
