@@ -182,8 +182,7 @@ class RoBERTaLarge(nn.Module):
         self.in_features = 1024
         self.roberta = RobertaModel.from_pretrained(model_path)
         self.head = AttentionHead(self.in_features,self.in_features,1)
-        self.embedding_dropout = nn.Dropout2d(0.1)
-        self.dropout = nn.Dropout(0.1)
+        # self.dropout = nn.Dropout(0.1)
         self.process_num = nn.Sequential(
             nn.Linear(10, 8),
             nn.BatchNorm1d(8),
@@ -214,8 +213,10 @@ class RoBERTaLarge(nn.Module):
 
         x = torch.cat([x1, x2, x3], 1) # bs, 1024 + 8 + 32
 
-        logits = self.l0(self.dropout(x))
-        aux_logits = torch.sigmoid(self.l1(self.dropout(x)))
+        # logits = self.l0(self.dropout(x))
+        # aux_logits = torch.sigmoid(self.l1(self.dropout(x)))
+        logits = self.l0(x)
+        aux_logits = torch.sigmoid(self.l1(x))
         return logits.squeeze(-1), aux_logits
 
 
@@ -247,30 +248,6 @@ class SmoothBCEwLogits(_WeightedLoss):
             loss = loss.mean()
 
         return loss
-
-
-class FocalLoss(nn.Module):
-    def __init__(self):
-        super().__init__()
-
-        self.bce = nn.BCEWithLogitsLoss(reduction='none')
-        self.gamma = 2
-
-    def forward(self, input_, target):
-        
-        input_ = torch.where(torch.isnan(input_),
-                             torch.zeros_like(input_),
-                             input_)
-        input_ = torch.where(torch.isinf(input_),
-                             torch.zeros_like(input_),
-                             input_)
-
-        target = target.float()
-
-        bce_loss = self.bce(input_, target)
-        probas = torch.sigmoid(input_)
-        loss = torch.where(target >= 0.5, (1. - probas)**self.gamma * bce_loss, probas**self.gamma * bce_loss)
-        return loss.mean()
 
 
 # ====================================================
@@ -333,8 +310,7 @@ def loss_fn(logits, targets):
 
 def aux_loss_fn(logits, targets):
     # loss_fct = nn.BCEWithLogitsLoss()
-    # loss_fct = SmoothBCEwLogits(smoothing=0.001) 
-    loss_fct = FocalLoss()
+    loss_fct = SmoothBCEwLogits(smoothing=0.001) 
     loss = loss_fct(logits, targets)
     return loss
         
