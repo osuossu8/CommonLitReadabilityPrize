@@ -199,10 +199,6 @@ class RoBERTaLarge(nn.Module):
         self.l0 = nn.Linear(self.in_features + 8 + 32, 1)
         self.l1 = nn.Linear(self.in_features + 8 + 32, 7)
 
-    def apply_spatial_dropout(self, h_embedding):
-        h_embedding = h_embedding.transpose(1, 2).unsqueeze(2)
-        h_embedding = self.embedding_dropout(h_embedding).squeeze(2).transpose(1, 2)
-        return h_embedding
 
     def forward(self, ids, mask, numerical_features, tfidf):
         roberta_outputs = self.roberta(
@@ -210,9 +206,7 @@ class RoBERTaLarge(nn.Module):
             attention_mask=mask
         )
 
-        h_embedding = self.apply_spatial_dropout(roberta_outputs[0])
-
-        x1 = self.head(h_embedding) # bs, 1024
+        x1 = self.head(roberta_outputs[0]) # bs, 1024
 
         x2 = self.process_num(numerical_features) # bs, 8
 
@@ -253,6 +247,30 @@ class SmoothBCEwLogits(_WeightedLoss):
             loss = loss.mean()
 
         return loss
+
+
+class FocalLoss(nn.Module):
+    def __init__(self):
+        super().__init__()
+
+        self.bce = nn.BCEWithLogitsLoss(reduction='none')
+        self.gamma = 2
+
+    def forward(self, input_, target):
+        
+        input_ = torch.where(torch.isnan(input_),
+                             torch.zeros_like(input_),
+                             input_)
+        input_ = torch.where(torch.isinf(input_),
+                             torch.zeros_like(input_),
+                             input_)
+
+        target = target.float()
+
+        bce_loss = self.bce(input_, target)
+        probas = torch.sigmoid(input_)
+        loss = torch.where(target >= 0.5, (1. - probas)**self.gamma * bce_loss, probas**self.gamma * bce_loss)
+        return loss.mean()
 
 
 # ====================================================
@@ -315,7 +333,8 @@ def loss_fn(logits, targets):
 
 def aux_loss_fn(logits, targets):
     # loss_fct = nn.BCEWithLogitsLoss()
-    loss_fct = SmoothBCEwLogits(smoothing=0.001) 
+    # loss_fct = SmoothBCEwLogits(smoothing=0.001) 
+    loss_fct = FocalLoss()
     loss = loss_fct(logits, targets)
     return loss
         
