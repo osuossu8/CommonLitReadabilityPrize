@@ -39,9 +39,9 @@ class CFG:
     N_FOLDS = 5
     LR = 2e-5
     max_len = 512
-    train_bs = 8 * 2
-    valid_bs = 16 * 2
-    log_interval = 10
+    train_bs = 8 #* 2
+    valid_bs = 16 #* 2
+    log_interval = 20 # 10
     model_name = 'roberta-large'
     itpt_path = 'itpt/roberta_large_2/' 
     numerical_cols = [
