@@ -182,6 +182,7 @@ class RoBERTaLarge(nn.Module):
         self.in_features = 1024
         self.roberta = RobertaModel.from_pretrained(model_path)
         self.head = AttentionHead(self.in_features,self.in_features,1)
+        self.embedding_dropout = nn.Dropout2d(0.1)
         self.dropout = nn.Dropout(0.1)
         self.process_num = nn.Sequential(
             nn.Linear(10, 8),
@@ -198,13 +199,20 @@ class RoBERTaLarge(nn.Module):
         self.l0 = nn.Linear(self.in_features + 8 + 32, 1)
         self.l1 = nn.Linear(self.in_features + 8 + 32, 7)
 
+    def apply_spatial_dropout(self, h_embedding):
+        h_embedding = h_embedding.transpose(1, 2).unsqueeze(2)
+        h_embedding = self.embedding_dropout(h_embedding).squeeze(2).transpose(1, 2)
+        return h_embedding
+
     def forward(self, ids, mask, numerical_features, tfidf):
         roberta_outputs = self.roberta(
             ids,
             attention_mask=mask
         )
 
-        x1 = self.head(roberta_outputs[0][:, -4:, :]) # bs, 1024
+        h_embedding = self.apply_spatial_dropout(roberta_outputs[0])
+
+        x1 = self.head(h_embedding) # bs, 1024
 
         x2 = self.process_num(numerical_features) # bs, 8
 
