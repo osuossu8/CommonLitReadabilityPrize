@@ -42,8 +42,8 @@ class CFG:
     train_bs = 8 * 2
     valid_bs = 16 * 2
     log_interval = 10
-    model_name = 'roberta-large'
-    itpt_path = 'itpt/roberta_large_2/' 
+    model_name = 'roberta-base' # 'roberta-large'
+    itpt_path = None # 'itpt/roberta_large_2/' 
     numerical_cols = [
        'excerpt_num_chars', 'excerpt_num_capitals', 'excerpt_caps_vs_length',
        'excerpt_num_exclamation_marks', 'excerpt_num_question_marks',
@@ -182,7 +182,7 @@ class RoBERTaLarge(nn.Module):
         self.in_features = 1024
         self.roberta = RobertaModel.from_pretrained(model_path)
         self.head = AttentionHead(self.in_features,self.in_features,1)
-        # self.dropout = nn.Dropout(0.1)
+        self.dropout = nn.Dropout(0.1)
         self.process_num = nn.Sequential(
             nn.Linear(10, 8),
             nn.BatchNorm1d(8),
@@ -213,10 +213,8 @@ class RoBERTaLarge(nn.Module):
 
         x = torch.cat([x1, x2, x3], 1) # bs, 1024 + 8 + 32
 
-        # logits = self.l0(self.dropout(x))
-        # aux_logits = torch.sigmoid(self.l1(self.dropout(x)))
-        logits = self.l0(x)
-        aux_logits = torch.sigmoid(self.l1(x))
+        logits = self.l0(self.dropout(x))
+        aux_logits = torch.sigmoid(self.l1(self.dropout(x)))
         return logits.squeeze(-1), aux_logits
 
 
