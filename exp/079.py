@@ -183,18 +183,18 @@ class ALBERTLarge(nn.Module):
         self.auto_model = AutoModel.from_pretrained(model_path)
         self.head = AttentionHead(self.in_features,self.in_features,1)
         self.dropout = nn.Dropout(0.1)
-        self.process_num = nn.Sequential(
-            nn.Linear(10, 8),
-            nn.BatchNorm1d(8),
-            nn.PReLU(),
-            nn.Dropout(0.1),
-        )
-        self.process_tfidf = nn.Sequential(
-            nn.Linear(100, 32),
-            nn.BatchNorm1d(32),
-            nn.PReLU(),
-            nn.Dropout(0.1),
-        )
+        #self.process_num = nn.Sequential(
+        #    nn.Linear(10, 8),
+        #    nn.BatchNorm1d(8),
+        #    nn.PReLU(),
+        #    nn.Dropout(0.1),
+        #)
+        #self.process_tfidf = nn.Sequential(
+        #    nn.Linear(100, 32),
+        #    nn.BatchNorm1d(32),
+        #    nn.PReLU(),
+        #    nn.Dropout(0.1),
+        #)
         self.l0 = nn.Linear(self.in_features, 1)
         self.l1 = nn.Linear(self.in_features, 7)
 
