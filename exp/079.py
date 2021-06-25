@@ -183,20 +183,20 @@ class ALBERTLarge(nn.Module):
         self.auto_model = AutoModel.from_pretrained(model_path)
         self.head = AttentionHead(self.in_features,self.in_features,1)
         self.dropout = nn.Dropout(0.1)
-        #self.process_num = nn.Sequential(
-        #    nn.Linear(10, 8),
-        #    nn.BatchNorm1d(8),
-        #    nn.PReLU(),
-        #    nn.Dropout(0.1),
-        #)
-        #self.process_tfidf = nn.Sequential(
-        #    nn.Linear(100, 32),
-        #    nn.BatchNorm1d(32),
-        #    nn.PReLU(),
-        #    nn.Dropout(0.1),
-        #)
-        self.l0 = nn.Linear(self.in_features, 1)
-        self.l1 = nn.Linear(self.in_features, 7)
+        self.process_num = nn.Sequential(
+            nn.Linear(10, 8),
+            nn.BatchNorm1d(8),
+            nn.PReLU(),
+            nn.Dropout(0.1),
+        )
+        self.process_tfidf = nn.Sequential(
+            nn.Linear(100, 32),
+            nn.BatchNorm1d(32),
+            nn.PReLU(),
+            nn.Dropout(0.1),
+        )
+        self.l0 = nn.Linear(self.in_features + 8 + 32, 1)
+        self.l1 = nn.Linear(self.in_features + 8 + 32, 7)
 
     def forward(self, ids, mask, numerical_features, tfidf):
         auto_outputs = self.auto_model(
@@ -204,13 +204,13 @@ class ALBERTLarge(nn.Module):
             attention_mask=mask
         )
 
-        x = self.head(auto_outputs[0]) # bs, 1024
+        x1 = self.head(auto_outputs[0]) # bs, 1024
 
-        # x2 = self.process_num(numerical_features) # bs, 8
+        x2 = self.process_num(numerical_features) # bs, 8
 
-        # x3 = self.process_tfidf(tfidf) # bs, 32
+        x3 = self.process_tfidf(tfidf) # bs, 32
 
-        # x = torch.cat([x1, x2, x3], 1) # bs, 1024 + 8 + 32
+        x = torch.cat([x1, x2, x3], 1) # bs, 1024 + 8 + 32
 
         logits = self.l0(self.dropout(x))
         aux_logits = torch.sigmoid(self.l1(self.dropout(x)))
