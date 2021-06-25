@@ -199,7 +199,7 @@ class ALBERTLarge(nn.Module):
         self.l1 = nn.Linear(self.in_features + 8 + 32, 7)
 
     def forward(self, ids, mask, numerical_features, tfidf):
-        auto_outputs = self.roberta(
+        auto_outputs = self.auto_model(
             ids,
             attention_mask=mask
         )
