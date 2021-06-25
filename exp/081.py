@@ -185,13 +185,13 @@ class RoBERTaLarge(nn.Module):
         self.dropout = nn.Dropout(0.1)
         self.process_num = nn.Sequential(
             nn.Linear(10, 8),
-            # nn.BatchNorm1d(8),
+            nn.BatchNorm1d(8),
             nn.PReLU(),
             nn.Dropout(0.1),
         )
         self.process_tfidf = nn.Sequential(
             nn.Linear(100, 32),
-            # nn.BatchNorm1d(32),
+            nn.BatchNorm1d(32),
             nn.PReLU(),
             nn.Dropout(0.1),
         )
@@ -307,7 +307,7 @@ def loss_fn(logits, targets):
 
 def aux_loss_fn(logits, targets):
     # loss_fct = nn.BCEWithLogitsLoss()
-    loss_fct = SmoothBCEwLogits(smoothing=0.001) 
+    loss_fct = SmoothBCEwLogits(smoothing=0.01) # 0.001
     loss = loss_fct(logits, targets)
     return loss
         
