@@ -23,7 +23,7 @@ from sklearn import model_selection
 from sklearn import metrics
 
 from tqdm import tqdm
-from transformers import RobertaConfig, RobertaModel, RobertaTokenizer
+from transformers import RobertaConfig, RobertaModel, RobertaTokenizer, AutoConfig, AutoModel, AutoTokenizer
 
 from apex import amp
 
@@ -42,8 +42,8 @@ class CFG:
     train_bs = 8 * 2
     valid_bs = 16 * 2
     log_interval = 10
-    model_name = 'roberta-large'
-    itpt_path = 'itpt/roberta_large_2/' 
+    model_name = 'albert-large-v2' # 'roberta-large'
+    itpt_path = # 'itpt/roberta_large_2/' 
     numerical_cols = [
        'excerpt_num_chars', 'excerpt_num_capitals', 'excerpt_caps_vs_length',
        'excerpt_num_exclamation_marks', 'excerpt_num_question_marks',
@@ -176,11 +176,11 @@ class AttentionHead(nn.Module):
         return context_vector
 
 
-class RoBERTaLarge(nn.Module):
+class ALBERTLarge(nn.Module):
     def __init__(self, model_path):
-        super(RoBERTaLarge, self).__init__()
+        super(ALBERTLarge, self).__init__()
         self.in_features = 1024
-        self.roberta = RobertaModel.from_pretrained(model_path)
+        self.auto_model = AutoModel.from_pretrained(model_path)
         self.head = AttentionHead(self.in_features,self.in_features,1)
         self.dropout = nn.Dropout(0.1)
         self.process_num = nn.Sequential(
@@ -199,12 +199,12 @@ class RoBERTaLarge(nn.Module):
         self.l1 = nn.Linear(self.in_features + 8 + 32, 7)
 
     def forward(self, ids, mask, numerical_features, tfidf):
-        roberta_outputs = self.roberta(
+        auto_outputs = self.roberta(
             ids,
             attention_mask=mask
         )
 
-        x1 = self.head(roberta_outputs[0]) # bs, 1024
+        x1 = self.head(auto_outputs[0]) # bs, 1024
 
         x2 = self.process_num(numerical_features) # bs, 8
 
@@ -348,24 +348,23 @@ def calc_cv(model_paths):
     models = []
     for p in model_paths:
         if CFG.itpt_path:
-            model = RoBERTaLarge(CFG.itpt_path)
+            model = ALBERTLarge(CFG.itpt_path)
             logger.info('load itpt model')
         else:
-            model = RoBERTaLarge(CFG.model_name)
+            model = ALBERTLarge(CFG.model_name)
         model.to("cuda")
         model.load_state_dict(torch.load(p))
         model.eval()
         models.append(model)
     
-    tokenizer = RobertaTokenizer.from_pretrained(CFG.model_name)
+    tokenizer = AutoTokenizer.from_pretrained(CFG.model_name)
     
     df = pd.read_csv("inputs/train_folds.csv")
     df['aux_target'] = np.round(df['target'], 0).astype(np.int8) # 7 classes
     df = get_sentence_features(df, 'excerpt')
 
     TP = TextPreprocessor()
-    # preprocessed_text = TP.preprocess(df['excerpt'])
-    preprocessed_text = df['excerpt'].fillna(" ").apply(lambda x: str(x).lower())
+    preprocessed_text = TP.preprocess(df['excerpt'])
 
     pipeline = make_pipeline(
                 TfidfVectorizer(max_features=100000),
@@ -556,8 +555,7 @@ train['aux_target'] = np.round(train['target'], 0).astype(np.int8) # 7 classes
 train = get_sentence_features(train, 'excerpt')
 
 TP = TextPreprocessor()
-# preprocessed_text = TP.preprocess(train['excerpt'])
-preprocessed_text = train['excerpt'].fillna(" ").apply(lambda x: str(x).lower())
+preprocessed_text = TP.preprocess(train['excerpt'])
 
 pipeline = make_pipeline(
                 TfidfVectorizer(max_features=100000),
@@ -589,12 +587,12 @@ for fold in range(5):
     val_df = train[train.kfold == fold].reset_index(drop=True)
 
     if CFG.itpt_path:
-        model = RoBERTaLarge(CFG.itpt_path)
+        model = ALBERTLarge(CFG.itpt_path)
         logger.info('load itpt model')
     else:
-        model = RoBERTaLarge(CFG.model_name)    
+        model = ALBERTLarge(CFG.model_name)    
 
-    tokenizer = RobertaTokenizer.from_pretrained(CFG.model_name)
+    tokenizer = AutoTokenizer.from_pretrained(CFG.model_name)
     
     train_dataset = CommonLitDataset(df=trn_df, excerpt=trn_df.excerpt.values, tokenizer=tokenizer, max_len=CFG.max_len, numerical_features=trn_df[CFG.numerical_cols].values, tfidf=tfidf_df)
     train_dataloader = torch.utils.data.DataLoader(
