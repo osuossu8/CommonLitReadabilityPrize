@@ -186,13 +186,13 @@ class RoBERTaLarge(nn.Module):
         self.process_num = nn.Sequential(
             nn.Linear(10, 8),
             nn.BatchNorm1d(8),
-            nn.ReLU(),
+            nn.PReLU(),
             nn.Dropout(0.1),
         )
         self.process_tfidf = nn.Sequential(
             nn.Linear(100, 32),
             nn.BatchNorm1d(32),
-            nn.ReLU(),
+            nn.PReLU(),
             nn.Dropout(0.1),
         )
         self.l0 = nn.Linear(self.in_features + 8 + 32, 1)
@@ -364,7 +364,8 @@ def calc_cv(model_paths):
     df = get_sentence_features(df, 'excerpt')
 
     TP = TextPreprocessor()
-    preprocessed_text = TP.preprocess(df['excerpt'])
+    # preprocessed_text = TP.preprocess(df['excerpt'])
+    preprocessed_text = df['excerpt'].fillna(" ").apply(lambda x: str(x).lower())
 
     pipeline = make_pipeline(
                 TfidfVectorizer(max_features=100000),
@@ -555,7 +556,8 @@ train['aux_target'] = np.round(train['target'], 0).astype(np.int8) # 7 classes
 train = get_sentence_features(train, 'excerpt')
 
 TP = TextPreprocessor()
-preprocessed_text = TP.preprocess(train['excerpt'])
+# preprocessed_text = TP.preprocess(train['excerpt'])
+preprocessed_text = train['excerpt'].fillna(" ").apply(lambda x: str(x).lower())
 
 pipeline = make_pipeline(
                 TfidfVectorizer(max_features=100000),
