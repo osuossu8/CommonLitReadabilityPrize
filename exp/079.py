@@ -43,7 +43,7 @@ class CFG:
     valid_bs = 16 * 2
     log_interval = 10
     model_name = 'albert-large-v2' # 'roberta-large'
-    itpt_path = # 'itpt/roberta_large_2/' 
+    itpt_path = None # 'itpt/roberta_large_2/' 
     numerical_cols = [
        'excerpt_num_chars', 'excerpt_num_capitals', 'excerpt_caps_vs_length',
        'excerpt_num_exclamation_marks', 'excerpt_num_question_marks',
