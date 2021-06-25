@@ -195,8 +195,8 @@ class ALBERTLarge(nn.Module):
             nn.PReLU(),
             nn.Dropout(0.1),
         )
-        self.l0 = nn.Linear(self.in_features + 8 + 32, 1)
-        self.l1 = nn.Linear(self.in_features + 8 + 32, 7)
+        self.l0 = nn.Linear(self.in_features, 1)
+        self.l1 = nn.Linear(self.in_features, 7)
 
     def forward(self, ids, mask, numerical_features, tfidf):
         auto_outputs = self.auto_model(
