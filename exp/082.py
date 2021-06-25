@@ -43,7 +43,7 @@ class CFG:
     valid_bs = 16 * 2
     log_interval = 10
     model_name = 'roberta-large'
-    itpt_path = None # 'itpt/roberta_large_2/' 
+    itpt_path = 'itpt/roberta_large_2/' 
     numerical_cols = [
        'excerpt_num_chars', 'excerpt_num_capitals', 'excerpt_caps_vs_length',
        'excerpt_num_exclamation_marks', 'excerpt_num_question_marks',
@@ -182,6 +182,7 @@ class RoBERTaLarge(nn.Module):
         self.in_features = 1024
         self.roberta = RobertaModel.from_pretrained(model_path)
         self.head = AttentionHead(self.in_features,self.in_features,1)
+        self.dropout = nn.Dropout(0.1)
         self.process_num = nn.Sequential(
             nn.Linear(10, 8),
             nn.BatchNorm1d(8),
@@ -194,21 +195,8 @@ class RoBERTaLarge(nn.Module):
             nn.PReLU(),
             nn.Dropout(0.1),
         )
-
-        self.l0 = nn.Sequential(
-            nn.Linear(self.in_features * 2 + 8 + 32, 512),
-            nn.BatchNorm1d(512),
-            nn.ReLU(),
-            nn.Dropout(0.1),
-            nn.Linear(512, 1)
-        )
-        self.l1 = nn.Sequential(
-            nn.Linear(self.in_features * 2 + 8 + 32, 512),
-            nn.BatchNorm1d(512),
-            nn.ReLU(),
-            nn.Dropout(0.1),
-            nn.Linear(512, 7)
-        )
+        self.l0 = nn.Linear(self.in_features + 8 + 32, 8)
+        # self.l1 = nn.Linear(self.in_features + 8 + 32, 7)
 
     def forward(self, ids, mask, numerical_features, tfidf):
         roberta_outputs = self.roberta(
@@ -222,10 +210,12 @@ class RoBERTaLarge(nn.Module):
 
         x3 = self.process_tfidf(tfidf) # bs, 32
 
-        x = torch.cat([x1, x2, x3, roberta_outputs[1]], 1) # bs, 1024 + 8 + 32
+        x = torch.cat([x1, x2, x3], 1) # bs, 1024 + 8 + 32
 
-        logits = self.l0(x)
-        aux_logits = torch.sigmoid(self.l1(x))
+        all_logits = self.l0(self.dropout(x))
+        logits = all_logits[:, 0]
+        aux_logits = all_logits[:, 1:]
+        # aux_logits = torch.sigmoid(self.l1(self.dropout(x)))
         return logits.squeeze(-1), aux_logits
 
 
