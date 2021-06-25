@@ -204,13 +204,13 @@ class ALBERTLarge(nn.Module):
             attention_mask=mask
         )
 
-        x1 = self.head(auto_outputs[0]) # bs, 1024
+        x = self.head(auto_outputs[0]) # bs, 1024
 
-        x2 = self.process_num(numerical_features) # bs, 8
+        # x2 = self.process_num(numerical_features) # bs, 8
 
-        x3 = self.process_tfidf(tfidf) # bs, 32
+        # x3 = self.process_tfidf(tfidf) # bs, 32
 
-        x = torch.cat([x1, x2, x3], 1) # bs, 1024 + 8 + 32
+        # x = torch.cat([x1, x2, x3], 1) # bs, 1024 + 8 + 32
 
         logits = self.l0(self.dropout(x))
         aux_logits = torch.sigmoid(self.l1(self.dropout(x)))
