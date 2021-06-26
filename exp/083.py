@@ -37,8 +37,7 @@ class CFG:
     epochs = 5
     folds = [0, 1, 2, 3, 4]
     N_FOLDS = 5
-    # LR = 2e-5
-    LR = 5e-5
+    LR = 2e-5
     max_len = 256
     train_bs = 8 * 2
     valid_bs = 16 * 2
@@ -50,6 +49,12 @@ class CFG:
        'excerpt_num_exclamation_marks', 'excerpt_num_question_marks',
        'excerpt_num_punctuation', 'excerpt_num_symbols', 'excerpt_num_words',
        'excerpt_num_unique_words', 'excerpt_words_vs_unique'
+    ] + [
+       'num_CARDINAL', 'num_DATE',
+       'num_EVENT', 'num_FAC', 'num_GPE', 'num_LANGUAGE', 'num_LAW', 'num_LOC',
+       'num_MONEY', 'num_NORP', 'num_ORDINAL', 'num_ORG', 'num_PERCENT',
+       'num_PERSON', 'num_PRODUCT', 'num_QUANTITY', 'num_TIME',
+       'num_WORK_OF_ART'
     ]
  
 
@@ -185,7 +190,7 @@ class RoBERTaLarge(nn.Module):
         self.head = AttentionHead(self.in_features,self.in_features,1)
         self.dropout = nn.Dropout(0.1)
         self.process_num = nn.Sequential(
-            nn.Linear(10, 8),
+            nn.Linear(10 + 18, 8),
             nn.BatchNorm1d(8),
             nn.PReLU(),
             nn.Dropout(0.1),
@@ -318,7 +323,7 @@ def train_fn(epoch, model, train_data_loader, valid_data_loader, device, optimiz
             # RuntimeError: cudnn RNN backward can only be called in training mode (_cudnn_rnn_backward_input at /pytorch/aten/src/ATen/native/cudnn/RNN.cpp:877)
             # https://discuss.pytorch.org/t/pytorch-cudnn-rnn-backward-can-only-be-called-in-training-mode/80080/2
             # edge case in my code when doing eval on training step
-            model.train() 
+            # model.train() 
 
     return scores.avg, losses.avg, valid_avg, valid_loss, best_score
 
@@ -381,6 +386,8 @@ def calc_cv(model_paths):
 
     z = pipeline.fit_transform(preprocessed_text)
     tfidf_df = pd.DataFrame(z, columns=[f'cleaned_excerpt_tf_idf_svd_{i}' for i in range(50*2)])
+
+    df = df.apply(extract_entity_features, 1).fillna(0)
 
     y_true = []
     y_pred = []
@@ -538,6 +545,22 @@ def get_sentence_features(train, col):
     return train
 
 
+import spacy
+from spacy import displacy
+from collections import Counter
+import en_core_web_sm
+
+nlp = en_core_web_sm.load()
+
+def extract_entity_features(row):
+    doc = nlp(row['excerpt'])
+    labels = [x.label_ for x in doc.ents]
+    
+    for k, v in Counter(labels).items():
+        row[f'num_{k}'] = v
+    return row
+
+
 OUTPUT_DIR = f'outputs/{CFG.EXP_ID}/'
 if not os.path.exists(OUTPUT_DIR):
     os.makedirs(OUTPUT_DIR)
@@ -572,6 +595,8 @@ pipeline = make_pipeline(
 
 z = pipeline.fit_transform(preprocessed_text)
 tfidf_df = pd.DataFrame(z, columns=[f'cleaned_excerpt_tf_idf_svd_{i}' for i in range(50*2)])
+
+train = train.apply(extract_entity_features, 1).fillna(0)
 
 print(train.shape)
 train.head()
