@@ -23,7 +23,7 @@ from sklearn import model_selection
 from sklearn import metrics
 
 from tqdm import tqdm
-from transformers import RobertaConfig, RobertaModel, RobertaTokenizer, AutoModel, AutoTokenizer
+from transformers import RobertaConfig, RobertaModel, RobertaTokenizer, AutoModel, AutoTokenizer, AutoModelForQuestionAnswering
 
 from apex import amp
 
