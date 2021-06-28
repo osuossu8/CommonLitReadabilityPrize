@@ -180,7 +180,7 @@ class RoBERTaLarge(nn.Module):
     def __init__(self, model_path):
         super(RoBERTaLarge, self).__init__()
         self.in_features = 1024
-        self.roberta = AutoModelForQuestionAnswering.from_pretrained(model_path)
+        self.backbone = AutoModelForQuestionAnswering.from_pretrained(model_path)
         self.head = AttentionHead(self.in_features,self.in_features,1)
         self.dropout = nn.Dropout(0.1)
         self.process_num = nn.Sequential(
@@ -199,7 +199,7 @@ class RoBERTaLarge(nn.Module):
         self.l1 = nn.Linear(self.in_features + 8 + 32, 7)
 
     def forward(self, ids, mask, numerical_features, tfidf):
-        roberta_outputs = self.roberta(
+        roberta_outputs = self.backbone.roberta(
             ids,
             attention_mask=mask
         )
