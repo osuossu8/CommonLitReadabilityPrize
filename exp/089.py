@@ -200,14 +200,14 @@ class RoBERTaLarge(nn.Module):
         self.l1 = nn.Linear(self.in_features + 8 + 32, 7)
 
         for i in range(1, 1 + CFG.num_reinitialize_layers):
-            _init_weights(self.roberta.encoder.layer[-i].attention.self.query)
-            _init_weights(self.roberta.encoder.layer[-i].attention.self.key)
-            _init_weights(self.roberta.encoder.layer[-i].attention.self.value)
-            _init_weights(self.roberta.encoder.layer[-i].attention.output.dense)
-            _init_weights(self.roberta.encoder.layer[-i].attention.output.LayerNorm)
-            _init_weights(self.roberta.encoder.layer[-i].intermediate.dense)
-            _init_weights(self.roberta.encoder.layer[-i].output.dense)
-            _init_weights(self.roberta.encoder.layer[-i].output.LayerNorm)
+            self._init_weights(self.roberta.encoder.layer[-i].attention.self.query)
+            self._init_weights(self.roberta.encoder.layer[-i].attention.self.key)
+            self._init_weights(self.roberta.encoder.layer[-i].attention.self.value)
+            self._init_weights(self.roberta.encoder.layer[-i].attention.output.dense)
+            self._init_weights(self.roberta.encoder.layer[-i].attention.output.LayerNorm)
+            self._init_weights(self.roberta.encoder.layer[-i].intermediate.dense)
+            self._init_weights(self.roberta.encoder.layer[-i].output.dense)
+            self._init_weights(self.roberta.encoder.layer[-i].output.LayerNorm)
 
 
     def _init_weights(self, module):
