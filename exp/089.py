@@ -50,7 +50,7 @@ class CFG:
        'excerpt_num_punctuation', 'excerpt_num_symbols', 'excerpt_num_words',
        'excerpt_num_unique_words', 'excerpt_words_vs_unique'
     ]
-    num_reinitialize_layers = 5
+    num_reinitialize_layers = 1 # 5
  
 
 def set_seed(seed=42):
@@ -200,14 +200,16 @@ class RoBERTaLarge(nn.Module):
         self.l1 = nn.Linear(self.in_features + 8 + 32, 7)
 
         for i in range(1, 1 + CFG.num_reinitialize_layers):
-            self._init_weights(self.roberta.encoder.layer[-i].attention.self.query)
-            self._init_weights(self.roberta.encoder.layer[-i].attention.self.key)
-            self._init_weights(self.roberta.encoder.layer[-i].attention.self.value)
+            # self._init_weights(self.roberta.encoder.layer[-i].attention.self.query)
+            # self._init_weights(self.roberta.encoder.layer[-i].attention.self.key)
+            # self._init_weights(self.roberta.encoder.layer[-i].attention.self.value)
             self._init_weights(self.roberta.encoder.layer[-i].attention.output.dense)
             self._init_weights(self.roberta.encoder.layer[-i].attention.output.LayerNorm)
             self._init_weights(self.roberta.encoder.layer[-i].intermediate.dense)
             self._init_weights(self.roberta.encoder.layer[-i].output.dense)
             self._init_weights(self.roberta.encoder.layer[-i].output.LayerNorm)
+        # self._init_weights(self.l0)
+        # self._init_weights(self.l1)
 
 
     def _init_weights(self, module):
