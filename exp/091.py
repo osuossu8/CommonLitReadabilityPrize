@@ -42,7 +42,7 @@ class CFG:
     train_bs = 8 * 2
     valid_bs = 16 * 2
     log_interval = 10
-    model_name = 'phiyodr/roberta-large-finetuned-squad2' # 'howey/roberta-large-mrpc' # 'roberta-large'
+    model_name = 'typeform/roberta-large-mnli'
     itpt_path = None # 'itpt/roberta_large_2/' 
     numerical_cols = [
        'excerpt_num_chars', 'excerpt_num_capitals', 'excerpt_caps_vs_length',
@@ -197,33 +197,6 @@ class RoBERTaLarge(nn.Module):
         )
         self.l0 = nn.Linear(self.in_features + 8 + 32, 1)
         self.l1 = nn.Linear(self.in_features + 8 + 32, 7)
-
-        
-        # self._init_weights(self.roberta.encoder.layer[-1].attention.self.query)
-        # self._init_weights(self.roberta.encoder.layer[-1].attention.self.key)
-        # self._init_weights(self.roberta.encoder.layer[-1].attention.self.value)
-        self._init_weights(self.roberta.encoder.layer[-1].attention.output.dense)
-        self._init_weights(self.roberta.encoder.layer[-1].attention.output.LayerNorm)
-        self._init_weights(self.roberta.encoder.layer[-1].intermediate.dense)
-        self._init_weights(self.roberta.encoder.layer[-1].output.dense)
-        self._init_weights(self.roberta.encoder.layer[-1].output.LayerNorm)
-        # self._init_weights(self.l0)
-        # self._init_weights(self.l1)
-
-
-    def _init_weights(self, module):
-        if isinstance(module, nn.Linear):
-            module.weight.data.normal_(mean=0.0, std=0.02)
-            if module.bias is not None:
-                module.bias.data.zero_()
-        elif isinstance(module, nn.Embedding):
-            module.weight.data.normal_(mean=0.0, std=0.02)
-            if module.padding_idx is not None:
-                module.weight.data[module.padding_idx].zero_()
-        elif isinstance(module, nn.LayerNorm):
-            module.bias.data.zero_()
-            module.weight.data.fill_(1.0)
-
 
     def forward(self, ids, mask, numerical_features, tfidf):
         roberta_outputs = self.roberta(
