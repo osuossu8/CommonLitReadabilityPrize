@@ -388,7 +388,7 @@ def train_fn(epoch, model, train_data_loader, valid_data_loader, device, optimiz
         loss = loss_fn(outputs, targets) * 0.5 + aux_loss_fn(aux_outs, aux_targets) * 0.5
         loss.backward()
         optimizer.step()
-        scheduler.step()
+        # scheduler.step()
         losses.update(loss.item(), inputs.size(0))
         scores.update(targets, outputs)
         tk0.set_postfix(loss=losses.avg)
