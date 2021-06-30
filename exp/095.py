@@ -820,10 +820,10 @@ all_texts = list(itertools.chain(*train_texts, *test_texts))
 
 
 vocab = build_vocab(itertools.chain(*train_texts, *test_texts), CFG.max_features)
-embedding_matrix = load_embedding(CFG.EMBEDDING_PATH, vocab['token2id'])
-embedding_matrix = w2v_fine_tune(all_texts, vocab, embedding_matrix)
+# embedding_matrix = load_embedding(CFG.EMBEDDING_PATH, vocab['token2id'])
+# embedding_matrix = w2v_fine_tune(all_texts, vocab, embedding_matrix)
 
-to_pickle('inputs/finetuned_embedding_matrix.pkl', embedding_matrix)
+# to_pickle('inputs/finetuned_embedding_matrix.pkl', embedding_matrix)
 
 embedding_matrix = unpickle('inputs/finetuned_embedding_matrix.pkl')
 
