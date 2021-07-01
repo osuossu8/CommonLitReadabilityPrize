@@ -42,7 +42,8 @@ class CFG:
     train_bs = 8 * 2
     valid_bs = 16 * 2
     log_interval = 10
-    model_name = 'distilgpt2'
+    model_name = 'distilbert-base-cased-distilled-squad'
+    tokenizer_name = 'roberta-base'
     itpt_path = None # 'itpt/roberta_large_2/' 
     numerical_cols = [
        'excerpt_num_chars', 'excerpt_num_capitals', 'excerpt_caps_vs_length',
@@ -358,8 +359,9 @@ def calc_cv(model_paths):
         model.eval()
         models.append(model)
     
-    tokenizer = RobertaTokenizer.from_pretrained(CFG.model_name)
-    
+    # tokenizer = RobertaTokenizer.from_pretrained(CFG.model_name)
+    tokenizer = RobertaTokenizer.from_pretrained(CFG.tokenizer_name)
+
     df = pd.read_csv("inputs/train_folds.csv")
     df['aux_target'] = np.round(df['target'], 0).astype(np.int8) # 7 classes
     df = get_sentence_features(df, 'excerpt')
@@ -593,8 +595,9 @@ for fold in range(5):
     else:
         model = RoBERTaLarge(CFG.model_name)    
 
-    tokenizer = RobertaTokenizer.from_pretrained(CFG.model_name)
-    
+    # tokenizer = RobertaTokenizer.from_pretrained(CFG.model_name)
+    tokenizer = RobertaTokenizer.from_pretrained(CFG.tokenizer_name)
+
     train_dataset = CommonLitDataset(df=trn_df, excerpt=trn_df.excerpt.values, tokenizer=tokenizer, max_len=CFG.max_len, numerical_features=trn_df[CFG.numerical_cols].values, tfidf=tfidf_df)
     train_dataloader = torch.utils.data.DataLoader(
         train_dataset, batch_size=CFG.train_bs, num_workers=0, pin_memory=True, shuffle=True
