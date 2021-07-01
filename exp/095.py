@@ -42,7 +42,7 @@ class CFG:
     train_bs = 8 * 2
     valid_bs = 16 * 2
     log_interval = 10
-    model_name = 'sentence-transformers/paraphrase-distilroberta-base-v2'
+    model_name = 'phiyodr/roberta-large-finetuned-squad2' # 'howey/roberta-large-mrpc' # 'roberta-large'
     itpt_path = None # 'itpt/roberta_large_2/' 
     numerical_cols = [
        'excerpt_num_chars', 'excerpt_num_capitals', 'excerpt_caps_vs_length',
@@ -179,8 +179,7 @@ class AttentionHead(nn.Module):
 class RoBERTaLarge(nn.Module):
     def __init__(self, model_path):
         super(RoBERTaLarge, self).__init__()
-        # self.in_features = 1024
-        self.in_features = 768
+        self.in_features = 1024
         self.roberta = RobertaModel.from_pretrained(model_path)
         self.head = AttentionHead(self.in_features,self.in_features,1)
         self.dropout = nn.Dropout(0.1)
@@ -272,7 +271,8 @@ class RMSELoss(torch.nn.Module):
 
 
 def loss_fn(logits, targets):
-    loss_fct = RMSELoss()
+    # loss_fct = RMSELoss()
+    loss_fct = nn.MSELoss()
     loss = loss_fct(logits, targets)
     return loss
 
