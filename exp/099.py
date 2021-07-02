@@ -294,8 +294,8 @@ class RMSELoss(torch.nn.Module):
 
 
 def loss_fn(logits, targets):
-    # loss_fct = RMSELoss()
-    loss_fct = nn.MSELoss()
+    loss_fct = RMSELoss()
+    # loss_fct = nn.MSELoss()
     loss = loss_fct(logits, targets)
     return loss
 
