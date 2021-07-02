@@ -38,7 +38,7 @@ class CFG:
     folds = [0, 1, 2, 3, 4]
     N_FOLDS = 5
     LR = 2e-5
-    max_len = 256
+    max_len = 512 # 256
     train_bs = 8
     valid_bs = 16
     log_interval = 20
