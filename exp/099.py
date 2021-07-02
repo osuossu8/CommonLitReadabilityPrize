@@ -42,7 +42,7 @@ class CFG:
     train_bs = 8 * 2
     valid_bs = 16 * 2
     log_interval = 10
-    model_name = 'phiyodr/roberta-large-finetuned-squad2' # 'roberta-large'
+    model_name = 'philschmid/distilroberta-base-ner-wikiann'
     itpt_path = None # 'itpt/roberta_large_2/' 
     numerical_cols = [
        'excerpt_num_chars', 'excerpt_num_capitals', 'excerpt_caps_vs_length',
@@ -179,18 +179,8 @@ class AttentionHead(nn.Module):
 class RoBERTaLarge(nn.Module):
     def __init__(self, model_path):
         super(RoBERTaLarge, self).__init__()
-        self.in_features = 1024
+        self.in_features = 768 # 1024
         self.roberta = RobertaModel.from_pretrained(model_path)
-
-        lstm_hidden_size = 128 * 2
-        gru_hidden_size = 128 * 2
-        n_channels = 64 * 2
-        self.embedding_dropout = nn.Dropout2d(0.2)
-        self.lstm = nn.LSTM(256, lstm_hidden_size, bidirectional=True, batch_first=True)
-        self.gru = nn.GRU(lstm_hidden_size * 2, gru_hidden_size, bidirectional=True, batch_first=True)
-        self.conv = nn.Conv1d(gru_hidden_size * 2, n_channels, 3, padding=2)
-        nn.init.xavier_uniform_(self.conv.weight)
-
         self.head = AttentionHead(self.in_features,self.in_features,1)
         self.dropout = nn.Dropout(0.1)
         self.process_num = nn.Sequential(
@@ -205,13 +195,8 @@ class RoBERTaLarge(nn.Module):
             nn.PReLU(),
             nn.Dropout(0.1),
         )
-        self.l0 = nn.Linear(self.in_features + 8 + 32 + 128 * 2, 1)
-        self.l1 = nn.Linear(self.in_features + 8 + 32 + 128 * 2, 7)
-
-    def apply_spatial_dropout(self, h_embedding):
-        h_embedding = h_embedding.transpose(1, 2).unsqueeze(2)
-        h_embedding = self.embedding_dropout(h_embedding).squeeze(2).transpose(1, 2)
-        return h_embedding
+        self.l0 = nn.Linear(self.in_features + 8 + 32, 1)
+        self.l1 = nn.Linear(self.in_features + 8 + 32, 7)
 
     def forward(self, ids, mask, numerical_features, tfidf):
         roberta_outputs = self.roberta(
@@ -219,21 +204,13 @@ class RoBERTaLarge(nn.Module):
             attention_mask=mask
         )
 
-        h_embedding = self.apply_spatial_dropout(roberta_outputs[0]).transpose(2, 1) # bs, 1024, 256
-        h_lstm, _ = self.lstm(h_embedding)
-        h_gru, _ = self.gru(h_lstm)
-        h_gru = h_gru.transpose(2, 1)
-        conv = self.conv(h_gru) # bs, 128, 258
-        conv_avg_pool = torch.mean(conv, 2) # bs, 128
-        conv_max_pool, _ = torch.max(conv, 2) # bs, 128
-
         x1 = self.head(roberta_outputs[0]) # bs, 1024
 
         x2 = self.process_num(numerical_features) # bs, 8
 
         x3 = self.process_tfidf(tfidf) # bs, 32
 
-        x = torch.cat([x1, x2, x3, conv_avg_pool, conv_max_pool], 1) # bs, 1024 + 8 + 32 + 128 * 2
+        x = torch.cat([x1, x2, x3], 1) # bs, 1024 + 8 + 32
 
         logits = self.l0(self.dropout(x))
         aux_logits = torch.sigmoid(self.l1(self.dropout(x)))
@@ -294,8 +271,8 @@ class RMSELoss(torch.nn.Module):
 
 
 def loss_fn(logits, targets):
-    loss_fct = RMSELoss()
-    # loss_fct = nn.MSELoss()
+    # loss_fct = RMSELoss()
+    loss_fct = nn.MSELoss()
     loss = loss_fct(logits, targets)
     return loss
 
@@ -341,7 +318,7 @@ def train_fn(epoch, model, train_data_loader, valid_data_loader, device, optimiz
             # RuntimeError: cudnn RNN backward can only be called in training mode (_cudnn_rnn_backward_input at /pytorch/aten/src/ATen/native/cudnn/RNN.cpp:877)
             # https://discuss.pytorch.org/t/pytorch-cudnn-rnn-backward-can-only-be-called-in-training-mode/80080/2
             # edge case in my code when doing eval on training step
-            model.train() 
+            # model.train() 
 
     return scores.avg, losses.avg, valid_avg, valid_loss, best_score
 
