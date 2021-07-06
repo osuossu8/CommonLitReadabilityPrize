@@ -400,7 +400,7 @@ def calc_cv(model_paths):
     w2v_model = word2vec.Word2Vec(preprocessed_text.apply(lambda x: x.split()).tolist(),
                                   vector_size=50, min_count=1, window=1, epochs=100)
 
-    w2v_vecs = preprocessed_text.progress_apply(lambda x: w2v_vectorize(w2v_model, x))
+    w2v_vecs = preprocessed_text.apply(lambda x: w2v_vectorize(w2v_model, x))
 
     y_true = []
     y_pred = []
@@ -610,7 +610,7 @@ tfidf_df = pd.DataFrame(z, columns=[f'cleaned_excerpt_tf_idf_svd_{i}' for i in r
 w2v_model = word2vec.Word2Vec(preprocessed_text.apply(lambda x: x.split()).tolist(), 
                               vector_size=50, min_count=1, window=1, epochs=100)
 
-w2v_vecs = preprocessed_text.progress_apply(lambda x: w2v_vectorize(w2v_model, x))
+w2v_vecs = preprocessed_text.apply(lambda x: w2v_vectorize(w2v_model, x))
 
 print(train.shape)
 train.head()
