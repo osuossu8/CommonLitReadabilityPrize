@@ -201,13 +201,13 @@ class RoBERTaLarge(nn.Module):
             nn.Dropout(0.1),
         )
         self.process_w2v = nn.Sequential(
-            nn.Linear(100, 32),
-            nn.BatchNorm1d(32),
+            nn.Linear(50, 16),
+            nn.BatchNorm1d(16),
             nn.PReLU(),
             nn.Dropout(0.1),
         )
-        self.l0 = nn.Linear(self.in_features + 8 + 32 * 2, 1)
-        self.l1 = nn.Linear(self.in_features + 8 + 32 * 2, 7)
+        self.l0 = nn.Linear(self.in_features + 8 + 32 + 16, 1)
+        self.l1 = nn.Linear(self.in_features + 8 + 32 + 16, 7)
 
     def forward(self, ids, mask, numerical_features, tfidf, w2v):
         roberta_outputs = self.roberta(
@@ -221,9 +221,9 @@ class RoBERTaLarge(nn.Module):
 
         x3 = self.process_tfidf(tfidf) # bs, 32
 
-        x4 = self.process_w2v(w2v) # bs, 32
+        x4 = self.process_w2v(w2v) # bs, 16
 
-        x = torch.cat([x1, x2, x3, x4], 1) # bs, 1024 + 8 + 32 * 2
+        x = torch.cat([x1, x2, x3, x4], 1) # bs, 1024 + 8 + 32 + 16
 
         logits = self.l0(self.dropout(x))
         aux_logits = torch.sigmoid(self.l1(self.dropout(x)))
@@ -609,6 +609,7 @@ tfidf_df = pd.DataFrame(z, columns=[f'cleaned_excerpt_tf_idf_svd_{i}' for i in r
 
 w2v_model = word2vec.Word2Vec(preprocessed_text.apply(lambda x: x.split()).tolist(), 
                               vector_size=50, min_count=1, window=1, epochs=100)
+print('w2v training finished !')
 
 w2v_vecs = preprocessed_text.apply(lambda x: w2v_vectorize(w2v_model, x))
 
