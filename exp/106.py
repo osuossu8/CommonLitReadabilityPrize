@@ -37,12 +37,12 @@ class CFG:
     epochs = 5
     folds = [0, 1, 2, 3, 4]
     N_FOLDS = 5
-    LR = 3e-5 # 2e-5
+    LR = 2e-5
     max_len = 256
     train_bs = 8 * 2
     valid_bs = 16 * 2
     log_interval = 10
-    model_name = 'ktrapeznikov/albert-xlarge-v2-squad-v2'
+    model_name = 'albert-large-v2'
     itpt_path = None # 'itpt/roberta_large_2/' 
     numerical_cols = [
        'excerpt_num_chars', 'excerpt_num_capitals', 'excerpt_caps_vs_length',
@@ -170,7 +170,7 @@ class AttentionHead(nn.Module):
 class CLRPModel(nn.Module):
     def __init__(self, model_path):
         super(CLRPModel, self).__init__()
-        self.in_features = 1024 * 2
+        self.in_features = 1024
         self.auto_model = AutoModel.from_pretrained(model_path)
         self.head = AttentionHead(self.in_features,self.in_features,1)
         self.dropout = nn.Dropout(0.1)
