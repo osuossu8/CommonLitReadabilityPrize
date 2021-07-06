@@ -170,7 +170,7 @@ class AttentionHead(nn.Module):
 class CLRPModel(nn.Module):
     def __init__(self, model_path):
         super(CLRPModel, self).__init__()
-        self.in_features = 1024
+        self.in_features = 1024 * 2
         self.auto_model = AutoModel.from_pretrained(model_path)
         self.head = AttentionHead(self.in_features,self.in_features,1)
         self.dropout = nn.Dropout(0.1)
