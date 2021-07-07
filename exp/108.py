@@ -181,6 +181,7 @@ class RoBERTaLarge(nn.Module):
         super(RoBERTaLarge, self).__init__()
         self.in_features = 1024
         self.roberta = RobertaModel.from_pretrained(model_path)
+        self.roberta2 = RobertaModel.from_pretrained('roberta-large')
         self.head = AttentionHead(self.in_features,self.in_features,1)
         self.dropout = nn.Dropout(0.1)
         self.process_num = nn.Sequential(
@@ -190,16 +191,20 @@ class RoBERTaLarge(nn.Module):
             nn.Dropout(0.1),
         )
         self.process_tfidf = nn.Sequential(
-            nn.Linear(200, 32*2),
-            nn.BatchNorm1d(32*2),
+            nn.Linear(100, 32),
+            nn.BatchNorm1d(32),
             nn.PReLU(),
             nn.Dropout(0.1),
         )
-        self.l0 = nn.Linear(self.in_features + 8 + 32*2, 1)
-        self.l1 = nn.Linear(self.in_features + 8 + 32*2, 7)
+        self.l0 = nn.Linear(self.in_features * 2 + 8 + 32, 1)
+        self.l1 = nn.Linear(self.in_features * 2 + 8 + 32, 7)
 
     def forward(self, ids, mask, numerical_features, tfidf):
         roberta_outputs = self.roberta(
+            ids,
+            attention_mask=mask
+        )
+        roberta_outputs2 = self.roberta2(
             ids,
             attention_mask=mask
         )
@@ -210,7 +215,9 @@ class RoBERTaLarge(nn.Module):
 
         x3 = self.process_tfidf(tfidf) # bs, 32
 
-        x = torch.cat([x1, x2, x3], 1) # bs, 1024 + 8 + 32
+        x4 = self.head(roberta_outputs2[0])
+
+        x = torch.cat([x1, x2, x3, x4], 1) # bs, 1024 + 8 + 32
 
         logits = self.l0(self.dropout(x))
         aux_logits = torch.sigmoid(self.l1(self.dropout(x)))
@@ -377,14 +384,6 @@ def calc_cv(model_paths):
                     ),
                     n_jobs=1,
                 ),
-                make_union(
-                    NMF(n_components=50, random_state=42),
-                    make_pipeline(
-                        BM25Transformer(use_idf=True, k1=2.0, b=0.75),
-                        NMF(n_components=50, random_state=42)
-                    ),
-                    n_jobs=1,
-                ),
              )
 
     z = pipeline.fit_transform(preprocessed_text)
@@ -430,7 +429,7 @@ from sklearn.utils.validation import check_is_fitted
 from sklearn.feature_extraction.text import _document_frequency
 from sklearn.pipeline import make_pipeline, make_union
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.decomposition import TruncatedSVD, PCA, NMF
+from sklearn.decomposition import TruncatedSVD
 
 
 class BM25Transformer(BaseEstimator, TransformerMixin):
@@ -573,14 +572,6 @@ pipeline = make_pipeline(
                     make_pipeline(
                         BM25Transformer(use_idf=True, k1=2.0, b=0.75),
                         TruncatedSVD(n_components=50, random_state=42)
-                    ),
-                    n_jobs=1,
-                ),
-                make_union(
-                    NMF(n_components=50, random_state=42),
-                    make_pipeline(
-                        BM25Transformer(use_idf=True, k1=2.0, b=0.75),
-                        NMF(n_components=50, random_state=42)
                     ),
                     n_jobs=1,
                 ),
