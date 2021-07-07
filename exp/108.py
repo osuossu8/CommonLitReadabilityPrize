@@ -375,12 +375,16 @@ def calc_cv(model_paths):
                         BM25Transformer(use_idf=True, k1=2.0, b=0.75),
                         TruncatedSVD(n_components=50, random_state=42)
                     ),
+                    n_jobs=1,
+                ),
                 make_union(
                     PCA(n_components=50, random_state=42),
                     make_pipeline(
                         BM25Transformer(use_idf=True, k1=2.0, b=0.75),
                         PCA(n_components=50, random_state=42)
                     ),
+                    n_jobs=1,
+                ),
                 make_union(
                     NMF(n_components=50, random_state=42),
                     make_pipeline(
@@ -578,12 +582,16 @@ pipeline = make_pipeline(
                         BM25Transformer(use_idf=True, k1=2.0, b=0.75),
                         TruncatedSVD(n_components=50, random_state=42)
                     ),
+                    n_jobs=1,
+                ),
                 make_union(
                     PCA(n_components=50, random_state=42),
                     make_pipeline(
                         BM25Transformer(use_idf=True, k1=2.0, b=0.75),
                         PCA(n_components=50, random_state=42)
                     ),
+                    n_jobs=1,
+                ),
                 make_union(
                     NMF(n_components=50, random_state=42),
                     make_pipeline(
