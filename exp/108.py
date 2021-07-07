@@ -39,9 +39,9 @@ class CFG:
     N_FOLDS = 5
     LR = 2e-5
     max_len = 256
-    train_bs = 8 * 2
-    valid_bs = 16 * 2
-    log_interval = 10
+    train_bs = 4 # 8 #* 2
+    valid_bs = 8 # 16 #* 2
+    log_interval = 40 # 10
     model_name = 'gpt2-large'
     itpt_path = None # 'itpt/roberta_large_2/' 
     numerical_cols = [
@@ -116,6 +116,7 @@ def convert_examples_to_head_and_tail_features(data, tokenizer, max_len):
 class CommonLitDataset:
     def __init__(self, df, excerpt, tokenizer, max_len):
         self.excerpt = excerpt
+        tokenizer.add_special_tokens({'pad_token': '0'})
         self.tokenizer = tokenizer
         self.max_len = max_len
         self.df = df
@@ -170,7 +171,7 @@ class AttentionHead(nn.Module):
 class CLRPModel(nn.Module):
     def __init__(self, model_path):
         super(CLRPModel, self).__init__()
-        self.in_features = 768 # 1024
+        self.in_features = 1280
         self.auto_model = AutoModel.from_pretrained(model_path)
         self.head = AttentionHead(self.in_features,self.in_features,1)
         self.dropout = nn.Dropout(0.1)
