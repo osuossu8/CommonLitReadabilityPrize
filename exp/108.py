@@ -190,7 +190,7 @@ class RoBERTaLarge(nn.Module):
             nn.Dropout(0.1),
         )
         self.process_tfidf = nn.Sequential(
-            nn.Linear(300, 32*2),
+            nn.Linear(200, 32*2),
             nn.BatchNorm1d(32*2),
             nn.PReLU(),
             nn.Dropout(0.1),
@@ -374,14 +374,6 @@ def calc_cv(model_paths):
                     make_pipeline(
                         BM25Transformer(use_idf=True, k1=2.0, b=0.75),
                         TruncatedSVD(n_components=50, random_state=42)
-                    ),
-                    n_jobs=1,
-                ),
-                make_union(
-                    PCA(n_components=50, random_state=42),
-                    make_pipeline(
-                        BM25Transformer(use_idf=True, k1=2.0, b=0.75),
-                        PCA(n_components=50, random_state=42)
                     ),
                     n_jobs=1,
                 ),
@@ -581,14 +573,6 @@ pipeline = make_pipeline(
                     make_pipeline(
                         BM25Transformer(use_idf=True, k1=2.0, b=0.75),
                         TruncatedSVD(n_components=50, random_state=42)
-                    ),
-                    n_jobs=1,
-                ),
-                make_union(
-                    PCA(n_components=50, random_state=42),
-                    make_pipeline(
-                        BM25Transformer(use_idf=True, k1=2.0, b=0.75),
-                        PCA(n_components=50, random_state=42)
                     ),
                     n_jobs=1,
                 ),
