@@ -185,13 +185,13 @@ class RoBERTaLarge(nn.Module):
         self.dropout = nn.Dropout(0.1)
         self.process_num = nn.Sequential(
             nn.Linear(10, 8),
-            # nn.BatchNorm1d(8),
+            nn.BatchNorm1d(8),
             nn.PReLU(),
             nn.Dropout(0.1),
         )
         self.process_tfidf = nn.Sequential(
             nn.Linear(100, 32),
-            # nn.BatchNorm1d(32),
+            nn.BatchNorm1d(32),
             nn.PReLU(),
             nn.Dropout(0.1),
         )
@@ -270,6 +270,23 @@ class RMSELoss(torch.nn.Module):
         return loss
 
 
+# https://www.kaggle.com/c/rfcx-species-audio-detection/discussion/213075
+class BCEFocalLoss(nn.Module):
+    def __init__(self, alpha=0.25, gamma=2.0):
+        super().__init__()
+        self.alpha = alpha
+        self.gamma = gamma
+
+    def forward(self, preds, targets):
+        bce_loss = nn.BCEWithLogitsLoss(reduction='none')(preds, targets)
+        probas = torch.sigmoid(preds)
+        loss = targets * self.alpha * \
+            (1. - probas)**self.gamma * bce_loss + \
+            (1. - targets) * probas**self.gamma * bce_loss
+        loss = loss.mean()
+        return loss
+
+
 def loss_fn(logits, targets):
     # loss_fct = RMSELoss()
     loss_fct = nn.MSELoss()
@@ -277,7 +294,8 @@ def loss_fn(logits, targets):
     return loss
 
 def aux_loss_fn(logits, targets):
-    loss_fct = nn.BCEWithLogitsLoss()
+    # loss_fct = nn.BCEWithLogitsLoss()
+    loss_fct = BCEFocalLoss()
     loss = loss_fct(logits, targets)
     return loss
         
