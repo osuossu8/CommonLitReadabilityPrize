@@ -167,7 +167,7 @@ class RoBERTaLarge(nn.Module):
             nn.Dropout(0.1),
         )
         self.l0 = nn.Linear(self.in_features + 8 + 32, 1)
-        self.l1 = nn.Linear(self.in_features + 8 + 32, 7)
+        self.l1 = nn.Linear(self.in_features + 8 + 32, 12)
 
     def forward(self, ids, mask, numerical_features, tfidf):
         roberta_outputs = self.roberta(
