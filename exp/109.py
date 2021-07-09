@@ -270,23 +270,6 @@ class RMSELoss(torch.nn.Module):
         return loss
 
 
-# https://www.kaggle.com/c/rfcx-species-audio-detection/discussion/213075
-class BCEFocalLoss(nn.Module):
-    def __init__(self, alpha=0.25, gamma=2.0):
-        super().__init__()
-        self.alpha = alpha
-        self.gamma = gamma
-
-    def forward(self, preds, targets):
-        bce_loss = nn.BCEWithLogitsLoss(reduction='none')(preds, targets)
-        probas = torch.sigmoid(preds)
-        loss = targets * self.alpha * \
-            (1. - probas)**self.gamma * bce_loss + \
-            (1. - targets) * probas**self.gamma * bce_loss
-        loss = loss.mean()
-        return loss
-
-
 def loss_fn(logits, targets):
     # loss_fct = RMSELoss()
     loss_fct = nn.MSELoss()
@@ -294,8 +277,7 @@ def loss_fn(logits, targets):
     return loss
 
 def aux_loss_fn(logits, targets):
-    # loss_fct = nn.BCEWithLogitsLoss()
-    loss_fct = BCEFocalLoss()
+    loss_fct = nn.BCEWithLogitsLoss()
     loss = loss_fct(logits, targets)
     return loss
         
@@ -307,6 +289,7 @@ def train_fn(epoch, model, train_data_loader, valid_data_loader, device, optimiz
     tk0 = tqdm(train_data_loader, total=len(train_data_loader))
     
     for batch_idx, data in enumerate(tk0):
+        r = np.random.rand()
         optimizer.zero_grad()
         inputs = data['input_ids'].to(device)
         masks = data['attention_mask'].to(device)
@@ -315,7 +298,7 @@ def train_fn(epoch, model, train_data_loader, valid_data_loader, device, optimiz
         numerical_features = data['numerical_features'].to(device)
         tfidf = data['tfidf'].to(device)
         outputs, aux_outs = model(inputs, masks, numerical_features, tfidf)
-        loss = loss_fn(outputs, targets) * 0.5 + aux_loss_fn(aux_outs, aux_targets) * 0.5
+        loss = loss_fn(outputs, targets) * r + aux_loss_fn(aux_outs, aux_targets) * (1-r)
         loss.backward()
         optimizer.step()
         # scheduler.step()
@@ -349,6 +332,7 @@ def valid_fn(model, data_loader, device):
 
     with torch.no_grad():
         for data in tk0:
+            r = np.random.rand()
             inputs = data['input_ids'].to(device)
             masks = data['attention_mask'].to(device)
             targets = data['targets'].to(device)
@@ -356,7 +340,7 @@ def valid_fn(model, data_loader, device):
             numerical_features = data['numerical_features'].to(device)
             tfidf = data['tfidf'].to(device)
             outputs, aux_outs = model(inputs, masks, numerical_features, tfidf)
-            loss = loss_fn(outputs, targets) * 0.5 + aux_loss_fn(aux_outs, aux_targets) * 0.5
+            loss = loss_fn(outputs, targets) * r + aux_loss_fn(aux_outs, aux_targets) * (1-r)
             losses.update(loss.item(), inputs.size(0))
             scores.update(targets, outputs)
             tk0.set_postfix(loss=losses.avg)
