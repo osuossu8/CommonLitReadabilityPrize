@@ -1,14 +1,7 @@
-import copy
 import gc
-import itertools
-import joblib
-import math
-import nltk
 import os
-import pickle
+import math
 import random
-import re
-import string
 import time
 import warnings
 import sys
@@ -28,33 +21,9 @@ from typing import List
 
 from sklearn import model_selection
 from sklearn import metrics
-from keras.preprocessing import text, sequence
 
 from tqdm import tqdm
 from transformers import RobertaConfig, RobertaModel, RobertaTokenizer
-
-from collections import Counter, defaultdict
-from functools import partial
-from pathlib import Path
-from typing import Dict, List, Tuple
-
-from gensim.models import Word2Vec
-from numba import cuda
-import plotly_express as px
-
-from nltk.stem import PorterStemmer, SnowballStemmer
-from nltk.stem.lancaster import LancasterStemmer
-
-from sklearn.model_selection import GroupKFold, KFold
-from sklearn.utils import shuffle
-
-import scipy as sp
-from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.utils.validation import check_is_fitted
-from sklearn.feature_extraction.text import _document_frequency
-from sklearn.pipeline import make_pipeline, make_union
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.decomposition import TruncatedSVD
 
 from apex import amp
 
@@ -63,7 +32,7 @@ class CFG:
     ######################
     # Globals #
     ######################
-    EXP_ID = '114' # 065
+    EXP_ID = '114'
     seed = 71
     epochs = 5
     folds = [0, 1, 2, 3, 4]
@@ -73,7 +42,7 @@ class CFG:
     train_bs = 8 * 2
     valid_bs = 16 * 2
     log_interval = 10
-    model_name = 'phiyodr/roberta-large-finetuned-squad2' # 'roberta-large'
+    model_name = 'deepset/roberta-large-squad2'
     itpt_path = None # 'itpt/roberta_large_2/' 
     numerical_cols = [
        'excerpt_num_chars', 'excerpt_num_capitals', 'excerpt_caps_vs_length',
@@ -81,14 +50,7 @@ class CFG:
        'excerpt_num_punctuation', 'excerpt_num_symbols', 'excerpt_num_words',
        'excerpt_num_unique_words', 'excerpt_words_vs_unique'
     ]
-    EMBEDDING_PATH = 'embeddings/fasttext.pkl'
-    max_features = 60000
-    embed_size = 300
-
-ps = PorterStemmer()
-lc = LancasterStemmer()
-sb = SnowballStemmer('english') 
-
+ 
 
 def set_seed(seed=42):
     random.seed(seed)
@@ -118,59 +80,18 @@ def init_logger(log_file='train.log'):
     return logger
 
 
-def to_pickle(filename, obj):
-    with open(filename, mode='wb') as f:
-        pickle.dump(obj, f)
-
-
-def unpickle(filename):
-    with open(filename, mode='rb') as fo:
-        p = pickle.load(fo)
-    return p  
-
-
 def calc_loss(y_true, y_pred):
     return  np.sqrt(metrics.mean_squared_error(y_true, y_pred))
 
 
-def convert_examples_to_head_and_tail_features(data, tokenizer, max_len):
-    head_len = int(max_len//2)
-    tail_len = head_len
-    
-    data = data.replace('\n', '')
-    len_tok = len(tokenizer.tokenize(data))
-    
-    tok = tokenizer.encode_plus(
-        data, 
-        max_length=max_len, 
-        truncation=True,
-        return_attention_mask=True,
-        return_token_type_ids=True
-    )
-    curr_sent = {}
-    if len_tok > max_len:
-        head_ids = tok['input_ids'][:head_len]
-        tail_ids = tok['input_ids'][-tail_len:]
-        head_mask = tok['attention_mask'][:head_len]
-        tail_mask = tok['attention_mask'][-tail_len:]
-        curr_sent['input_ids'] = head_ids + tail_ids
-        curr_sent['attention_mask'] = head_mask + tail_mask
-    else:
-        padding_length = max_len - len(tok['input_ids'])
-        curr_sent['input_ids'] = tok['input_ids'] + ([1] * padding_length)
-        curr_sent['attention_mask'] = tok['attention_mask'] + ([0] * padding_length)
-    return curr_sent
-
-
 class CommonLitDataset:
-    def __init__(self, df, excerpt, tokenizer, max_len, numerical_features, tfidf, padded_tokens):
+    def __init__(self, df, excerpt, tokenizer, max_len, numerical_features, tfidf):
         self.excerpt = excerpt
         self.tokenizer = tokenizer
         self.max_len = max_len
         self.df = df
         self.numerical_features = numerical_features
         self.tfidf_df = tfidf
-        self.padded_tokens = padded_tokens
 
     def __len__(self):
         return len(self.excerpt)
@@ -184,8 +105,6 @@ class CommonLitDataset:
             truncation=True
         )
 
-        # inputs = convert_examples_to_head_and_tail_features(text, tokenizer, self.max_len)
-
         ids = inputs["input_ids"]
         mask = inputs["attention_mask"]
         targets = self.df["target"].values[item]
@@ -198,7 +117,6 @@ class CommonLitDataset:
 
         numerical_features = self.numerical_features[item]
         tfidf = self.tfidf_df.values[item]
-        padded_tokens = self.padded_tokens[item]
 
         return {
             "input_ids": torch.tensor(ids, dtype=torch.long),
@@ -207,7 +125,6 @@ class CommonLitDataset:
             "aux_targets" : torch.tensor(aux_targets, dtype=torch.float32),
             "numerical_features" : torch.tensor(numerical_features, dtype=torch.float32),
             "tfidf" : torch.tensor(tfidf, dtype=torch.float32),
-            "padded_tokens": torch.tensor(padded_tokens, dtype=torch.long),
         }
 
 
@@ -230,23 +147,11 @@ class AttentionHead(nn.Module):
         return context_vector
 
 
-# https://github.com/sakami0000/kaggle_jigsaw/blob/master/src/lstm_models/models.py
-# https://www.kaggle.com/c/jigsaw-unintended-bias-in-toxicity-classification/discussion/97471
 class RoBERTaLarge(nn.Module):
-    def __init__(self, model_path, embedding_matrix):
+    def __init__(self, model_path):
         super(RoBERTaLarge, self).__init__()
         self.in_features = 1024
         self.roberta = RobertaModel.from_pretrained(model_path)
-
-        self.lstm_hidden_size = 128 // 2
-        self.gru_hidden_size = 128 // 2
-        self.embedding = nn.Embedding(*embedding_matrix.shape)
-        self.embedding.weight = nn.Parameter(torch.tensor(embedding_matrix, dtype=torch.float32))
-        self.embedding.weight.requires_grad = False
-        self.embedding_dropout = nn.Dropout2d(0.2)
-        self.lstm = nn.LSTM(embedding_matrix.shape[1], self.lstm_hidden_size, bidirectional=True, batch_first=True)
-        self.gru = nn.GRU(self.lstm_hidden_size * 2, self.gru_hidden_size, bidirectional=True, batch_first=True)
-
         self.head = AttentionHead(self.in_features,self.in_features,1)
         self.dropout = nn.Dropout(0.1)
         self.process_num = nn.Sequential(
@@ -261,34 +166,14 @@ class RoBERTaLarge(nn.Module):
             nn.PReLU(),
             nn.Dropout(0.1),
         )
-        self.linear = nn.Linear(self.in_features + 8 + 32 + 128 * 3, 200)
-        self.relu = nn.ReLU()
-        self.l0 = nn.Linear(200, 1)
-        self.l1 = nn.Linear(200, 12)
+        self.l0 = nn.Linear(self.in_features + 8 + 32, 1)
+        self.l1 = nn.Linear(self.in_features + 8 + 32, 12)
 
-    def apply_spatial_dropout(self, h_embedding):
-        h_embedding = h_embedding.transpose(1, 2).unsqueeze(2)
-        h_embedding = self.embedding_dropout(h_embedding).squeeze(2).transpose(1, 2)
-        return h_embedding
-
-    def forward(self, ids, mask, numerical_features, tfidf, seqs):
+    def forward(self, ids, mask, numerical_features, tfidf):
         roberta_outputs = self.roberta(
             ids,
             attention_mask=mask
         )
-
-        h_embedding = self.embedding(seqs)
-        h_embedding = self.apply_spatial_dropout(h_embedding)
-
-        h_lstm, _ = self.lstm(h_embedding)
-        h_gru, hh_gru = self.gru(h_lstm)
-
-        hh_gru = hh_gru.view(-1, self.gru_hidden_size * 2) # bs, 128
-
-        avg_pool = torch.mean(h_gru, 1) # bs, 128
-        max_pool, _ = torch.max(h_gru, 1) # bs, 128
-
-        conc = torch.cat((hh_gru, avg_pool, max_pool), 1) # bs, 128 * 3
 
         x1 = self.head(roberta_outputs[0]) # bs, 1024
 
@@ -296,9 +181,7 @@ class RoBERTaLarge(nn.Module):
 
         x3 = self.process_tfidf(tfidf) # bs, 32
 
-        x = torch.cat([x1, x2, x3, conc], 1) # bs, 8 + 32 + 128 * 3
-
-        x = self.relu(self.linear(x)) # bs, 200
+        x = torch.cat([x1, x2, x3], 1) # bs, 1024 + 8 + 32
 
         logits = self.l0(self.dropout(x))
         aux_logits = torch.sigmoid(self.l1(self.dropout(x)))
@@ -359,6 +242,7 @@ class RMSELoss(torch.nn.Module):
 
 
 def loss_fn(logits, targets):
+    # loss_fct = RMSELoss()
     loss_fct = nn.MSELoss()
     loss = loss_fct(logits, targets)
     return loss
@@ -383,8 +267,7 @@ def train_fn(epoch, model, train_data_loader, valid_data_loader, device, optimiz
         aux_targets = data['aux_targets'].to(device)
         numerical_features = data['numerical_features'].to(device)
         tfidf = data['tfidf'].to(device)
-        seqs = data['padded_tokens'].to(device)
-        outputs, aux_outs = model(inputs, masks, numerical_features, tfidf, seqs)
+        outputs, aux_outs = model(inputs, masks, numerical_features, tfidf)
         loss = loss_fn(outputs, targets) * 0.5 + aux_loss_fn(aux_outs, aux_targets) * 0.5
         loss.backward()
         optimizer.step()
@@ -406,7 +289,7 @@ def train_fn(epoch, model, train_data_loader, valid_data_loader, device, optimiz
             # RuntimeError: cudnn RNN backward can only be called in training mode (_cudnn_rnn_backward_input at /pytorch/aten/src/ATen/native/cudnn/RNN.cpp:877)
             # https://discuss.pytorch.org/t/pytorch-cudnn-rnn-backward-can-only-be-called-in-training-mode/80080/2
             # edge case in my code when doing eval on training step
-            model.train() 
+            # model.train() 
 
     return scores.avg, losses.avg, valid_avg, valid_loss, best_score
 
@@ -425,8 +308,7 @@ def valid_fn(model, data_loader, device):
             aux_targets = data['aux_targets'].to(device)
             numerical_features = data['numerical_features'].to(device)
             tfidf = data['tfidf'].to(device)
-            seqs = data['padded_tokens'].to(device)
-            outputs, aux_outs = model(inputs, masks, numerical_features, tfidf, seqs)
+            outputs, aux_outs = model(inputs, masks, numerical_features, tfidf)
             loss = loss_fn(outputs, targets) * 0.5 + aux_loss_fn(aux_outs, aux_targets) * 0.5
             losses.update(loss.item(), inputs.size(0))
             scores.update(targets, outputs)
@@ -438,10 +320,10 @@ def calc_cv(model_paths):
     models = []
     for p in model_paths:
         if CFG.itpt_path:
-            model = RoBERTaLarge(CFG.itpt_path, embedding_matrix)
+            model = RoBERTaLarge(CFG.itpt_path)
             logger.info('load itpt model')
         else:
-            model = RoBERTaLarge(CFG.model_name, embedding_matrix)
+            model = RoBERTaLarge(CFG.model_name)
         model.to("cuda")
         model.load_state_dict(torch.load(p))
         model.eval()
@@ -450,9 +332,9 @@ def calc_cv(model_paths):
     tokenizer = RobertaTokenizer.from_pretrained(CFG.model_name)
     
     df = pd.read_csv("inputs/train_folds.csv")
-    # df['aux_target'] = np.round(df['target'], 0).astype(np.int8) # 7 classes
     num_bins = int(np.floor(1 + np.log2(len(df))))
     df.loc[:,'aux_target'] = pd.cut(df['target'],bins=num_bins,labels=False)
+    # df['aux_target'] = np.round(df['target'], 0).astype(np.int8) # 7 classes
     df = get_sentence_features(df, 'excerpt')
 
     TP = TextPreprocessor()
@@ -477,12 +359,8 @@ def calc_cv(model_paths):
     y_pred = []
     for fold, model in enumerate(models):
         val_df = df[df.kfold == fold].reset_index(drop=True)
-
-        valid_tok = tokenize(val_df['excerpt'].values, vocab['token2id'], CFG.max_len)
-        padded_tokens = sequence.pad_sequences(valid_tok, maxlen=CFG.max_len)
     
-        dataset = CommonLitDataset(df=val_df, excerpt=val_df.excerpt.values, tokenizer=tokenizer, max_len=CFG.max_len, 
-                                   numerical_features=df[CFG.numerical_cols].values, tfidf=tfidf_df, padded_tokens=padded_tokens)
+        dataset = CommonLitDataset(df=val_df, excerpt=val_df.excerpt.values, tokenizer=tokenizer, max_len=CFG.max_len, numerical_features=df[CFG.numerical_cols].values, tfidf=tfidf_df)
         data_loader = torch.utils.data.DataLoader(
             dataset, batch_size=CFG.valid_bs, num_workers=0, pin_memory=True, shuffle=False
         )
@@ -494,8 +372,7 @@ def calc_cv(model_paths):
                 masks = data['attention_mask'].to(device)
                 numerical_features = data['numerical_features'].to(device)
                 tfidf = data['tfidf'].to(device)
-                seqs = data['padded_tokens'].to(device)
-                output, _ = model(inputs, masks, numerical_features, tfidf, seqs)
+                output, _ = model(inputs, masks, numerical_features, tfidf)
                 output = output.detach().cpu().numpy().tolist()
                 final_output.extend(output)
         logger.info(calc_loss(np.array(final_output), val_df['target'].values))
@@ -508,6 +385,17 @@ def calc_cv(model_paths):
     overall_cv_score = calc_loss(y_true, y_pred)
     logger.info(f'cv score {overall_cv_score}')
     return overall_cv_score
+
+
+import nltk
+import re
+import scipy as sp
+from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.utils.validation import check_is_fitted
+from sklearn.feature_extraction.text import _document_frequency
+from sklearn.pipeline import make_pipeline, make_union
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.decomposition import TruncatedSVD
 
 
 class BM25Transformer(BaseEstimator, TransformerMixin):
@@ -623,159 +511,6 @@ def get_sentence_features(train, col):
     return train
 
 
-misspell_dict = {"aren't": "are not", "can't": "cannot", "couldn't": "could not",
-                 "didn't": "did not", "doesn't": "does not", "don't": "do not",
-                 "hadn't": "had not", "hasn't": "has not", "haven't": "have not",
-                 "he'd": "he would", "he'll": "he will", "he's": "he is",
-                 "i'd": "I had", "i'll": "I will", "i'm": "I am", "isn't": "is not",
-                 "it's": "it is", "it'll": "it will", "i've": "I have", "let's": "let us",
-                 "mightn't": "might not", "mustn't": "must not", "shan't": "shall not",
-                 "she'd": "she would", "she'll": "she will", "she's": "she is",
-                 "shouldn't": "should not", "that's": "that is", "there's": "there is",
-                 "they'd": "they would", "they'll": "they will", "they're": "they are",
-                 "they've": "they have", "we'd": "we would", "we're": "we are",
-                 "weren't": "were not", "we've": "we have", "what'll": "what will",
-                 "what're": "what are", "what's": "what is", "what've": "what have",
-                 "where's": "where is", "who'd": "who would", "who'll": "who will",
-                 "who're": "who are", "who's": "who is", "who've": "who have",
-                 "won't": "will not", "wouldn't": "would not", "you'd": "you would",
-                 "you'll": "you will", "you're": "you are", "you've": "you have",
-                 "'re": " are", "wasn't": "was not", "we'll": " will", "tryin'": "trying"}
-
-
-def replace_typical_misspell(text: str) -> str:
-    misspell_re = re.compile('(%s)' % '|'.join(misspell_dict.keys()))
-
-    def replace(match):
-        return misspell_dict[match.group(0)]
-
-    return misspell_re.sub(replace, text)
-
-
-puncts = [',', '.', '"', ':', ')', '(', '-', '!', '?', '|', ';', "'", '$', '&', '/', '[', ']',
-          '>', '%', '=', '#', '*', '+', '\\', '•', '~', '@', '£', '·', '_', '{', '}', '©', '^',
-          '®', '`', '<', '→', '°', '€', '™', '›', '♥', '←', '×', '§', '″', '′', 'Â', '█',
-          '½', 'à', '…', '“', '★', '”', '–', '●', 'â', '►', '−', '¢', '²', '¬', '░', '¶',
-          '↑', '±', '¿', '▾', '═', '¦', '║', '―', '¥', '▓', '—', '‹', '─', '▒', '：', '¼',
-          '⊕', '▼', '▪', '†', '■', '’', '▀', '¨', '▄', '♫', '☆', 'é', '¯', '♦', '¤', '▲',
-          'è', '¸', '¾', 'Ã', '⋅', '‘', '∞', '∙', '）', '↓', '、', '│', '（', '»', '，', '♪',
-          '╩', '╚', '³', '・', '╦', '╣', '╔', '╗', '▬', '❤', 'ï', 'Ø', '¹', '≤', '‡', '√']
-
-
-def clean_text(text: str) -> str:
-    text = str(text)
-    for punct in puncts + list(string.punctuation):
-        if punct in text:
-            text = text.replace(punct, f' {punct} ')
-    return text
-
-
-def clean_numbers(text: str) -> str:
-    return re.sub(r'\d+', ' ', text)
-
-
-def preprocess_text(text: str) -> str:
-    text = text.lower()
-    text = replace_typical_misspell(text)
-    text = clean_text(text)
-    text = clean_numbers(text)
-    text = text.strip()
-    return text
-
-
-def build_vocab(texts: List[str], max_features: int = 100000) -> Dict[str, Dict]:
-    counter = Counter()
-    for text in texts:
-        counter.update(text.split())
-
-    vocab = {}
-    vocab['token2id'] = {
-        token: _id + 1 for _id, (token, count) in
-        enumerate(counter.most_common(max_features))}
-    vocab['token2id']['<PAD>'] = 0
-    vocab['token2id']['<UNK>'] = len(vocab['token2id'])
-    vocab['id2token'] = {v: k for k, v in vocab['token2id'].items()}
-    vocab['word_freq'] = {
-        **{'<PAD>': 0, '<UNK>': 0},
-        **dict(counter.most_common(max_features)),
-    }
-    return vocab
-
-
-def tokenize(texts: List[str],
-             token2id: Dict[str, int],
-             max_len: int = 200) -> List[List[int]]:
-    
-    def text2ids(text, token2id, max_len):
-        return [
-            token2id.get(token, len(token2id) - 1)
-            for token in text.split()[:max_len]]
-    
-    tokenized = [
-        text2ids(text, token2id, max_len)
-        for text in texts]
-    return tokenized
-
-
-def load_embedding(embedding_path: str, word_index: Dict[str, int]) -> np.ndarray:
-    embeddings_index = joblib.load(embedding_path)
-
-    # word_index = tokenizer.word_index
-    nb_words = min(CFG.max_features + 2, len(word_index))
-    embedding_matrix = np.zeros((nb_words, CFG.embed_size))
-
-    for key, i in word_index.items():
-        word = key
-        embedding_vector = embeddings_index.get(word)
-        if embedding_vector is not None:
-            embedding_matrix[i] = embedding_vector
-            continue
-        word = key.lower()
-        embedding_vector = embeddings_index.get(word)
-        if embedding_vector is not None:
-            embedding_matrix[i] = embedding_vector
-            continue
-        word = key.upper()
-        embedding_vector = embeddings_index.get(word)
-        if embedding_vector is not None:
-            embedding_matrix[i] = embedding_vector
-            continue
-        word = key.capitalize()
-        embedding_vector = embeddings_index.get(word)
-        if embedding_vector is not None:
-            embedding_matrix[i] = embedding_vector
-            continue
-        word = ps.stem(key)
-        embedding_vector = embeddings_index.get(word)
-        if embedding_vector is not None:
-            embedding_matrix[i] = embedding_vector
-            continue
-        word = lc.stem(key)
-        embedding_vector = embeddings_index.get(word)
-        if embedding_vector is not None:
-            embedding_matrix[i] = embedding_vector
-            continue
-        word = sb.stem(key)
-        embedding_vector = embeddings_index.get(word)
-        if embedding_vector is not None:
-            embedding_matrix[i] = embedding_vector
-            continue
-
-    return embedding_matrix
-
-
-def w2v_fine_tune(all_texts: List[str], vocab: Dict, embedding_matrix: np.ndarray) -> np.ndarray:
-    model = Word2Vec(min_count=1, workers=1, epochs=3, vector_size=300)
-    model.build_vocab_from_freq(vocab['word_freq'])
-    idxmap = np.array(
-        [vocab['token2id'][w] for w in model.wv.index_to_key])
-    model.wv.vectors[:] = embedding_matrix[idxmap]
-    # model.trainables.syn1neg[:] = embedding_matrix[idxmap]
-    model.train(all_texts, total_examples=len(all_texts), epochs=model.epochs)
-    embedding_matrix = np.vstack([np.zeros((1, 300)), model.wv.vectors, np.zeros((1, 300))])
-    return embedding_matrix
- 
-       
 OUTPUT_DIR = f'outputs/{CFG.EXP_ID}/'
 if not os.path.exists(OUTPUT_DIR):
     os.makedirs(OUTPUT_DIR)
@@ -789,9 +524,10 @@ device = get_device()
 
 # data
 train = pd.read_csv("inputs/train_folds.csv")
-# train['aux_target'] = np.round(train['target'], 0).astype(np.int8) # 7 classes
+
 num_bins = int(np.floor(1 + np.log2(len(train)))) # 12
 train.loc[:,'aux_target'] = pd.cut(train['target'],bins=num_bins,labels=False)
+# train['aux_target'] = np.round(train['target'], 0).astype(np.int8) # 7 classes
 
 train = get_sentence_features(train, 'excerpt')
 
@@ -816,24 +552,6 @@ tfidf_df = pd.DataFrame(z, columns=[f'cleaned_excerpt_tf_idf_svd_{i}' for i in r
 print(train.shape)
 train.head()
 
-
-test = pd.read_csv("inputs/test.csv")
-train_texts = train[['excerpt']].applymap(preprocess_text).values
-test_texts = test[['excerpt']].applymap(preprocess_text).values
-all_texts = list(itertools.chain(*train_texts, *test_texts))
-
-
-vocab = build_vocab(itertools.chain(*train_texts, *test_texts), CFG.max_features)
-# embedding_matrix = load_embedding(CFG.EMBEDDING_PATH, vocab['token2id'])
-# embedding_matrix = w2v_fine_tune(all_texts, vocab, embedding_matrix)
-
-# to_pickle('inputs/finetuned_embedding_matrix.pkl', embedding_matrix)
-
-embedding_matrix = unpickle('inputs/finetuned_embedding_matrix.pkl')
-
-print(embedding_matrix.shape)
-
-
 # main loop
 for fold in range(5):
     if fold not in CFG.folds:
@@ -846,27 +564,19 @@ for fold in range(5):
     val_df = train[train.kfold == fold].reset_index(drop=True)
 
     if CFG.itpt_path:
-        model = RoBERTaLarge(CFG.itpt_path, embedding_matrix)
+        model = RoBERTaLarge(CFG.itpt_path)
         logger.info('load itpt model')
     else:
-        model = RoBERTaLarge(CFG.model_name, embedding_matrix)    
+        model = RoBERTaLarge(CFG.model_name)    
 
     tokenizer = RobertaTokenizer.from_pretrained(CFG.model_name)
-
-    train_tok = tokenize(trn_df['excerpt'].values, vocab['token2id'], CFG.max_len)
-    train_padded_tokens = sequence.pad_sequences(train_tok, maxlen=CFG.max_len)
-
-    valid_tok = tokenize(val_df['excerpt'].values, vocab['token2id'], CFG.max_len)
-    valid_padded_tokens = sequence.pad_sequences(valid_tok, maxlen=CFG.max_len)
     
-    train_dataset = CommonLitDataset(df=trn_df, excerpt=trn_df.excerpt.values, tokenizer=tokenizer, max_len=CFG.max_len, 
-                                     numerical_features=trn_df[CFG.numerical_cols].values, tfidf=tfidf_df, padded_tokens=train_padded_tokens)
+    train_dataset = CommonLitDataset(df=trn_df, excerpt=trn_df.excerpt.values, tokenizer=tokenizer, max_len=CFG.max_len, numerical_features=trn_df[CFG.numerical_cols].values, tfidf=tfidf_df)
     train_dataloader = torch.utils.data.DataLoader(
         train_dataset, batch_size=CFG.train_bs, num_workers=0, pin_memory=True, shuffle=True
     )
     
-    valid_dataset = CommonLitDataset(df=val_df, excerpt=val_df.excerpt.values, tokenizer=tokenizer, max_len=CFG.max_len, 
-                                     numerical_features=val_df[CFG.numerical_cols].values, tfidf=tfidf_df, padded_tokens=valid_padded_tokens)
+    valid_dataset = CommonLitDataset(df=val_df, excerpt=val_df.excerpt.values, tokenizer=tokenizer, max_len=CFG.max_len, numerical_features=val_df[CFG.numerical_cols].values, tfidf=tfidf_df)
     valid_dataloader = torch.utils.data.DataLoader(
         valid_dataset, batch_size=CFG.valid_bs, num_workers=0, pin_memory=True, shuffle=False
     )
@@ -874,6 +584,7 @@ for fold in range(5):
     param_optimizer = list(model.named_parameters())
     no_decay = ["bias", "LayerNorm.bias", "LayerNorm.weight"]
     optimizer_parameters = [
+        # {'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], 'weight_decay': 0.001},
         {'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], 'weight_decay': 0.0},
         {'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], 'weight_decay': 0.0},
     ]
