@@ -173,7 +173,7 @@ class RoBERTaLarge(nn.Module):
         self.l0 = nn.Linear(self.in_features + 8 + 32, 1)
         self.l1 = nn.Linear(self.in_features + 8 + 32, 12)
 
-    def forward(self, ids, mask, numerical_features, tfidf, std_err):
+    def forward(self, ids, mask, numerical_features, tfidf):
         roberta_outputs = self.roberta(
             ids,
             attention_mask=mask
@@ -189,7 +189,7 @@ class RoBERTaLarge(nn.Module):
 
         logits = self.l0(self.dropout(x))
         aux_logits = torch.sigmoid(self.l1(self.dropout(x)))
-        return logits.squeeze(-1), aux_logits, std_err
+        return logits.squeeze(-1), aux_logits
 
 
 # ====================================================
@@ -382,7 +382,7 @@ def calc_cv(model_paths):
                 numerical_features = data['numerical_features'].to(device)
                 tfidf = data['tfidf'].to(device)
                 std_err = data['std_err'].to(device)
-                output, _, _ = model(inputs, masks, numerical_features, tfidf, std_err)
+                output, _ = model(inputs, masks, numerical_features, tfidf, std_err)
                 output = output.detach().cpu().numpy().tolist()
                 final_output.extend(output)
         logger.info(calc_loss(np.array(final_output), val_df['target'].values))
