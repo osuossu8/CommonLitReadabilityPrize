@@ -170,7 +170,7 @@ class RoBERTaLarge(nn.Module):
             nn.PReLU(),
             nn.Dropout(0.1),
         )
-        self.l0 = nn.Linear(self.in_features + 8 + 32, 1)
+        self.l0 = nn.Linear(self.in_features + 8 + 32, 64)
         self.l1 = nn.Linear(self.in_features + 8 + 32, 12)
 
     def forward(self, ids, mask, numerical_features, tfidf):
@@ -190,7 +190,7 @@ class RoBERTaLarge(nn.Module):
         logits = self.l0(self.dropout(x))
         aux_logits = torch.sigmoid(self.l1(self.dropout(x)))
         
-        return logits.squeeze(-1), aux_logits
+        return logits, aux_logits
 
 
 """
@@ -285,13 +285,12 @@ def loss_fn(logits, targets, standard_error):
 """
 
 def loss_fn(logits, targets, standard_error):
-    bs = logits.size()
-    logits = logits.view(bs, 1)
+    bs, bx = logits.size()
     std, mean = torch.std_mean(logits, 1)
     p = torch.distributions.Normal(mean, std)
     q = torch.distributions.Normal(targets, standard_error)
-    loss = torch.distributions.kl_divergence(p, q)
-    return loss
+    kl_vector = torch.distributions.kl_divergence(p, q)
+    return kl_vector.mean()
 
 
 def aux_loss_fn(logits, targets):
