@@ -172,6 +172,7 @@ class RoBERTaLarge(nn.Module):
         )
         self.l0 = nn.Linear(self.in_features + 8 + 32, 1)
         self.l1 = nn.Linear(self.in_features + 8 + 32, 12)
+        self.l2 = nn.Linear(self.in_features + 8 + 32, 64)
 
     def forward(self, ids, mask, numerical_features, tfidf):
         roberta_outputs = self.roberta(
@@ -189,8 +190,9 @@ class RoBERTaLarge(nn.Module):
 
         logits = self.l0(self.dropout(x))
         aux_logits = torch.sigmoid(self.l1(self.dropout(x)))
-        
-        return logits.squeeze(-1), aux_logits, x1
+        std_mean_logits = self.l2(self.dropout(x))        
+
+        return logits.squeeze(-1), aux_logits, std_mean_logits
 
 
 """
