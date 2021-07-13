@@ -315,7 +315,7 @@ def train_fn(epoch, model, train_data_loader, valid_data_loader, device, optimiz
         numerical_features = data['numerical_features'].to(device)
         tfidf = data['tfidf'].to(device)
         std_err = data['std_err'].to(device)
-        outputs, aux_outs, std_outs = model(inputs, masks, numerical_features, tfidf)
+        outputs, aux_outs = model(inputs, masks, numerical_features, tfidf)
         loss = loss_fn(outputs, targets, std_err) * 0.5 + aux_loss_fn(aux_outs, aux_targets) * 0.5
         loss.backward()
         optimizer.step()
@@ -357,7 +357,7 @@ def valid_fn(model, data_loader, device):
             numerical_features = data['numerical_features'].to(device)
             tfidf = data['tfidf'].to(device)
             std_err = data['std_err'].to(device)
-            outputs, aux_outs, std_outs = model(inputs, masks, numerical_features, tfidf)
+            outputs, aux_outs = model(inputs, masks, numerical_features, tfidf)
             loss = loss_fn(outputs, targets, std_err) * 0.5 + aux_loss_fn(aux_outs, aux_targets) * 0.5
             losses.update(loss.item(), inputs.size(0))
             scores.update(targets, outputs)
