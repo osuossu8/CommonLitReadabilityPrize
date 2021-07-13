@@ -199,15 +199,12 @@ from torch.nn.modules.loss import _Loss
 class GaussianNLLLoss(_Loss):
     def __init__(self, *, full: bool = False, eps: float = 1e-6, reduction: str = 'mean') -> None:
         super(GaussianNLLLoss, self).__init__(None, None, reduction)
-        self.full = full
         self.eps = eps
 
     def forward(self, input, target, var):
         # https://pytorch.org/docs/stable/_modules/torch/nn/functional.html#gaussian_nll_loss
         # return F.gaussian_nll_loss(input, target, var, full=self.full, eps=self.eps, reduction=self.reduction)
         loss = 0.5 * (torch.log(var) + (input - target)**2 / var)
-        if full:
-            loss += 0.5 * math.log(2 * math.pi)
         if reduction == 'mean':
             return loss.mean()
         elif reduction == 'sum':
