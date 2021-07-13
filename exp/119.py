@@ -197,17 +197,18 @@ from torch.nn.modules.loss import _Loss
 # My torch 1.5 don't have this class ...
 # https://pytorch.org/docs/stable/_modules/torch/nn/modules/loss.html#GaussianNLLLoss
 class GaussianNLLLoss(_Loss):
-    def __init__(self, *, full: bool = False, eps: float = 1e-6, reduction: str = 'mean') -> None:
-        super(GaussianNLLLoss, self).__init__(None, None, reduction)
-        self.eps = eps
+    def __init__(self):
+        super(GaussianNLLLoss, self).__init__()
+        self.eps = 1e-6
+        self.reduction = 'mean'
 
     def forward(self, input, target, var):
         # https://pytorch.org/docs/stable/_modules/torch/nn/functional.html#gaussian_nll_loss
         # return F.gaussian_nll_loss(input, target, var, full=self.full, eps=self.eps, reduction=self.reduction)
         loss = 0.5 * (torch.log(var) + (input - target)**2 / var)
-        if reduction == 'mean':
+        if self.reduction == 'mean':
             return loss.mean()
-        elif reduction == 'sum':
+        elif self.reduction == 'sum':
             return loss.sum()
         else:
             return loss
