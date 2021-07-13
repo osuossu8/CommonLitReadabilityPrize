@@ -246,7 +246,7 @@ class RMSELoss(torch.nn.Module):
 
 
 def loss_fn(logits, targets, standard_error):
-    bs, bx = logits.size()
+    bs = logits.size()
     loss_fct = torch.nn.GaussianNLLLoss()
     logits = logits.view(bs, 1)
     targets = targets.view(bs, 1)
