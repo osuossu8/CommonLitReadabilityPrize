@@ -170,9 +170,8 @@ class RoBERTaLarge(nn.Module):
             nn.PReLU(),
             nn.Dropout(0.1),
         )
-        self.l0 = nn.Linear(self.in_features + 8 + 32, 1)
+        self.l0 = nn.Linear(self.in_features + 8 + 32, 2)
         self.l1 = nn.Linear(self.in_features + 8 + 32, 12)
-        self.l2 = nn.Linear(self.in_features + 8 + 32, 64)
 
     def forward(self, ids, mask, numerical_features, tfidf):
         roberta_outputs = self.roberta(
@@ -190,36 +189,8 @@ class RoBERTaLarge(nn.Module):
 
         logits = self.l0(self.dropout(x))
         aux_logits = torch.sigmoid(self.l1(self.dropout(x)))
-        std_mean_logits = self.l2(self.dropout(x))        
 
-        return logits.squeeze(-1), aux_logits, std_mean_logits
-
-
-"""
-from torch.nn.modules.loss import _Loss
-# My torch 1.5 don't have this class ...
-# https://pytorch.org/docs/stable/_modules/torch/nn/modules/loss.html#GaussianNLLLoss
-class GaussianNLLLoss(_Loss):
-    def __init__(self):
-        super(GaussianNLLLoss, self).__init__()
-        self.eps = 1e-6
-        self.reduction = 'mean'
-
-    def forward(self, input, target, var):
-        # https://pytorch.org/docs/stable/_modules/torch/nn/functional.html#gaussian_nll_loss
-        # return F.gaussian_nll_loss(input, target, var, full=self.full, eps=self.eps, reduction=self.reduction)
-        var = var.clone()
-        with torch.no_grad():
-            var.clamp_(min=self.eps)
-
-        loss = 0.5 * (torch.log(var) + (input - target)**2 / var)
-        if self.reduction == 'mean':
-            return loss.mean()
-        elif self.reduction == 'sum':
-            return loss.sum()
-        else:
-            return loss
-"""
+        return logits[:, 0].squeeze(-1), aux_logits, logits[:, 1].squeeze(-1)
 
 
 # ====================================================
@@ -275,24 +246,16 @@ class RMSELoss(torch.nn.Module):
         return loss
 
 
-"""
-def loss_fn(logits, targets, standard_error):
-    bs = logits.size()
-    loss_fct = GaussianNLLLoss() # nn.GaussianNLLLoss()
-    logits = logits.view(bs, 1)
-    targets = targets.view(bs, 1)
-    standard_error = standard_error.view(bs, 1)
-    loss = loss_fct(input=logits, target=targets, var=standard_error ** 2)
+def loss_fn(logits, targets):
+    loss_fct = nn.MSELoss()
+    loss = loss_fct(logits, targets)
     return loss
-"""
 
-def loss_fn(logits, targets, standard_error):
-    bs, bx = logits.size()
-    std, mean = torch.std_mean(logits, 1)
-    p = torch.distributions.Normal(mean, std)
-    q = torch.distributions.Normal(targets, standard_error)
-    kl_vector = torch.distributions.kl_divergence(p, q)
-    return kl_vector.mean()
+
+def std_loss_fn(logits, targets):
+    loss_fct = nn.MSELoss()
+    loss = loss_fct(logits, targets)
+    return loss
 
 
 def aux_loss_fn(logits, targets):
@@ -316,8 +279,8 @@ def train_fn(epoch, model, train_data_loader, valid_data_loader, device, optimiz
         numerical_features = data['numerical_features'].to(device)
         tfidf = data['tfidf'].to(device)
         std_err = data['std_err'].to(device)
-        outputs, aux_outs, std_mean_outs = model(inputs, masks, numerical_features, tfidf)
-        loss = loss_fn(std_mean_outs, targets, std_err) * 0.5 + aux_loss_fn(aux_outs, aux_targets) * 0.5
+        outputs, aux_outs, std_outs = model(inputs, masks, numerical_features, tfidf)
+        loss = (loss_fn(outputs, targets) + aux_loss_fn(aux_outs, aux_targets) + std_loss_fn(std_outs, std_err))/3
         loss.backward()
         optimizer.step()
         # scheduler.step()
@@ -358,8 +321,8 @@ def valid_fn(model, data_loader, device):
             numerical_features = data['numerical_features'].to(device)
             tfidf = data['tfidf'].to(device)
             std_err = data['std_err'].to(device)
-            outputs, aux_outs, std_mean_outs = model(inputs, masks, numerical_features, tfidf)
-            loss = loss_fn(std_mean_outs, targets, std_err) * 0.5 + aux_loss_fn(aux_outs, aux_targets) * 0.5
+            outputs, aux_outs, std_outs = model(inputs, masks, numerical_features, tfidf)
+            loss = (loss_fn(outputs, targets) + aux_loss_fn(aux_outs, aux_targets) + std_loss_fn(std_outs, std_err))/3
             losses.update(loss.item(), inputs.size(0))
             scores.update(targets, outputs)
             tk0.set_postfix(loss=losses.avg)
