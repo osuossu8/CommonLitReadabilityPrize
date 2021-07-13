@@ -172,6 +172,7 @@ class RoBERTaLarge(nn.Module):
         )
         self.l0 = nn.Linear(self.in_features + 8 + 32, 1)
         self.l1 = nn.Linear(self.in_features + 8 + 32, 12)
+        self.l2 = nn.Linear(self.in_features + 8 + 32, 1)
 
     def forward(self, ids, mask, numerical_features, tfidf):
         roberta_outputs = self.roberta(
@@ -189,11 +190,12 @@ class RoBERTaLarge(nn.Module):
 
         logits = self.l0(self.dropout(x))
         aux_logits = torch.sigmoid(self.l1(self.dropout(x)))
-        return logits.squeeze(-1), aux_logits
+        std_logits = self.l2(self.dropout(x))
+        return logits.squeeze(-1), aux_logits, std_logits
 
 
+"""
 from torch.nn.modules.loss import _Loss
-
 # My torch 1.5 don't have this class ...
 # https://pytorch.org/docs/stable/_modules/torch/nn/modules/loss.html#GaussianNLLLoss
 class GaussianNLLLoss(_Loss):
@@ -216,6 +218,7 @@ class GaussianNLLLoss(_Loss):
             return loss.sum()
         else:
             return loss
+"""
 
 
 # ====================================================
@@ -271,6 +274,7 @@ class RMSELoss(torch.nn.Module):
         return loss
 
 
+"""
 def loss_fn(logits, targets, standard_error):
     bs = logits.size()
     loss_fct = GaussianNLLLoss() # nn.GaussianNLLLoss()
@@ -279,6 +283,19 @@ def loss_fn(logits, targets, standard_error):
     standard_error = standard_error.view(bs, 1)
     loss = loss_fct(input=logits, target=targets, var=standard_error ** 2)
     return loss
+"""
+
+def loss_fn(logits, targets):
+    loss_fct = nn.MSELoss()
+    loss = loss_fct(logits, targets)
+    return loss
+
+
+def std_loss_fn(logits, targets):
+    loss_fct = nn.MSELoss()
+    loss = loss_fct(logits, targets)
+    return loss
+
 
 def aux_loss_fn(logits, targets):
     loss_fct = nn.BCEWithLogitsLoss()
@@ -301,8 +318,8 @@ def train_fn(epoch, model, train_data_loader, valid_data_loader, device, optimiz
         numerical_features = data['numerical_features'].to(device)
         tfidf = data['tfidf'].to(device)
         std_err = data['std_err'].to(device)
-        outputs, aux_outs = model(inputs, masks, numerical_features, tfidf)
-        loss = loss_fn(outputs, targets, std_err) * 0.5 + aux_loss_fn(aux_outs, aux_targets) * 0.5
+        outputs, aux_outs, std_outs = model(inputs, masks, numerical_features, tfidf)
+        loss = (loss_fn(outputs, targets) + aux_loss_fn(aux_outs, aux_targets) + std_loss_fn(std_outs, std_err))/3
         loss.backward()
         optimizer.step()
         # scheduler.step()
@@ -343,8 +360,8 @@ def valid_fn(model, data_loader, device):
             numerical_features = data['numerical_features'].to(device)
             tfidf = data['tfidf'].to(device)
             std_err = data['std_err'].to(device)
-            outputs, aux_outs = model(inputs, masks, numerical_features, tfidf)
-            loss = loss_fn(outputs, targets, std_err) * 0.5 + aux_loss_fn(aux_outs, aux_targets) * 0.5
+            outputs, aux_outs, std_outs = model(inputs, masks, numerical_features, tfidf)
+            loss = (loss_fn(outputs, targets) + aux_loss_fn(aux_outs, aux_targets) + std_loss_fn(std_outs, std_err))/3
             losses.update(loss.item(), inputs.size(0))
             scores.update(targets, outputs)
             tk0.set_postfix(loss=losses.avg)
@@ -408,7 +425,7 @@ def calc_cv(model_paths):
                 numerical_features = data['numerical_features'].to(device)
                 tfidf = data['tfidf'].to(device)
                 std_err = data['std_err'].to(device)
-                output, _ = model(inputs, masks, numerical_features, tfidf, std_err)
+                output, _, _ = model(inputs, masks, numerical_features, tfidf)
                 output = output.detach().cpu().numpy().tolist()
                 final_output.extend(output)
         logger.info(calc_loss(np.array(final_output), val_df['target'].values))
