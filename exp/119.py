@@ -192,6 +192,18 @@ class RoBERTaLarge(nn.Module):
         return logits.squeeze(-1), aux_logits
 
 
+from torch.nn.modules.loss import _Loss
+
+# My torch 1.5 don't have this class ...
+class GaussianNLLLoss(_Loss):
+    def __init__(self, *, full: bool = False, eps: float = 1e-6, reduction: str = 'mean') -> None:
+        super(GaussianNLLLoss, self).__init__(None, None, reduction)
+        self.full = full
+        self.eps = eps
+
+    def forward(self, input: Tensor, target: Tensor, var: Tensor) -> Tensor:
+        return F.gaussian_nll_loss(input, target, var, full=self.full, eps=self.eps, reduction=self.reduction)
+
 # ====================================================
 # Training helper functions
 # ====================================================
@@ -247,7 +259,7 @@ class RMSELoss(torch.nn.Module):
 
 def loss_fn(logits, targets, standard_error):
     bs = logits.size()
-    loss_fct = nn.GaussianNLLLoss()
+    loss_fct = GaussianNLLLoss() # nn.GaussianNLLLoss()
     logits = logits.view(bs, 1)
     targets = targets.view(bs, 1)
     standard_error = standard_error.view(bs, 1)
