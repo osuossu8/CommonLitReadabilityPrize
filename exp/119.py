@@ -205,6 +205,10 @@ class GaussianNLLLoss(_Loss):
     def forward(self, input, target, var):
         # https://pytorch.org/docs/stable/_modules/torch/nn/functional.html#gaussian_nll_loss
         # return F.gaussian_nll_loss(input, target, var, full=self.full, eps=self.eps, reduction=self.reduction)
+        var = var.clone()
+        with torch.no_grad():
+            var.clamp_(min=self.eps)
+
         loss = 0.5 * (torch.log(var) + (input - target)**2 / var)
         if self.reduction == 'mean':
             return loss.mean()
