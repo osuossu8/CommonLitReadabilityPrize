@@ -190,7 +190,7 @@ class RoBERTaLarge(nn.Module):
         logits = self.l0(self.dropout(x))
         aux_logits = torch.sigmoid(self.l1(self.dropout(x)))
         
-        return logits.squeeze(-1), aux_logits
+        return logits.squeeze(-1), aux_logits, x1
 
 
 """
@@ -285,9 +285,8 @@ def loss_fn(logits, targets, standard_error):
 """
 
 def loss_fn(logits, targets, standard_error):
-    bs = logits.size()
-    logits = logits.view(bs, 1)
-    std, mean = torch.std_mean(logits, 0)
+    bs, bx = logits.size()
+    std, mean = torch.std_mean(logits, 1)
     p = torch.distributions.Normal(mean, std)
     q = torch.distributions.Normal(targets, standard_error)
     kl_vector = torch.distributions.kl_divergence(p, q)
@@ -315,8 +314,8 @@ def train_fn(epoch, model, train_data_loader, valid_data_loader, device, optimiz
         numerical_features = data['numerical_features'].to(device)
         tfidf = data['tfidf'].to(device)
         std_err = data['std_err'].to(device)
-        outputs, aux_outs = model(inputs, masks, numerical_features, tfidf)
-        loss = loss_fn(outputs, targets, std_err) * 0.5 + aux_loss_fn(aux_outs, aux_targets) * 0.5
+        outputs, aux_outs, std_mean_outs = model(inputs, masks, numerical_features, tfidf)
+        loss = loss_fn(std_mean_outs, targets, std_err) * 0.5 + aux_loss_fn(aux_outs, aux_targets) * 0.5
         loss.backward()
         optimizer.step()
         # scheduler.step()
@@ -357,8 +356,8 @@ def valid_fn(model, data_loader, device):
             numerical_features = data['numerical_features'].to(device)
             tfidf = data['tfidf'].to(device)
             std_err = data['std_err'].to(device)
-            outputs, aux_outs = model(inputs, masks, numerical_features, tfidf)
-            loss = loss_fn(outputs, targets, std_err) * 0.5 + aux_loss_fn(aux_outs, aux_targets) * 0.5
+            outputs, aux_outs, std_mean_outs = model(inputs, masks, numerical_features, tfidf)
+            loss = loss_fn(std_mean_outs, targets, std_err) * 0.5 + aux_loss_fn(aux_outs, aux_targets) * 0.5
             losses.update(loss.item(), inputs.size(0))
             scores.update(targets, outputs)
             tk0.set_postfix(loss=losses.avg)
@@ -422,7 +421,7 @@ def calc_cv(model_paths):
                 numerical_features = data['numerical_features'].to(device)
                 tfidf = data['tfidf'].to(device)
                 std_err = data['std_err'].to(device)
-                output, _ = model(inputs, masks, numerical_features, tfidf)
+                output, _, _ = model(inputs, masks, numerical_features, tfidf)
                 output = output.detach().cpu().numpy().tolist()
                 final_output.extend(output)
         logger.info(calc_loss(np.array(final_output), val_df['target'].values))
