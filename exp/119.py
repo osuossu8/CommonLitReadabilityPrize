@@ -254,7 +254,7 @@ class MetricMeter(object):
 
     @property
     def avg(self):
-        self.rmse = calc_loss(np.nan_to_num(self.y_true), np.nan_to_num(self.y_pred))
+        self.rmse = calc_loss(self.y_true, self.y_pred)
        
         return {
             "RMSE" : self.rmse,
