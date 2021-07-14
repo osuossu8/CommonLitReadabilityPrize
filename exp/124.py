@@ -23,7 +23,7 @@ from sklearn import model_selection
 from sklearn import metrics
 
 from tqdm import tqdm
-from transformers import RobertaConfig, RobertaModel, RobertaTokenizer
+from transformers import RobertaConfig, RobertaModel, RobertaTokenizer, AutoConfig, AutoModel, AutoTokenizer
 
 from apex import amp
 
@@ -33,7 +33,7 @@ class CFG:
     # Globals #
     ######################
     EXP_ID = '124'
-    seed = 71
+    seed = 124 # 71
     epochs = 5
     folds = [0, 1, 2, 3, 4]
     N_FOLDS = 5
@@ -42,7 +42,7 @@ class CFG:
     train_bs = 8 * 2
     valid_bs = 16 * 2
     log_interval = 10
-    model_name = 'phiyodr/roberta-large-finetuned-squad2' # 'howey/roberta-large-mrpc' # 'roberta-large'
+    model_name = 'pertschuk/albert-large-intent-v2'
     itpt_path = None # 'itpt/roberta_large_2/' 
     numerical_cols = [
        'excerpt_num_chars', 'excerpt_num_capitals', 'excerpt_caps_vs_length',
@@ -85,14 +85,13 @@ def calc_loss(y_true, y_pred):
 
 
 class CommonLitDataset:
-    def __init__(self, df, excerpt, tokenizer, max_len, numerical_features, tfidf, std_err):
+    def __init__(self, df, excerpt, tokenizer, max_len, numerical_features, tfidf):
         self.excerpt = excerpt
         self.tokenizer = tokenizer
         self.max_len = max_len
         self.df = df
         self.numerical_features = numerical_features
         self.tfidf_df = tfidf
-        self.std_err = std_err
 
     def __len__(self):
         return len(self.excerpt)
@@ -119,8 +118,6 @@ class CommonLitDataset:
         numerical_features = self.numerical_features[item]
         tfidf = self.tfidf_df.values[item]
 
-        std_err = self.std_err[item]
-
         return {
             "input_ids": torch.tensor(ids, dtype=torch.long),
             "attention_mask": torch.tensor(mask, dtype=torch.long),
@@ -128,7 +125,6 @@ class CommonLitDataset:
             "aux_targets" : torch.tensor(aux_targets, dtype=torch.float32),
             "numerical_features" : torch.tensor(numerical_features, dtype=torch.float32),
             "tfidf" : torch.tensor(tfidf, dtype=torch.float32),
-            "std_err" : torch.tensor(std_err, dtype=torch.float32),
         }
 
 
@@ -155,7 +151,7 @@ class RoBERTaLarge(nn.Module):
     def __init__(self, model_path):
         super(RoBERTaLarge, self).__init__()
         self.in_features = 1024
-        self.roberta = RobertaModel.from_pretrained(model_path)
+        self.roberta = AutoModel.from_pretrained(model_path)
         self.head = AttentionHead(self.in_features,self.in_features,1)
         self.dropout = nn.Dropout(0.1)
         self.process_num = nn.Sequential(
@@ -170,7 +166,7 @@ class RoBERTaLarge(nn.Module):
             nn.PReLU(),
             nn.Dropout(0.1),
         )
-        self.l0 = nn.Linear(self.in_features + 8 + 32, 2)
+        self.l0 = nn.Linear(self.in_features + 8 + 32, 1)
         self.l1 = nn.Linear(self.in_features + 8 + 32, 12)
 
     def forward(self, ids, mask, numerical_features, tfidf):
@@ -189,31 +185,7 @@ class RoBERTaLarge(nn.Module):
 
         logits = self.l0(self.dropout(x))
         aux_logits = torch.sigmoid(self.l1(self.dropout(x)))
-
-        return logits[:, 0].squeeze(-1), aux_logits, logits[:, 1].squeeze(-1)
-
-
-from torch.nn.modules.loss import _Loss
-# My torch 1.5 don't have this class ...
-# https://pytorch.org/docs/stable/_modules/torch/nn/modules/loss.html#GaussianNLLLoss
-class GaussianNLLLoss(_Loss):
-    def __init__(self):
-        super(GaussianNLLLoss, self).__init__()
-        self.eps = 1e-6
-        self.reduction = 'mean'
-    def forward(self, input, target, var):
-        # https://pytorch.org/docs/stable/_modules/torch/nn/functional.html#gaussian_nll_loss
-        # return F.gaussian_nll_loss(input, target, var, full=self.full, eps=self.eps, reduction=self.reduction)
-        var = var.clone()
-        with torch.no_grad():
-            var.clamp_(min=self.eps)
-        loss = 0.5 * (torch.log(var) + (input - target)**2 / var)
-        if self.reduction == 'mean':
-            return loss.mean()
-        elif self.reduction == 'sum':
-            return loss.sum()
-        else:
-            return loss
+        return logits.squeeze(-1), aux_logits
 
 
 # ====================================================
@@ -269,12 +241,11 @@ class RMSELoss(torch.nn.Module):
         return loss
 
 
-# https://www.kaggle.com/c/commonlitreadabilityprize/discussion/239421
-def loss_fn(logits, targets, standard_error):
-    loss_fct = GaussianNLLLoss() # nn.GaussianNLLLoss()
-    loss = loss_fct(input=logits, target=targets, var=standard_error ** 2)
+def loss_fn(logits, targets):
+    # loss_fct = RMSELoss()
+    loss_fct = nn.MSELoss()
+    loss = loss_fct(logits, targets)
     return loss
-
 
 def aux_loss_fn(logits, targets):
     loss_fct = nn.BCEWithLogitsLoss()
@@ -296,9 +267,8 @@ def train_fn(epoch, model, train_data_loader, valid_data_loader, device, optimiz
         aux_targets = data['aux_targets'].to(device)
         numerical_features = data['numerical_features'].to(device)
         tfidf = data['tfidf'].to(device)
-        std_err = data['std_err'].to(device)
-        outputs, aux_outs, std_outs = model(inputs, masks, numerical_features, tfidf)
-        loss = loss_fn(outputs, targets, std_outs) * 0.5 + aux_loss_fn(aux_outs, aux_targets) * 0.5
+        outputs, aux_outs = model(inputs, masks, numerical_features, tfidf)
+        loss = loss_fn(outputs, targets) * 0.5 + aux_loss_fn(aux_outs, aux_targets) * 0.5
         loss.backward()
         optimizer.step()
         # scheduler.step()
@@ -338,9 +308,8 @@ def valid_fn(model, data_loader, device):
             aux_targets = data['aux_targets'].to(device)
             numerical_features = data['numerical_features'].to(device)
             tfidf = data['tfidf'].to(device)
-            std_err = data['std_err'].to(device)
-            outputs, aux_outs, std_outs = model(inputs, masks, numerical_features, tfidf)
-            loss = loss_fn(outputs, targets, std_outs) * 0.5 + aux_loss_fn(aux_outs, aux_targets) * 0.5
+            outputs, aux_outs = model(inputs, masks, numerical_features, tfidf)
+            loss = loss_fn(outputs, targets) * 0.5 + aux_loss_fn(aux_outs, aux_targets) * 0.5
             losses.update(loss.item(), inputs.size(0))
             scores.update(targets, outputs)
             tk0.set_postfix(loss=losses.avg)
@@ -360,7 +329,7 @@ def calc_cv(model_paths):
         model.eval()
         models.append(model)
     
-    tokenizer = RobertaTokenizer.from_pretrained(CFG.model_name)
+    tokenizer = AutoTokenizer.from_pretrained(CFG.model_name)
     
     df = pd.read_csv("inputs/train_folds.csv")
     num_bins = int(np.floor(1 + np.log2(len(df))))
@@ -391,7 +360,7 @@ def calc_cv(model_paths):
     for fold, model in enumerate(models):
         val_df = df[df.kfold == fold].reset_index(drop=True)
     
-        dataset = CommonLitDataset(df=val_df, excerpt=val_df.excerpt.values, tokenizer=tokenizer, max_len=CFG.max_len, numerical_features=df[CFG.numerical_cols].values, tfidf=tfidf_df, std_err=df["standard_error"].values)
+        dataset = CommonLitDataset(df=val_df, excerpt=val_df.excerpt.values, tokenizer=tokenizer, max_len=CFG.max_len, numerical_features=df[CFG.numerical_cols].values, tfidf=tfidf_df)
         data_loader = torch.utils.data.DataLoader(
             dataset, batch_size=CFG.valid_bs, num_workers=0, pin_memory=True, shuffle=False
         )
@@ -403,8 +372,7 @@ def calc_cv(model_paths):
                 masks = data['attention_mask'].to(device)
                 numerical_features = data['numerical_features'].to(device)
                 tfidf = data['tfidf'].to(device)
-                std_err = data['std_err'].to(device)
-                output, _, _ = model(inputs, masks, numerical_features, tfidf)
+                output, _ = model(inputs, masks, numerical_features, tfidf)
                 output = output.detach().cpu().numpy().tolist()
                 final_output.extend(output)
         logger.info(calc_loss(np.array(final_output), val_df['target'].values))
@@ -601,14 +569,14 @@ for fold in range(5):
     else:
         model = RoBERTaLarge(CFG.model_name)    
 
-    tokenizer = RobertaTokenizer.from_pretrained(CFG.model_name)
+    tokenizer = AutoTokenizer.from_pretrained(CFG.model_name)
     
-    train_dataset = CommonLitDataset(df=trn_df, excerpt=trn_df.excerpt.values, tokenizer=tokenizer, max_len=CFG.max_len, numerical_features=trn_df[CFG.numerical_cols].values, tfidf=tfidf_df, std_err=trn_df["standard_error"].values)
+    train_dataset = CommonLitDataset(df=trn_df, excerpt=trn_df.excerpt.values, tokenizer=tokenizer, max_len=CFG.max_len, numerical_features=trn_df[CFG.numerical_cols].values, tfidf=tfidf_df)
     train_dataloader = torch.utils.data.DataLoader(
         train_dataset, batch_size=CFG.train_bs, num_workers=0, pin_memory=True, shuffle=True
     )
     
-    valid_dataset = CommonLitDataset(df=val_df, excerpt=val_df.excerpt.values, tokenizer=tokenizer, max_len=CFG.max_len, numerical_features=val_df[CFG.numerical_cols].values, tfidf=tfidf_df, std_err=val_df["standard_error"].values)
+    valid_dataset = CommonLitDataset(df=val_df, excerpt=val_df.excerpt.values, tokenizer=tokenizer, max_len=CFG.max_len, numerical_features=val_df[CFG.numerical_cols].values, tfidf=tfidf_df)
     valid_dataloader = torch.utils.data.DataLoader(
         valid_dataset, batch_size=CFG.valid_bs, num_workers=0, pin_memory=True, shuffle=False
     )
