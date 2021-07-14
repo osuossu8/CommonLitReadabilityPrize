@@ -23,7 +23,7 @@ from sklearn import model_selection
 from sklearn import metrics
 
 from tqdm import tqdm
-from transformers import RobertaConfig, RobertaModel, RobertaTokenizer, AutoConfig, AutoModel, AutoTokenizer
+from transformers import RobertaConfig, RobertaModel, RobertaTokenizer
 
 from apex import amp
 
@@ -33,7 +33,7 @@ class CFG:
     # Globals #
     ######################
     EXP_ID = '124'
-    seed = 124 # 71
+    seed = 71
     epochs = 5
     folds = [0, 1, 2, 3, 4]
     N_FOLDS = 5
@@ -42,7 +42,7 @@ class CFG:
     train_bs = 8 * 2
     valid_bs = 16 * 2
     log_interval = 10
-    model_name = 'pertschuk/albert-large-intent-v2'
+    model_name = 'phiyodr/roberta-large-finetuned-squad2' # 'howey/roberta-large-mrpc' # 'roberta-large'
     itpt_path = None # 'itpt/roberta_large_2/' 
     numerical_cols = [
        'excerpt_num_chars', 'excerpt_num_capitals', 'excerpt_caps_vs_length',
@@ -151,7 +151,9 @@ class RoBERTaLarge(nn.Module):
     def __init__(self, model_path):
         super(RoBERTaLarge, self).__init__()
         self.in_features = 1024
-        self.roberta = AutoModel.from_pretrained(model_path)
+        self.roberta = RobertaModel.from_pretrained(model_path)
+        self.layer_norm = nn.LayerNorm(self.in_features)
+
         self.head = AttentionHead(self.in_features,self.in_features,1)
         self.dropout = nn.Dropout(0.1)
         self.process_num = nn.Sequential(
@@ -175,13 +177,19 @@ class RoBERTaLarge(nn.Module):
             attention_mask=mask
         )
 
-        x1 = self.head(roberta_outputs[0]) # bs, 1024
+        last_hidden_state = roberta_outputs[0]
+        input_mask_expanded = mask.unsqueeze(-1).expand(last_hidden_state.size()).float()
+        sum_embeddings = torch.sum(last_hidden_state * input_mask_expanded, 1)
+        sum_mask = input_mask_expanded.sum(1)
+        sum_mask = torch.clamp(sum_mask, min=1e-9)
+        mean_embeddings = sum_embeddings / sum_mask
+        norm_mean_embeddings = self.layer_norm(mean_embeddings) # bs, 1024
 
         x2 = self.process_num(numerical_features) # bs, 8
 
         x3 = self.process_tfidf(tfidf) # bs, 32
 
-        x = torch.cat([x1, x2, x3], 1) # bs, 1024 + 8 + 32
+        x = torch.cat([norm_mean_embeddings, x2, x3], 1) # bs, 1024 + 8 + 32
 
         logits = self.l0(self.dropout(x))
         aux_logits = torch.sigmoid(self.l1(self.dropout(x)))
@@ -329,7 +337,7 @@ def calc_cv(model_paths):
         model.eval()
         models.append(model)
     
-    tokenizer = AutoTokenizer.from_pretrained(CFG.model_name)
+    tokenizer = RobertaTokenizer.from_pretrained(CFG.model_name)
     
     df = pd.read_csv("inputs/train_folds.csv")
     num_bins = int(np.floor(1 + np.log2(len(df))))
@@ -569,7 +577,7 @@ for fold in range(5):
     else:
         model = RoBERTaLarge(CFG.model_name)    
 
-    tokenizer = AutoTokenizer.from_pretrained(CFG.model_name)
+    tokenizer = RobertaTokenizer.from_pretrained(CFG.model_name)
     
     train_dataset = CommonLitDataset(df=trn_df, excerpt=trn_df.excerpt.values, tokenizer=tokenizer, max_len=CFG.max_len, numerical_features=trn_df[CFG.numerical_cols].values, tfidf=tfidf_df)
     train_dataloader = torch.utils.data.DataLoader(
