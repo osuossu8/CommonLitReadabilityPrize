@@ -153,8 +153,6 @@ class RoBERTaLarge(nn.Module):
         self.in_features = 1024
         self.roberta = RobertaModel.from_pretrained(model_path)
         self.layer_norm = nn.LayerNorm(self.in_features)
-
-        self.head = AttentionHead(self.in_features,self.in_features,1)
         self.dropout = nn.Dropout(0.1)
         self.process_num = nn.Sequential(
             nn.Linear(10, 8),
