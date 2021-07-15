@@ -42,7 +42,7 @@ class CFG:
     train_bs = 8 * 2
     valid_bs = 16 * 2
     log_interval = 10
-    model_name = 'philschmid/distilroberta-base-ner-conll2003'
+    model_name = 'distilroberta-base'
     itpt_path = None # 'itpt/roberta_large_2/' 
     numerical_cols = [
        'excerpt_num_chars', 'excerpt_num_capitals', 'excerpt_caps_vs_length',
