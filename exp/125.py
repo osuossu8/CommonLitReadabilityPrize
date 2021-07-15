@@ -36,11 +36,11 @@ class CFG:
     seed = 125 # 71
     epochs = 5
     folds = [0, 1, 2, 3, 4]
-    N_FOLDS = 5
-    LR = 2e-5
+    N_FOLDS = 3 # 5
+    LR = 3e-5 # 2e-5
     max_len = 256
-    train_bs = 8 * 2
-    valid_bs = 16 * 2
+    train_bs = 8 # * 2
+    valid_bs = 16 # * 2
     log_interval = 10
     model_name = 'albert-xlarge-v2'
     itpt_path = None # 'itpt/roberta_large_2/' 
