@@ -37,8 +37,8 @@ class CFG:
     epochs = 5
     folds = [0, 1, 2, 3, 4]
     N_FOLDS = 3 # 5
-    LR = 3e-5 # 2e-5
-    max_len = 256
+    LR = 2e-5
+    max_len = 248 # 256
     train_bs = 8 # * 2
     valid_bs = 16 # * 2
     log_interval = 10
