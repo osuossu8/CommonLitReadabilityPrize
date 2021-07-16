@@ -81,6 +81,12 @@ def init_logger(log_file='train.log'):
     return logger
 
 
+def unpickle(filename):
+    with open(filename, mode='rb') as fo:
+        p = pickle.load(fo)
+    return p  
+
+
 def calc_loss(y_true, y_pred):
     return  np.sqrt(metrics.mean_squared_error(y_true, y_pred))
 
