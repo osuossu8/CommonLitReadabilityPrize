@@ -24,7 +24,7 @@ from sklearn import model_selection
 from sklearn import metrics
 
 from tqdm import tqdm
-from transformers import RobertaConfig, RobertaModel, RobertaTokenizer
+from transformers import RobertaConfig, RobertaModel, RobertaTokenizer, AutoConfig, AutoModel, AutoTokenizer
 
 from apex import amp
 
@@ -34,16 +34,16 @@ class CFG:
     # Globals #
     ######################
     EXP_ID = '127'
-    seed = 71
+    seed = 127
     epochs = 5
     folds = [0, 1, 2, 3, 4]
     N_FOLDS = 5
     LR = 2e-5
-    max_len = 256
+    max_len = 300 # 256
     train_bs = 8 * 2
     valid_bs = 16 * 2
     log_interval = 10
-    model_name = 'phiyodr/roberta-large-finetuned-squad2' # 'howey/roberta-large-mrpc' # 'roberta-large'
+    model_name = 'albert-base-v1'
     itpt_path = None # 'itpt/roberta_large_2/' 
     numerical_cols = [
        'excerpt_num_chars', 'excerpt_num_capitals', 'excerpt_caps_vs_length',
@@ -161,7 +161,7 @@ class AttentionHead(nn.Module):
 class RoBERTaLarge(nn.Module):
     def __init__(self, model_path):
         super(RoBERTaLarge, self).__init__()
-        self.in_features = 1024
+        self.in_features = 768 # 1024
         self.roberta = RobertaModel.from_pretrained(model_path)
         self.head = AttentionHead(self.in_features,self.in_features,1)
         self.dropout = nn.Dropout(0.1)
@@ -179,7 +179,7 @@ class RoBERTaLarge(nn.Module):
         )
         self.process_use = nn.Sequential(
             nn.BatchNorm1d(512),
-            nn.PReLU(),
+            nn.ReLU(),
             nn.Dropout(0.1),
         )
         self.l0 = nn.Linear(self.in_features + 8 + 32 + 512, 1)
