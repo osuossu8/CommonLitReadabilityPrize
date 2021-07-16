@@ -177,6 +177,11 @@ class RoBERTaLarge(nn.Module):
             nn.PReLU(),
             nn.Dropout(0.1),
         )
+        self.process_use = nn.Sequential(
+            nn.BatchNorm1d(512),
+            nn.PReLU(),
+            nn.Dropout(0.1),
+        )
         self.l0 = nn.Linear(self.in_features + 8 + 32 + 512, 1)
         self.l1 = nn.Linear(self.in_features + 8 + 32 + 512, 12)
 
@@ -187,15 +192,12 @@ class RoBERTaLarge(nn.Module):
         )
 
         x1 = self.head(roberta_outputs[0]) # bs, 1024
-        x1 = torch.norm(x1)
 
         x2 = self.process_num(numerical_features) # bs, 8
-        x2 = torch.norm(x2)
 
         x3 = self.process_tfidf(tfidf) # bs, 32
-        x3 = torch.norm(x3)
 
-        x4 = torch.norm(use_features) # bs, 512
+        x4 = self.process_use(use_features) # bs, 512
 
         x = torch.cat([x1, x2, x3, x4], 1) # bs, 1024 + 8 + 32 + 512
 
