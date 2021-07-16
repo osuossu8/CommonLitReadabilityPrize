@@ -162,7 +162,7 @@ class RoBERTaLarge(nn.Module):
     def __init__(self, model_path):
         super(RoBERTaLarge, self).__init__()
         self.in_features = 768 # 1024
-        self.roberta = RobertaModel.from_pretrained(model_path)
+        self.roberta = AutoModel.from_pretrained(model_path)
         self.head = AttentionHead(self.in_features,self.in_features,1)
         self.dropout = nn.Dropout(0.1)
         self.process_num = nn.Sequential(
@@ -349,7 +349,7 @@ def calc_cv(model_paths):
         model.eval()
         models.append(model)
     
-    tokenizer = RobertaTokenizer.from_pretrained(CFG.model_name)
+    tokenizer = AutoTokenizer.from_pretrained(CFG.model_name)
     
     df = pd.read_csv("inputs/train_folds.csv")
     num_bins = int(np.floor(1 + np.log2(len(df))))
@@ -596,7 +596,7 @@ for fold in range(5):
     else:
         model = RoBERTaLarge(CFG.model_name)    
 
-    tokenizer = RobertaTokenizer.from_pretrained(CFG.model_name)
+    tokenizer = AutoTokenizer.from_pretrained(CFG.model_name)
     
     train_dataset = CommonLitDataset(df=trn_df, excerpt=trn_df.excerpt.values, tokenizer=tokenizer, max_len=CFG.max_len, numerical_features=trn_df[CFG.numerical_cols].values, tfidf=tfidf_df, use_features=trn_df[CFG.USE_cols].values)
     train_dataloader = torch.utils.data.DataLoader(
