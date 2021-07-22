@@ -1,6 +1,5 @@
 import gc
 import os
-import pickle
 import math
 import random
 import time
@@ -34,16 +33,16 @@ class CFG:
     # Globals #
     ######################
     EXP_ID = '129'
-    seed = 129
+    seed = 71
     epochs = 5
     folds = [0, 1, 2, 3, 4]
     N_FOLDS = 5
     LR = 2e-5
-    max_len = 250 # 256
+    max_len = 256
     train_bs = 8 * 2
     valid_bs = 16 * 2
     log_interval = 10
-    model_name = 'bert-base-uncased'
+    model_name = 'google/electra-large-discriminator'
     itpt_path = None # 'itpt/roberta_large_2/' 
     numerical_cols = [
        'excerpt_num_chars', 'excerpt_num_capitals', 'excerpt_caps_vs_length',
@@ -51,7 +50,6 @@ class CFG:
        'excerpt_num_punctuation', 'excerpt_num_symbols', 'excerpt_num_words',
        'excerpt_num_unique_words', 'excerpt_words_vs_unique'
     ]
-    USE_cols = [f'excerpt_use_{c}' for c in range(512)]
  
 
 def set_seed(seed=42):
@@ -80,12 +78,6 @@ def init_logger(log_file='train.log'):
     logger.addHandler(handler1)
     logger.addHandler(handler2)
     return logger
-
-
-def unpickle(filename):
-    with open(filename, mode='rb') as fo:
-        p = pickle.load(fo)
-    return p  
 
 
 def calc_loss(y_true, y_pred):
@@ -158,7 +150,7 @@ class AttentionHead(nn.Module):
 class RoBERTaLarge(nn.Module):
     def __init__(self, model_path):
         super(RoBERTaLarge, self).__init__()
-        self.in_features = 768 # 1024
+        self.in_features = 1024
         self.roberta = AutoModel.from_pretrained(model_path)
         self.head = AttentionHead(self.in_features,self.in_features,1)
         self.dropout = nn.Dropout(0.1)
@@ -189,7 +181,7 @@ class RoBERTaLarge(nn.Module):
 
         x3 = self.process_tfidf(tfidf) # bs, 32
 
-        x = torch.cat([x1, x2, x3], 1) # bs, 1024 + 8 + 32 + 512
+        x = torch.cat([x1, x2, x3], 1) # bs, 1024 + 8 + 32
 
         logits = self.l0(self.dropout(x))
         aux_logits = torch.sigmoid(self.l1(self.dropout(x)))
@@ -368,7 +360,7 @@ def calc_cv(model_paths):
     for fold, model in enumerate(models):
         val_df = df[df.kfold == fold].reset_index(drop=True)
     
-        dataset = CommonLitDataset(df=val_df, excerpt=val_df.excerpt.values, tokenizer=tokenizer, max_len=CFG.max_len, numerical_features=df[CFG.numerical_cols].values, tfidf=tfidf_df, use_features=df[CFG.USE_cols].values)
+        dataset = CommonLitDataset(df=val_df, excerpt=val_df.excerpt.values, tokenizer=tokenizer, max_len=CFG.max_len, numerical_features=df[CFG.numerical_cols].values, tfidf=tfidf_df)
         data_loader = torch.utils.data.DataLoader(
             dataset, batch_size=CFG.valid_bs, num_workers=0, pin_memory=True, shuffle=False
         )
@@ -380,8 +372,7 @@ def calc_cv(model_paths):
                 masks = data['attention_mask'].to(device)
                 numerical_features = data['numerical_features'].to(device)
                 tfidf = data['tfidf'].to(device)
-                use_features = data['use_features'].to(device)
-                output, _ = model(inputs, masks, numerical_features, tfidf, use_features)
+                output, _ = model(inputs, masks, numerical_features, tfidf)
                 output = output.detach().cpu().numpy().tolist()
                 final_output.extend(output)
         logger.info(calc_loss(np.array(final_output), val_df['target'].values))
